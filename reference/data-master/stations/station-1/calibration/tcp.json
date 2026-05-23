@@ -1,0 +1,53 @@
+{
+  "tool_mount": {
+    "parent_frame": "robot_flange",
+    "child_frame": "gripper_base",
+    "translation_m": [
+      0,
+      0,
+      0
+    ],
+    "rotation_rpy_deg": [
+      0,
+      0,
+      -45
+    ]
+  },
+  "custom_tcp": {
+    "parent_frame": "gripper_base",
+    "child_frame": "tool_tcp",
+    "translation_m": [
+      0.0,
+      0.0,
+      0.205
+    ],
+    "rotation_rpy_deg": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "hand_eye": {
+    "type": "eye_in_hand",
+    "parent_frame": "tool_tcp",
+    "child_frame": "camera_color_optical_frame",
+    "translation_m": [
+      0.06562570632849236,
+      -0.00757987482527042,
+      -0.1505543462411308
+    ],
+    "rotation_rpy_deg": [
+      0.776143763017356,
+      -0.4499941553201325,
+      90.20446869120703
+    ]
+  },
+  "convention": {
+    "translation_unit": "meters",
+    "rotation_unit": "degrees",
+    "rotation_order": "XYZ"
+  },
+  "metadata": {
+    "saved_at": "2026-05-12T15:10:18.733903Z"
+  }
+}

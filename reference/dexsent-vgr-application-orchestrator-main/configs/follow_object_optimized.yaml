@@ -1,0 +1,108 @@
+# Robot Follow Object - Optimized Configuration
+# This configuration addresses tracking instability issues identified in TRACKING_ANALYSIS.md
+
+robot:
+  follow:
+    # ======================================
+    # CRITICAL FIXES FOR TRACKING
+    # ======================================
+    
+    # Increase control loop rate to match robot servo frequency
+    # Default was 60Hz (for predictive) - keep it at max
+    rate_hz: 60.0
+    mode: predictive
+    control_mode: auto
+    
+    # ======================================
+    # LOSS BEHAVIOR TUNING
+    # ======================================
+    # Reduce dropout grace period - vision should rarely lose for 180ms
+    dropout_grace_s: 0.08  # Was 0.18
+    lost_behavior: "hold_current"
+    max_target_age_s: 0.25  # Was 0.35
+    clear_target_on_lost: true
+    
+    # ======================================
+    # SAFETY GATES
+    # ======================================
+    max_jump_m: 0.03  # Was 0.05 - reduce to prevent oscillation recovery
+    workspace_min_m: [-1.0, -1.0, 0.15]
+    workspace_max_m: [1.0, 1.0, 0.50]
+    
+    # ======================================
+    # GEOMETRY & ORIENTATION
+    # ======================================
+    hover_height_m: 0.12
+    align_with_surface: false
+    
+    # Fixed roll/pitch (gripper pointing down)
+    orientation_mode: "fixed_rp"
+    roll_fixed_deg: -180.0
+    pitch_fixed_deg: 0.0
+    
+    # ======================================
+    # YAW CONTROL - CRITICAL FOR SMOOTHNESS
+    # ======================================
+    yaw_mode: "blend"          # Use blend instead of raw vision yaw
+    yaw_blend: 0.15            # Was 0.25 - More aggressive smoothing (lower = smoother)
+    yaw_sign: -1.0
+    yaw_offset_deg: 0.0
+    smart_yaw: true
+    yaw_period_deg: 180.0
+    
+    # ======================================
+    # POSITION CONTROLLER (Direct Mode)
+    # ======================================
+    gain: 0.25                 # Was 0.35 - Lower gain = smoother response
+    max_step_xy_m: 0.0025      # Was 0.005
+    max_step_z_m: 0.001        # Was 0.002
+    
+    # ======================================
+    # VELOCITY CONTROLLER
+    # ======================================
+    # These are 1/s gains for velocity servo
+    velocity_kp: 2.5           # Was 3.5 - Lower = smoother, less overshoot
+    yaw_velocity_kp: 3.0       # Was 4.0
+    max_vel_mps: 0.20          # Was 0.25
+    max_yaw_vel_dps: 60.0       # Was 120.0 - Reduce yaw velocity limit
+    
+    # ======================================
+    # PREDICTIVE CONTROLLER
+    # ======================================
+    predictive_latency_s: 0.10     # Was 0.12 (match new 20Hz vision)
+    predictive_latency_min_s: 0.05
+    predictive_latency_max_s: 0.15
+    predictive_vel_alpha: 0.4      # Was 0.5 - Less velocity estimation jitter
+    predictive_ff_gain: 0.8        # Was 1.0 - Reduce feed-forward spike
+    predictive_max_speed_mps: 0.30 # Was 0.30
+    
+    # ======================================
+    # SMOOTHING - KEY FOR STABILITY
+    # ======================================
+    # These time constants apply exponential averaging
+    # Lower tau_s = more aggressive smoothing = less responsive but smoother
+    target_tau_s: 0.08        # Was 0.12 - Target position smoothing
+    cmd_tau_s: 0.06           # Was 0.06 - Command smoothing
+    
+    # Logging
+    log_interval_s: 0.15
+
+# ======================================
+# VISION ENGINE SETTINGS (Parallel Config)
+# ======================================
+# These are in vgr-vision-engine-2.5d/configs/engine.local.json
+# Key changes already made:
+# - fps_limit: 20 (was 5)
+# - process_mode: continuous (was trigger_only)
+# - depth_object_min_height_m: 0.05 (was 0.008)
+# - depth_object_max_height_m: 0.5 (was 0.2)
+# - bg_delta: 15.0 (was 18.0)
+# - bg_delta_min: 10.0 (was 12.0)
+
+# ======================================
+# ROBOT CONTROLLER SETTINGS (Parallel Config)
+# ======================================
+# These are in vgr-robot-controller-2.5d/configs/robot.xarm.json
+# Key changes already made:
+# - state_plane.rate_hz: 60 (was 20)
+

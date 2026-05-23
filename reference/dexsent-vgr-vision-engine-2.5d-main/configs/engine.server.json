@@ -1,0 +1,264 @@
+{
+  "camera_events": {
+    "subscribe_endpoint": "tcp://127.0.0.1:5555",
+    "subscribe_topic": "camera"
+  },
+  "results": {
+    "publish_endpoint": "tcp://127.0.0.1:5556",
+    "publish_topic": "vision"
+  },
+  "control_plane": {
+    "mode": "reqrep",
+    "endpoint": "tcp://127.0.0.1:5561",
+    "bind_localhost_only": false
+  },
+    "vision": {
+    "fps_limit": 25,
+    "process_mode": "continuous",
+    "modules": [
+      { "name": "camera_preview", "params": { "max_width": 640, "max_height": 480, "quality": 65, "format": "jpg" } },
+      {
+        "name": "object_proposals",
+        "params": {
+          "method": "auto",
+          "color_method": "background",
+          "combine_mode": "depth",
+          "min_area_px": 600,
+          "max_area_px": 250000,
+          "max_proposals": 8,
+          "min_extent": 0.2,
+          "min_solidity": 0.6,
+          "nms_iou_threshold": 0.4,
+          "depth_plane_source": "border",
+          "depth_plane_fit": true,
+          "depth_plane_bins": 160,
+          "depth_plane_border_px": 20,
+          "depth_smooth_ksize": 3,
+          "depth_object_min_height_m": 0.04,
+          "depth_object_max_height_m": 0.55,
+          "bg_delta": 12.0,
+          "bg_delta_min": 8.0,
+          "bg_delta_scale": 2.0,
+          "bg_border_px": 20,
+          "include_image": true,
+          "format": "jpg",
+          "quality": 70
+        }
+      },
+      { "name": "blob_detection", "params": { "min_area": 500, "max_area": 100000, "threshold": 128, "invert": false } },
+      {
+        "name": "feature_matching",
+        "params": {
+          "templates_dir": "assets/templates",
+          "nfeatures": 900,
+          "match_ratio": 0.7,
+          "min_inliers": 10,
+          "ransac_thresh": 3.5,
+          "max_results": 1,
+          "use_clahe": true,
+          "edge_fallback": true,
+          "edge_threshold": 0.4,
+          "edge_rotations_deg": [-180, -120, -60, -30, 0, 30, 60, 120, 180],
+          "edge_scales": [0.8, 0.9, 1.0, 1.1],
+          "include_image": false,
+          "prioritize_speed": true
+        }
+      },
+      {
+        "name": "template_matching",
+        "params": {
+          "templates_dir": "assets/templates",
+          "threshold": 0.82,
+          "rotations_deg": [-30, -15, 0, 15, 30],
+          "scales": [0.9, 1.0, 1.1]
+        }
+      },
+      {
+        "name": "tamplate_matching_sift",
+        "params": {
+          "templates_dir": "assets/templates",
+          "scene_scale": 1.0,
+          "nfeatures": 0,
+          "n_octave_layers": 3,
+          "contrast_threshold": 0.04,
+          "sift_edge_threshold": 10,
+          "sigma": 1.6,
+          "match_ratio": 0.7,
+          "min_inliers": 15,
+          "ransac_thresh": 3.0,
+          "use_clahe": true,
+          "max_results": 1,
+          "include_image": true,
+          "image_fps_limit": 25,
+          "image_on_match": true,
+          "image_on_match_max": 1000,
+          "image_format": "jpg",
+          "image_quality": 50,
+          "intrinsics": {
+            "fx": 615,
+            "fy": 615,
+            "cx": 320,
+            "cy": 240
+          },
+          "depth_window_px": 5,
+          "depth_min_m": 0.05,
+          "depth_max_m": 5.0
+        }
+      },
+      {
+        "name": "opt_sift",
+        "params": {
+          "templates_dir": "assets/templates",
+          "scene_scale": 1.0,
+          "nfeatures": 0,
+          "n_octave_layers": 3,
+          "contrast_threshold": 0.04,
+          "sift_edge_threshold": 10,
+          "sigma": 1.6,
+          "match_ratio": 0.7,
+          "min_inliers": 15,
+          "ransac_thresh": 3.0,
+          "use_clahe": true,
+          "max_results": 1,
+          "include_image": true,
+          "image_fps_limit": 25,
+          "image_on_match": true,
+          "image_on_match_max": 1000,
+          "image_format": "jpg",
+          "image_quality": 50,
+          "intrinsics": {
+            "fx": 615,
+            "fy": 615,
+            "cx": 320,
+            "cy": 240
+          },
+          "depth_window_px": 5,
+          "depth_min_m": 0.05,
+          "depth_max_m": 5.0
+        }
+      },
+      {
+        "name": "cuboid_pose_6d",
+        "params": {
+          "alpha_trans": 0.3,
+          "alpha_rot": 0.3,
+          "max_jump_m": 0.05,
+          "max_rot_deg": 15.0,
+          "lost_grace_s": 0.8,
+          "template_score_threshold": 0.6,
+          "require_template_match": true,
+          "depth_min_m": 0.05,
+          "depth_max_m": 5.0,
+          "depth_downsample_stride": 1,
+          "depth_roi_margin_px": 20,
+          "ransac_iterations": 100,
+          "ransac_thresh_m": 0.01,
+          "cuboid_dims": {
+            "L": 100.0,
+            "B": 80.0,
+            "H": 60.0
+          },
+          "intrinsics": {
+            "fx": 615,
+            "fy": 615,
+            "cx": 320,
+            "cy": 240
+          }
+        }
+      },
+      {
+        "name": "megapose_bin_picking",
+        "params": {
+          "input_color_order": "bgr",
+          "selection_top_k": 5,
+          "selection_min_confidence": 0.5,
+          "yolo_conf": 1.0,
+          "yolo_device": "cuda",
+          "model": "rgbd",
+          "device": "cuda",
+          "refiner_iterations": 20,
+          "pose_hypotheses": 5,
+          "rerank_enabled": true,
+          "rerank_top_k": 5,
+          "crop_render_height": 320,
+          "crop_render_width": 448,
+          "mesh_recompute_vertex_normals": true,
+          "mesh_merge_vertices": true,
+          "mesh_process_before_export": true,
+          "coarse_grid_size": 72,
+          "depth_ray_refinement": true,
+          "depth_ray_refinement_iterations": 2,
+          "depth_ray_refinement_mesh_samples": 2500,
+          "depth_ray_refinement_observed_samples": 4000,
+          "depth_ray_refinement_max_correspondence_m": 0.02,
+          "depth_ray_refinement_max_shift_m": 0.05,
+          "depth_ray_front_layer_thickness_m": 0.01,
+          "depth_ray_center_keep_ratio": 0.7,
+          "mesh_units": "mm",
+          "mesh_scale": 1.0,
+          "prewarm_before_run": false,
+          "startup_warmup_frames": 0,
+          "max_no_candidate_frames": 1,
+          "axis": [0.0, 0.0, 1.0],
+          "renderer_workers": 1,
+          "cpu_threads": 0,
+          "cpu_interop_threads": 1,
+          "save_outputs": false
+        }
+      },
+      {
+        "name": "ppf_icp_bin_picking",
+        "params": {
+          "input_color_order": "bgr",
+          "selection_top_k": 5,
+          "selection_min_confidence": 0.5,
+          "yolo_conf": 1.0,
+          "yolo_device": "cuda",
+          "mesh_units": "mm",
+          "mesh_scale": 1.0,
+          "ppf_relative_sampling_step": 0.025,
+          "ppf_relative_distance_step": 0.025,
+          "ppf_num_angles": 36,
+          "ppf_scene_sample_step": 0.04,
+          "ppf_scene_distance": 0.02,
+          "ppf_search_position_threshold": 0.015,
+          "ppf_search_rotation_threshold": 0.087,
+          "ppf_weighted_clustering": true,
+          "ppf_max_hypotheses": 30,
+          "ppf_model_sample_points": 8000,
+          "ppf_scene_max_points": 12000,
+          "ppf_scene_voxel_size_m": 0.0015,
+          "ppf_scene_min_points": 200,
+          "ppf_normal_neighbors": 24,
+          "ppf_orthonormalize_pose": true,
+          "scene_cluster3d_enabled": true,
+          "scene_z_band_filter_enabled": true,
+          "scene_sor_enabled": true,
+          "scene_sor_k": 16,
+          "icp_enabled": true,
+          "icp_iterations": 100,
+          "icp_tolerance": 0.005,
+          "icp_rejection_scale": 1.5,
+          "icp_num_levels": 8,
+          "icp_sample_type": "uniform",
+          "icp_num_max_corr": 4,
+          "icp_max_residual_m": 0.012,
+          "icp_coarse_iterations": 50,
+          "icp_coarse_rejection_scale": 3.0,
+          "icp_coarse_num_levels": 4,
+          "icp_coarse_tolerance": 0.02,
+          "prewarm_before_run": false,
+          "startup_warmup_frames": 0,
+          "max_no_candidate_frames": 1,
+          "axis": [0.0, 0.0, 1.0],
+          "save_outputs": false
+        }
+      }
+    ]
+  },
+  "shm": {
+    "frame_header_bytes": 64,
+    "result_max_json_bytes": 4096
+  },
+  "logging": { "level": "INFO" }
+}

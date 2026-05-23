@@ -1,0 +1,53 @@
+# camera_core/ipc/event_bus.py
+
+import time
+import zmq
+import json
+
+
+def start_event_bus(pub_addr: str, pull_addr: str, topic: str, log=None):
+    """
+    Start the central ZMQ event bus.
+    - PULL socket: receives events from camera pipelines (bind)
+    - PUB socket: publishes events to subscribers (bind)
+
+    This acts as a broker between producers (cameras) and consumers (subscribers).
+    """
+    ctx = zmq.Context.instance()
+
+    # PULL socket - receives from cameras
+    pull_sock = ctx.socket(zmq.PULL)
+    pull_sock.bind(pull_addr)
+
+    # PUB socket - sends to subscribers
+    pub_sock = ctx.socket(zmq.PUB)
+    pub_sock.bind(pub_addr)
+
+    if log:
+        log.info(f"[EVENT BUS] PULL bound at {pull_addr}")
+        log.info(f"[EVENT BUS] PUB bound at {pub_addr}")
+    else:
+        print(f"[EVENT BUS] PULL bound at {pull_addr}")
+        print(f"[EVENT BUS] PUB bound at {pub_addr}")
+
+    # Give sockets time to settle
+    time.sleep(0.5)
+
+    try:
+        while True:
+            # Receive event from camera (blocking)
+            msg_bytes = pull_sock.recv()
+            event = json.loads(msg_bytes.decode('utf-8'))
+
+            # Forward to all subscribers with topic prefix
+            payload = json.dumps(event, separators=(",", ":"), ensure_ascii=False)
+            pub_sock.send_string(f"{topic} {payload}")
+
+    except KeyboardInterrupt:
+        pass
+    finally:
+        try:
+            pull_sock.close(0)
+            pub_sock.close(0)
+        except Exception:
+            pass

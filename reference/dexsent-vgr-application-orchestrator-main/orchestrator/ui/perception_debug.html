@@ -1,0 +1,1662 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dexsent Intelligent Manupulation Platform | Perception Node Monitor</title>
+    <link rel="icon" type="image/png" href="/ui/assets/favicon.png" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+      :root {
+        color-scheme: light;
+        --ink: #363b44;
+        --muted: rgba(54, 59, 68, 0.78);
+        --paper: #f6f6f6;
+        --sand: #aaedf6;
+        --ocean: #115a9b;
+        --mint: #12c6cf;
+        --card: #ffffff;
+        --border: rgba(54, 59, 68, 0.18);
+        --shadow: 0 12px 30px rgba(17, 90, 155, 0.1);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at 10% 14%, rgba(170, 237, 246, 0.58) 0%, transparent 42%),
+          radial-gradient(circle at 92% 10%, rgba(18, 198, 207, 0.18) 0%, transparent 34%),
+          var(--paper);
+        min-height: 100vh;
+      }
+      .app {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 32px 24px 40px;
+      }
+      h1 {
+        margin: 0;
+        font-size: clamp(26px, 3vw, 34px);
+        color: var(--ocean);
+      }
+      p {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+      .controls {
+        margin-top: 18px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: flex-end;
+      }
+      label {
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+      input:not([type="checkbox"]):not([type="radio"]),
+      select,
+      textarea {
+        min-height: 40px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 14px;
+        background: #ffffff;
+        color: var(--ink);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      }
+      select {
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 40px;
+        background-image: linear-gradient(45deg, transparent 50%, var(--ocean) 50%),
+          linear-gradient(135deg, var(--ocean) 50%, transparent 50%),
+          linear-gradient(
+            to right,
+            rgba(17, 90, 155, 0.22),
+            rgba(17, 90, 155, 0.22)
+          );
+        background-position: calc(100% - 18px) calc(50% - 3px),
+          calc(100% - 13px) calc(50% - 3px), calc(100% - 34px) 50%;
+        background-size: 5px 5px, 5px 5px, 1px 68%;
+        background-repeat: no-repeat;
+      }
+      select:hover {
+        border-color: rgba(17, 90, 155, 0.5);
+      }
+      select option {
+        color: var(--ink);
+        background: #ffffff;
+      }
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: rgba(17, 90, 155, 0.5);
+        box-shadow: 0 0 0 3px rgba(170, 237, 246, 0.65);
+      }
+      textarea {
+        min-height: 98px;
+        font-family: "IBM Plex Mono", monospace;
+      }
+      button {
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        font-weight: 600;
+        font-family: "Space Grotesk", sans-serif;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+      button.primary {
+        background: linear-gradient(135deg, var(--ocean) 0%, var(--mint) 100%);
+        color: #fff;
+        box-shadow: 0 10px 20px rgba(17, 90, 155, 0.25);
+      }
+      button.secondary {
+        background: rgba(170, 237, 246, 0.72);
+        border: 1px solid rgba(18, 198, 207, 0.38);
+        color: var(--ocean);
+      }
+      button.ghost {
+        background: transparent;
+        border: 1px solid rgba(17, 90, 155, 0.36);
+        color: var(--ocean);
+      }
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 16px rgba(17, 90, 155, 0.16);
+      }
+      button:active {
+        transform: translateY(1px);
+      }
+      .btn-group {
+        display: flex;
+        gap: 10px;
+      }
+      .btn-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 8px;
+      }
+      .status-pill {
+        margin-left: auto;
+        padding: 6px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(18, 198, 207, 0.3);
+        background: rgba(170, 237, 246, 0.75);
+        font-size: 12px;
+        color: var(--ocean);
+        font-weight: 600;
+      }
+      .session-row {
+        margin-top: 28px;
+        display: flex;
+      }
+      .session-row .card {
+        width: 100%;
+      }
+      .results-row {
+        margin-top: 18px;
+        display: flex;
+        gap: 18px;
+      }
+      .results-row .card {
+        flex: 1;
+        min-width: 280px;
+      }
+      .grid {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 18px;
+      }
+      .param-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+      }
+      .checkbox-field {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .checkbox-field input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+        accent-color: var(--mint);
+        cursor: pointer;
+      }
+      .card {
+        background: var(--card);
+        border-radius: 18px;
+        border: 1px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .card h2 {
+        margin: 0;
+        font-size: 16px;
+        color: var(--ocean);
+      }
+      .param-section h3 {
+        margin: 0 0 8px;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--ocean);
+      }
+      pre {
+        margin: 0;
+        background: #363b44;
+        color: #f6f6f6;
+        border: 1px solid rgba(170, 237, 246, 0.28);
+        padding: 12px;
+        border-radius: 10px;
+        font-size: 12px;
+        line-height: 1.4;
+        overflow: auto;
+        min-height: 80px;
+      }
+      .timeline {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 420px;
+        overflow: auto;
+      }
+      .timeline-row {
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: rgba(170, 237, 246, 0.24);
+        border: 1px solid rgba(17, 90, 155, 0.16);
+      }
+      .timeline-row.lost {
+        background: rgba(54, 59, 68, 0.1);
+        border-color: rgba(54, 59, 68, 0.32);
+      }
+      .timeline-row strong {
+        display: block;
+        font-size: 13px;
+        color: var(--ocean);
+      }
+      .timeline-row span {
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .timeline-detail {
+        font-size: 12px;
+        color: var(--ink);
+        margin-top: 4px;
+      }
+      .metric-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-size: 13px;
+      }
+      .metric-row span {
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <h1>Perception Node Monitor</h1>
+        <p>Watch the live perception pipeline, get the latest target pose, and verify the point in robot coordinates without moving the arm.</p>
+      </header>
+      <div class="controls">
+        <label>
+          Task ID
+          <input id="taskId" placeholder="task-..." />
+        </label>
+        <label>
+          Station
+          <select id="stationId"></select>
+        </label>
+        <div class="btn-group">
+          <button id="startMonitor" class="primary">Start Monitor</button>
+          <button id="stopMonitor" class="secondary">Stop</button>
+          <button id="refreshCameras" class="ghost">Refresh Cameras</button>
+        </div>
+        <span id="statusIndicator" class="status-pill">idle</span>
+      </div>
+      <div class="session-row">
+        <div class="card">
+          <h2>Vision Session</h2>
+          <label>
+            Camera
+            <select id="visionCameraSelect"></select>
+          </label>
+          <label>
+            Module
+            <input id="visionModule" value="feature_matching" />
+          </label>
+          <label>
+            FPS limit
+            <input id="visionFps" value="0" type="number" min="0" max="60" />
+          </label>
+          <label>
+            Process mode
+            <select id="visionProcessMode">
+              <option value="continuous">continuous</option>
+              <option value="trigger_only">trigger only</option>
+            </select>
+          </label>
+          <label>
+            Params (JSON)
+            <textarea id="visionParams" rows="3">{"templates_dir":"assets/templates"}</textarea>
+          </label>
+          <div class="param-section">
+            <h3>Template tuning</h3>
+            <div class="param-grid">
+              <label>
+                Template dir
+                <input id="paramTemplatesDir" type="text" />
+              </label>
+              <label>
+                Features
+                <input id="paramNFeatures" type="number" min="0" />
+              </label>
+              <label>
+                Match ratio
+                <input id="paramMatchRatio" type="number" step="0.01" min="0" max="1" />
+              </label>
+              <label>
+                Min inliers
+                <input id="paramMinInliers" type="number" min="0" />
+              </label>
+              <label>
+                RANSAC thresh
+                <input id="paramRansac" type="number" step="0.1" min="0" />
+              </label>
+              <label>
+                Depth window px
+                <input id="paramDepthWindow" type="number" min="0" />
+              </label>
+              <label class="checkbox-field">
+                <span>Include image</span>
+                <input id="paramIncludeImage" type="checkbox" />
+              </label>
+              <label>
+                FPS limit
+                <input id="paramImageFps" type="number" min="1" />
+              </label>
+              <label class="checkbox-field">
+                <span>Image on match</span>
+                <input id="paramImageOnMatch" type="checkbox" />
+              </label>
+              <label>
+                Image max
+                <input id="paramImageOnMatchMax" type="number" min="0" />
+              </label>
+              <label>
+                Image quality
+                <input id="paramImageQuality" type="number" min="1" max="100" />
+              </label>
+              <label>
+                Min good matches
+                <input id="paramMinGoodMatches" type="number" min="4" />
+              </label>
+              <label>
+                Min inlier ratio
+                <input id="paramMinInlierRatio" type="number" step="0.01" min="0" max="1" />
+              </label>
+              <label>
+                Max RMSE (px)
+                <input id="paramMaxRmsePx" type="number" step="0.1" min="0" />
+              </label>
+              <label>
+                Min proj area (px²)
+                <input id="paramMinProjArea" type="number" step="1" min="0" />
+              </label>
+              <label>
+                Bounds margin (px)
+                <input id="paramBoundsMarginPx" type="number" step="1" min="0" />
+              </label>
+              <label>
+                Stable px threshold
+                <input id="paramStableCenterPx" type="number" step="0.1" min="0" />
+              </label>
+              <label>
+                Require consecutive
+                <input id="paramRequireConsecutive" type="number" min="1" />
+              </label>
+              <label>
+                Temporal alpha
+                <input id="paramTemporalAlpha" type="number" step="0.01" min="0" max="1" />
+              </label>
+              <label class="checkbox-field">
+                <span>Geom filters</span>
+                <input id="paramEnableGeomFilters" type="checkbox" />
+              </label>
+              <label class="checkbox-field">
+                <span>Temporal filter</span>
+                <input id="paramEnableTemporalFilter" type="checkbox" />
+              </label>
+              <label class="checkbox-field">
+                <span>Pose smoothing</span>
+                <input id="paramEnablePoseSmoothing" type="checkbox" />
+              </label>
+              <label class="checkbox-field">
+                <span>Corner smoothing</span>
+                <input id="paramEnableCornerSmoothing" type="checkbox" />
+              </label>
+            </div>
+          </div>
+          <div class="param-section">
+            <h3>Cuboid pose</h3>
+            <div class="param-grid">
+              <label>
+                Alpha trans
+                <input id="paramAlphaTrans" type="number" step="0.01" min="0" max="1" />
+              </label>
+              <label>
+                Alpha rot
+                <input id="paramAlphaRot" type="number" step="0.01" min="0" max="1" />
+              </label>
+              <label>
+                Max jump (m)
+                <input id="paramMaxJump" type="number" step="0.001" min="0" />
+              </label>
+              <label>
+                Max rot (deg)
+                <input id="paramMaxRot" type="number" step="0.1" min="0" />
+              </label>
+              <label>
+                Lost grace (s)
+                <input id="paramLostGrace" type="number" step="0.1" min="0" />
+              </label>
+              <label>
+                Template score
+                <input id="paramTemplateScore" type="number" step="0.01" min="0" max="1" />
+              </label>
+              <label class="checkbox-field">
+                <span>Require template</span>
+                <input id="paramRequireTemplate" type="checkbox" />
+              </label>
+              <label>
+                Depth min (m)
+                <input id="paramDepthMin" type="number" step="0.01" min="0" />
+              </label>
+              <label>
+                Depth max (m)
+                <input id="paramDepthMax" type="number" step="0.01" min="0" />
+              </label>
+              <label>
+                Depth stride
+                <input id="paramDepthStride" type="number" min="1" />
+              </label>
+              <label>
+                Depth roi margin
+                <input id="paramDepthMargin" type="number" min="0" />
+              </label>
+              <label>
+                RANSAC iterations
+                <input id="paramRansacIter" type="number" min="0" />
+              </label>
+            </div>
+          </div>
+          <div class="btn-row">
+            <button class="primary" id="visionSessionStart">Start Vision Feed</button>
+            <button class="secondary" id="visionSessionStop">Stop</button>
+            <button class="secondary" id="saveConfigBtn">Save Config to Task</button>
+          </div>
+          <div class="metric-row">
+            <strong>Session status</strong>
+            <span id="visionSessionStatus">idle</span>
+          </div>
+          <div class="metric-row">
+            <strong>Vision result</strong>
+            <span id="visionResultStatus">no data</span>
+          </div>
+        </div>
+      </div>
+      <div class="results-row">
+        <div class="card">
+          <h2>Vision Target</h2>
+          <div class="metric-row">
+            <strong id="targetPosition">no target yet</strong>
+            <span id="targetYaw">yaw: -</span>
+          </div>
+          <div class="metric-row">
+            <strong>Object (camera frame)</strong>
+            <span id="targetCamera">-</span>
+          </div>
+          <div class="metric-row">
+            <strong>Object (base frame)</strong>
+            <span id="targetBase">-</span>
+          </div>
+          <pre id="targetRaw">waiting for the first match</pre>
+        </div>
+        <div class="card">
+          <h2>Annotated Frame</h2>
+          <canvas id="visionPreviewCanvas" width="320" height="240"></canvas>
+          <div class="btn-row">
+            <button class="ghost" id="refreshVisionPreview">Refresh Frame</button>
+          </div>
+          <div class="metric-row">
+            <strong>Result latency</strong>
+            <span id="visionResultLatencyMs">- ms</span>
+          </div>
+          <div class="metric-row">
+            <strong>Result FPS</strong>
+            <span id="visionResultFps">-</span>
+          </div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="card">
+          <h2>Hand-eye transform</h2>
+          <pre id="handeyeDetails">loading...</pre>
+        </div>
+        <div class="card">
+          <h2>Robot state</h2>
+          <pre id="robotState">waiting</pre>
+        </div>
+      </div>
+    </main>
+    <script>
+      const API_ROOT = "";
+      const taskIdInput = document.getElementById("taskId");
+      const stationSelect = document.getElementById("stationId");
+      const statusIndicator = document.getElementById("statusIndicator");
+      const targetRaw = document.getElementById("targetRaw");
+      const targetPosition = document.getElementById("targetPosition");
+      const targetYaw = document.getElementById("targetYaw");
+      const handeyeDetails = document.getElementById("handeyeDetails");
+      const robotState = document.getElementById("robotState");
+      const startMonitorBtn = document.getElementById("startMonitor");
+      const stopMonitorBtn = document.getElementById("stopMonitor");
+      const targetCamera = document.getElementById("targetCamera");
+      const targetBase = document.getElementById("targetBase");
+      const visionCameraSelect = document.getElementById("visionCameraSelect");
+      const visionModule = document.getElementById("visionModule");
+      const visionFps = document.getElementById("visionFps");
+      const visionProcessMode = document.getElementById("visionProcessMode");
+      const visionParams = document.getElementById("visionParams");
+      const visionSessionStart = document.getElementById("visionSessionStart");
+      const visionSessionStop = document.getElementById("visionSessionStop");
+      const saveConfigBtn = document.getElementById("saveConfigBtn");
+      const visionSessionStatus = document.getElementById("visionSessionStatus");
+      const visionResultStatus = document.getElementById("visionResultStatus");
+      const refreshCamerasBtn = document.getElementById("refreshCameras");
+      const visionPreviewCanvas = document.getElementById("visionPreviewCanvas");
+      const refreshVisionPreviewBtn = document.getElementById("refreshVisionPreview");
+      const visionResultLatencyMs = document.getElementById("visionResultLatencyMs");
+      const visionResultFps = document.getElementById("visionResultFps");
+      let monitorTimer = null;
+      let visionSessionId = "";
+      let visionSessionTimer = null;
+      let visionStream = null;
+      let lastStreamFrameId = null;
+      let lastVisionResultFrameId = "";
+      let lastHandeye = null;
+      let lastTcpPose = null;
+      let baseToCam = null;
+      let dataRootPath = "";
+      let runVisionConfig = null;
+      let userIsEditing = false;
+      let paramUpdateTimeout = null;
+      let lastFallbackFrameFetchMs = 0;
+      const presetParams = new URLSearchParams(window.location.search);
+      const presetTaskId = presetParams.get("task");
+      const paramFieldConfig = [
+        { id: "paramTemplatesDir", key: "templates_dir", type: "string" },
+        { id: "paramNFeatures", key: "nfeatures", type: "number" },
+        { id: "paramMatchRatio", key: "match_ratio", type: "number" },
+        { id: "paramMinInliers", key: "min_inliers", type: "number" },
+        { id: "paramRansac", key: "ransac_thresh", type: "number" },
+        { id: "paramDepthWindow", key: "depth_window_px", type: "number" },
+        { id: "paramIncludeImage", key: "include_image", type: "boolean" },
+        { id: "paramImageFps", key: "image_fps_limit", type: "number" },
+        { id: "paramImageOnMatch", key: "image_on_match", type: "boolean" },
+        { id: "paramImageOnMatchMax", key: "image_on_match_max", type: "number" },
+        { id: "paramImageQuality", key: "image_quality", type: "number" },
+        { id: "paramMinGoodMatches", key: "min_good_matches", type: "number" },
+        { id: "paramMinInlierRatio", key: "min_inlier_ratio", type: "number" },
+        { id: "paramMaxRmsePx", key: "max_reproj_rmse_px", type: "number" },
+        { id: "paramMinProjArea", key: "min_projected_area_px", type: "number" },
+        { id: "paramBoundsMarginPx", key: "projected_bounds_margin_px", type: "number" },
+        { id: "paramStableCenterPx", key: "stable_center_px_threshold", type: "number" },
+        { id: "paramRequireConsecutive", key: "require_consecutive", type: "number" },
+        { id: "paramTemporalAlpha", key: "temporal_alpha", type: "number" },
+        { id: "paramEnableGeomFilters", key: "enable_geometric_filters", type: "boolean" },
+        { id: "paramEnableTemporalFilter", key: "enable_temporal_filter", type: "boolean" },
+        { id: "paramEnablePoseSmoothing", key: "enable_pose_smoothing", type: "boolean" },
+        { id: "paramEnableCornerSmoothing", key: "enable_corner_smoothing", type: "boolean" },
+        { id: "paramAlphaTrans", key: "alpha_trans", type: "number" },
+        { id: "paramAlphaRot", key: "alpha_rot", type: "number" },
+        { id: "paramMaxJump", key: "max_jump_m", type: "number" },
+        { id: "paramMaxRot", key: "max_rot_deg", type: "number" },
+        { id: "paramLostGrace", key: "lost_grace_s", type: "number" },
+        { id: "paramTemplateScore", key: "template_score_threshold", type: "number" },
+        { id: "paramRequireTemplate", key: "require_template_match", type: "boolean" },
+        { id: "paramDepthMin", key: "depth_min_m", type: "number" },
+        { id: "paramDepthMax", key: "depth_max_m", type: "number" },
+        { id: "paramDepthStride", key: "depth_downsample_stride", type: "number" },
+        { id: "paramDepthMargin", key: "depth_roi_margin_px", type: "number" },
+        { id: "paramRansacIter", key: "ransac_iterations", type: "number" },
+      ];
+      if (presetTaskId && taskIdInput) {
+        taskIdInput.value = presetTaskId;
+      }
+
+      async function refreshDataRoot() {
+        const res = await api("/ready", { silent: true });
+        if (res.ok && res.body?.data_root) {
+          dataRootPath = res.body.data_root.replace(/\\\\/g, "/").replace(trailingSlashRegex, "");
+        }
+      }
+
+      const trailingSlashRegex = new RegExp("\\\\/$");
+      function normalizeTemplatesDir(dir) {
+        if (!dir) return dir;
+        if (dir.startsWith("/") || /^[A-Za-z]:/.test(dir)) {
+          return dir;
+        }
+        if (!dataRootPath) {
+          return dir;
+        }
+        const cleaned = dir.replace(/^["']|["']$/g, "").replace(/^[\\/]+/, "");
+        return `${dataRootPath}/${cleaned}`;
+      }
+      async function api(path, options = {}) {
+        const silent = options.silent === true;
+        const opts = { ...options };
+        if ("silent" in opts) delete opts.silent;
+        const url = path.startsWith("http") || path.startsWith(API_ROOT) ? path : `${API_ROOT}${path}`;
+        try {
+          if (!silent) {
+            statusIndicator.textContent = "fetching";
+          }
+          const res = await fetch(url, opts);
+          const text = await res.text();
+          let body = text;
+          try {
+            body = JSON.parse(text);
+          } catch (_e) {}
+          if (!silent) {
+            statusIndicator.textContent = res.ok ? "ok" : `error ${res.status}`;
+          }
+          return { ok: res.ok, status: res.status, body };
+        } catch (err) {
+          console.error("api failure", err);
+          if (!silent) {
+            statusIndicator.textContent = "offline";
+          }
+          return { ok: false, status: 0, body: null };
+        }
+      }
+      async function refreshStations() {
+        const res = await api("/stations", { silent: true });
+        if (!res.ok || !res.body) {
+          stationSelect.innerHTML = "<option value=\"\">default</option>";
+          return;
+        }
+        const stations = res.body.stations || [];
+        stationSelect.innerHTML = stations
+          .map((station) => `<option value=\"${station.station_id}\">${station.station_id}</option>`)
+          .join("");
+      }
+      function addVec(a, b) {
+        if (!a || !b) return null;
+        return [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
+      }
+      function quatMul(a, b) {
+        const ax = a[0],
+          ay = a[1],
+          az = a[2],
+          aw = a[3];
+        const bx = b[0],
+          by = b[1],
+          bz = b[2],
+          bw = b[3];
+        return [
+          ax * bw + aw * bx + ay * bz - az * by,
+          ay * bw + aw * by + az * bx - ax * bz,
+          az * bw + aw * bz + ax * by - ay * bx,
+          aw * bw - ax * bx - ay * by - az * bz,
+        ];
+      }
+      function quatConj(q) {
+        return q ? [-q[0], -q[1], -q[2], q[3]] : [0, 0, 0, 1];
+      }
+      function rpy2quat(rpy_deg) {
+        // Convert roll-pitch-yaw (degrees) to quaternion (xyzw format)
+        const r = (rpy_deg[0] * Math.PI) / 180;
+        const p = (rpy_deg[1] * Math.PI) / 180;
+        const y = (rpy_deg[2] * Math.PI) / 180;
+        const cy = Math.cos(y * 0.5);
+        const sy = Math.sin(y * 0.5);
+        const cp = Math.cos(p * 0.5);
+        const sp = Math.sin(p * 0.5);
+        const cr = Math.cos(r * 0.5);
+        const sr = Math.sin(r * 0.5);
+        const qx = sr * cp * cy - cr * sp * sy;
+        const qy = cr * sp * cy + sr * cp * sy;
+        const qz = cr * cp * sy - sr * sp * cy;
+        const qw = cr * cp * cy + sr * sp * sy;
+        return [qx, qy, qz, qw];
+      }
+      function quatRotate(q, v) {
+        const rotated = quatMul(quatMul(q, [...v, 0]), quatConj(q));
+        return rotated ? [rotated[0], rotated[1], rotated[2]] : [0, 0, 0];
+      }
+      function composeTransform(a, b) {
+        const ra = (a && a.rotation_quat_xyzw) || [0, 0, 0, 1];
+        const rb = (b && b.rotation_quat_xyzw) || [0, 0, 0, 1];
+        const ta = (a && a.translation_m) || [0, 0, 0];
+        const tb = (b && b.translation_m) || [0, 0, 0];
+        const rotated = quatRotate(ra, tb);
+        const translation = addVec(ta, rotated) || [0, 0, 0];
+        return {
+          translation_m: translation,
+          rotation_quat_xyzw: quatMul(ra, rb),
+        };
+      }
+      function transformPoint(pt, transform) {
+        if (!pt || !transform) return null;
+        const rotated = quatRotate(transform.rotation_quat_xyzw || [0, 0, 0, 1], pt);
+        const translation = transform.translation_m || [0, 0, 0];
+        return addVec(rotated, translation);
+      }
+      function updateCameraTransform() {
+        if (!lastHandeye || !lastTcpPose || !lastTcpPose.position_m) {
+          console.warn("[Transform] Missing data:", {
+            hasHandeye: !!lastHandeye,
+            hasTcpPose: !!lastTcpPose,
+            hasTcpPosePosition: !!lastTcpPose?.position_m,
+          });
+          return;
+        }
+        const baseToEe = {
+          translation_m: lastTcpPose.position_m,
+          rotation_quat_xyzw: lastTcpPose.quat_xyzw || [0, 0, 0, 1],
+        };
+        baseToCam = composeTransform(baseToEe, lastHandeye);
+        console.log("[Transform] Composed base->cam:", baseToCam);
+      }
+      function drawPose6DAnnotation(ctx, pose) {
+        if (!pose) return;
+        let cx = null,
+          cy = null;
+        if (pose.position_2d && pose.position_2d.length >= 2) {
+          [cx, cy] = pose.position_2d;
+        } else if (pose.center && pose.center.length >= 2) {
+          [cx, cy] = pose.center;
+        } else if (pose.center_uv && pose.center_uv.length >= 2) {
+          [cx, cy] = pose.center_uv;
+        }
+        if (cx === null || cy === null) return;
+        ctx.fillStyle = "#12c6cf";
+        ctx.beginPath();
+        ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+        ctx.fill();
+        const yawDeg = pose.yaw_deg ?? pose.yaw ?? (pose.rotation && pose.rotation.yaw);
+        if (typeof yawDeg === "number") {
+          const yawRad = (yawDeg * Math.PI) / 180;
+          const len = 40;
+          ctx.strokeStyle = "#115a9b";
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(cx, cy);
+          ctx.lineTo(cx + len * Math.cos(yawRad), cy + len * Math.sin(yawRad));
+          ctx.stroke();
+        }
+      }
+      function drawMatchOverlay(ctx, canvas, match) {
+        if (!ctx || !match) return;
+        ctx.strokeStyle = "#12c6cf";
+        ctx.lineWidth = 3;
+        ctx.fillStyle = "rgba(18, 198, 207, 0.14)";
+        
+        // Get center point and dimensions
+        let cx = null, cy = null;
+        if (match.center_uv && match.center_uv.length >= 2) {
+          [cx, cy] = match.center_uv;
+        } else if (match.bbox_xywh && match.bbox_xywh.length >= 4) {
+          const [x, y, w, h] = match.bbox_xywh;
+          cx = x + w / 2;
+          cy = y + h / 2;
+        }
+        
+        // Priority 1: Use actual homography corners (obb_points) - best fit for any viewing angle
+        if (match.obb_points && match.obb_points.length === 4) {
+          ctx.beginPath();
+          ctx.moveTo(match.obb_points[0][0], match.obb_points[0][1]);
+          match.obb_points.slice(1).forEach(([x, y]) => ctx.lineTo(x, y));
+          ctx.closePath();
+          ctx.stroke();
+          ctx.fill();
+        }
+        // Priority 2: Use detected dimensions with rotation (works for frontal views)
+        else if (cx !== null && cy !== null && match.detected_width && match.detected_height && match.yaw_deg !== undefined) {
+          const w = match.detected_width;  // Actual detected width in pixels
+          const h = match.detected_height; // Actual detected height in pixels
+          const yawRad = (match.yaw_deg * Math.PI) / 180;
+          
+          // Calculate rotated corners around center
+          const corners = [
+            [-w / 2, -h / 2],
+            [w / 2, -h / 2],
+            [w / 2, h / 2],
+            [-w / 2, h / 2],
+          ];
+          
+          const rotatedCorners = corners.map(([px, py]) => {
+            const rotX = px * Math.cos(yawRad) - py * Math.sin(yawRad);
+            const rotY = px * Math.sin(yawRad) + py * Math.cos(yawRad);
+            return [cx + rotX, cy + rotY];
+          });
+          
+          // Draw rotated rectangle
+          ctx.beginPath();
+          ctx.moveTo(rotatedCorners[0][0], rotatedCorners[0][1]);
+          rotatedCorners.slice(1).forEach(([px, py]) => ctx.lineTo(px, py));
+          ctx.closePath();
+          ctx.stroke();
+          ctx.fill();
+        }
+        // Fallback: Use scale factors with template dimensions
+        else if (cx !== null && cy !== null && match.x_scale && match.y_scale && match.template_width && match.template_height && match.yaw_deg !== undefined) {
+          const w = match.x_scale * match.template_width;  // Scaled template width
+          const h = match.y_scale * match.template_height; // Scaled template height
+          const yawRad = (match.yaw_deg * Math.PI) / 180;
+          
+          const corners = [
+            [-w / 2, -h / 2],
+            [w / 2, -h / 2],
+            [w / 2, h / 2],
+            [-w / 2, h / 2],
+          ];
+          
+          const rotatedCorners = corners.map(([px, py]) => {
+            const rotX = px * Math.cos(yawRad) - py * Math.sin(yawRad);
+            const rotY = px * Math.sin(yawRad) + py * Math.cos(yawRad);
+            return [cx + rotX, cy + rotY];
+          });
+          
+          ctx.beginPath();
+          ctx.moveTo(rotatedCorners[0][0], rotatedCorners[0][1]);
+          rotatedCorners.slice(1).forEach(([px, py]) => ctx.lineTo(px, py));
+          ctx.closePath();
+          ctx.stroke();
+          ctx.fill();
+        }
+        // Fallback: draw bbox_xywh with rotation if yaw available
+        else if (match.bbox_xywh && match.bbox_xywh.length === 4 && match.yaw_deg !== undefined) {
+          const [x, y, w, h] = match.bbox_xywh;
+          const cx_bbox = x + w / 2;
+          const cy_bbox = y + h / 2;
+          const yawRad = (match.yaw_deg * Math.PI) / 180;
+          
+          const corners = [
+            [-w / 2, -h / 2],
+            [w / 2, -h / 2],
+            [w / 2, h / 2],
+            [-w / 2, h / 2],
+          ];
+          
+          const rotatedCorners = corners.map(([px, py]) => {
+            const rotX = px * Math.cos(yawRad) - py * Math.sin(yawRad);
+            const rotY = px * Math.sin(yawRad) + py * Math.cos(yawRad);
+            return [cx_bbox + rotX, cy_bbox + rotY];
+          });
+          
+          ctx.beginPath();
+          ctx.moveTo(rotatedCorners[0][0], rotatedCorners[0][1]);
+          rotatedCorners.slice(1).forEach(([px, py]) => ctx.lineTo(px, py));
+          ctx.closePath();
+          ctx.stroke();
+          ctx.fill();
+        }
+        // Fallback: draw axis-aligned bbox
+        else if (match.bbox_xywh && match.bbox_xywh.length === 4) {
+          const [x, y, w, h] = match.bbox_xywh;
+          ctx.strokeRect(x, y, w, h);
+          ctx.fillRect(x, y, w, h);
+        }
+        
+        // Draw center point
+        if (match.center_uv && match.center_uv.length >= 2) {
+          ctx.fillStyle = "#12c6cf";
+          ctx.beginPath();
+          ctx.arc(match.center_uv[0], match.center_uv[1], 5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        
+        // Draw yaw direction arrow
+        if (match.yaw_deg !== undefined) {
+          const arrowCx = match.center_uv ? match.center_uv[0] : (match.bbox_xywh ? match.bbox_xywh[0] + match.bbox_xywh[2] / 2 : null);
+          const arrowCy = match.center_uv ? match.center_uv[1] : (match.bbox_xywh ? match.bbox_xywh[1] + match.bbox_xywh[3] / 2 : null);
+          if (arrowCx !== null && arrowCy !== null) {
+            const yawRad = (match.yaw_deg * Math.PI) / 180;
+            const len = 40;
+            ctx.strokeStyle = "#115a9b";
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(arrowCx, arrowCy);
+            ctx.lineTo(arrowCx + len * Math.cos(yawRad), arrowCy + len * Math.sin(yawRad));
+            ctx.stroke();
+            
+            // Draw arrowhead
+            const arrowSize = 8;
+            const angle1 = yawRad + (5 * Math.PI) / 6;
+            const angle2 = yawRad - (5 * Math.PI) / 6;
+            const arrowX = arrowCx + len * Math.cos(yawRad);
+            const arrowY = arrowCy + len * Math.sin(yawRad);
+            ctx.beginPath();
+            ctx.moveTo(arrowX, arrowY);
+            ctx.lineTo(arrowX + arrowSize * Math.cos(angle1), arrowY + arrowSize * Math.sin(angle1));
+            ctx.moveTo(arrowX, arrowY);
+            ctx.lineTo(arrowX + arrowSize * Math.cos(angle2), arrowY + arrowSize * Math.sin(angle2));
+            ctx.stroke();
+          }
+        }
+        
+        // Draw surface normal arrow (3D normal projected to image plane)
+        if (match.surface_normal && match.surface_normal.length === 3) {
+          const cx = match.center_uv ? match.center_uv[0] : (match.bbox_xywh ? match.bbox_xywh[0] + match.bbox_xywh[2] / 2 : null);
+          const cy = match.center_uv ? match.center_uv[1] : (match.bbox_xywh ? match.bbox_xywh[1] + match.bbox_xywh[3] / 2 : null);
+          if (cx !== null && cy !== null) {
+            const [nx, ny, nz] = match.surface_normal;
+            console.log("[NORMAL] Drawing normal:", {cx, cy, nx, ny, nz});
+            
+            // Large, visible arrow - fixed length for consistency
+            const normalLen = 80;  // Fixed large arrow length
+            
+            // Draw thick, bright normal vector
+            ctx.strokeStyle = "#12c6cf";
+            ctx.lineWidth = 4;  // Thick line
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+            const endX = cx + normalLen * nx;
+            const endY = cy + normalLen * ny;
+            ctx.lineTo(endX, endY);
+            ctx.stroke();
+            
+            // Draw large arrowhead
+            const normalAngle = Math.atan2(ny, nx);
+            const arrowSize = 15;
+            const angle1 = normalAngle + (5 * Math.PI) / 6;
+            const angle2 = normalAngle - (5 * Math.PI) / 6;
+            ctx.beginPath();
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX + arrowSize * Math.cos(angle1), endY + arrowSize * Math.sin(angle1));
+            ctx.moveTo(endX, endY);
+            ctx.lineTo(endX + arrowSize * Math.cos(angle2), endY + arrowSize * Math.sin(angle2));
+            ctx.stroke();
+            
+            // Draw circle at base
+            ctx.fillStyle = "#12c6cf";
+            ctx.beginPath();
+            ctx.arc(cx, cy, 8, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            console.log("[NORMAL] No valid center point for normal visualization");
+          }
+        } else {
+          if (match.surface_normal === undefined) {
+            console.log("[NORMAL] No surface_normal in match result");
+          } else {
+            console.log("[NORMAL] Invalid surface_normal format:", match.surface_normal);
+          }
+        }
+      }
+      async function refreshRobotState() {
+        const res = await api("/robot/state", { silent: true });
+        if (!res.ok || !res.body) {
+          console.warn("[RobotState] Failed to fetch:", res.status, res.statusText);
+          robotState.textContent = "offline";
+          lastTcpPose = null;
+          return null;
+        }
+        console.log("[RobotState] Loaded:", res.body);
+        robotState.textContent = JSON.stringify(res.body.tcp_pose || res.body, null, 2);
+        if (res.body && res.body.tcp_pose) {
+          lastTcpPose = {
+            position_m: (Array.isArray(res.body.tcp_pose.position_m) ? res.body.tcp_pose.position_m : [0, 0, 0]),
+            quat_xyzw: res.body.tcp_pose.quat_xyzw || [0, 0, 0, 1],
+          };
+          console.log("[RobotState] Parsed tcp_pose:", lastTcpPose);
+        } else {
+          console.warn("[RobotState] No tcp_pose in response");
+          lastTcpPose = null;
+        }
+        updateCameraTransform();
+        return res.body;
+      }
+      async function refreshVisionCameras() {
+        if (!visionCameraSelect) return;
+        const res = await api("/vision/cameras", { silent: true });
+        if (!res.ok || !res.body) return;
+        const known = Array.isArray(res.body.known_cameras) ? res.body.known_cameras : [];
+        if (!known.length) {
+          visionCameraSelect.innerHTML = "<option value=\"\">no cameras</option>";
+          return;
+        }
+        visionCameraSelect.innerHTML = known
+          .map((cam) => `<option value=\"${cam}\">${cam}</option>`)
+          .join("");
+      }
+      function clearPreviewCanvas() {
+        if (!visionPreviewCanvas) return;
+        const ctx = visionPreviewCanvas.getContext("2d");
+        if (!ctx) return;
+        ctx.clearRect(0, 0, visionPreviewCanvas.width, visionPreviewCanvas.height);
+      }
+      async function refreshCameraFrameFallback(result = null, force = false) {
+        const now = Date.now();
+        if (!force && now - lastFallbackFrameFetchMs < 120) {
+          return;
+        }
+        if (!visionCameraSelect?.value) return;
+        lastFallbackFrameFetchMs = now;
+        try {
+          const targetFrameId = lastVisionResultFrameId || "";
+          let path = `/camera/frame?camera_id=${encodeURIComponent(visionCameraSelect.value)}&fmt=jpg&quality=70&t=${now}`;
+          if (targetFrameId) {
+            path += `&frame_id=${encodeURIComponent(targetFrameId)}`;
+          }
+          let res = await fetch(path, { cache: "no-store" });
+          if (!res.ok && targetFrameId) {
+            const latestPath = `/camera/frame?camera_id=${encodeURIComponent(
+              visionCameraSelect.value
+            )}&fmt=jpg&quality=70&t=${now}`;
+            res = await fetch(latestPath, { cache: "no-store" });
+          }
+          if (!res.ok) return;
+          const blob = await res.blob();
+          if (!blob || !blob.size) return;
+          const url = URL.createObjectURL(blob);
+          const img = new Image();
+          img.onload = () => {
+            if (!visionPreviewCanvas) return;
+            visionPreviewCanvas.width = img.width;
+            visionPreviewCanvas.height = img.height;
+            const ctx = visionPreviewCanvas.getContext("2d");
+            if (!ctx) return;
+            ctx.clearRect(0, 0, visionPreviewCanvas.width, visionPreviewCanvas.height);
+            ctx.drawImage(img, 0, 0);
+            const matches = (result?.matches || result?.proposals || []);
+            const match = matches[0];
+            drawMatchOverlay(ctx, visionPreviewCanvas, match);
+            if (result?.result_pose || match?.pose_6d) {
+              drawPose6DAnnotation(ctx, result?.result_pose || match?.pose_6d);
+            }
+            URL.revokeObjectURL(url);
+          };
+          img.src = url;
+        } catch (_err) {}
+      }
+      function drawVisionPreview(imageB64, result) {
+        if (!visionPreviewCanvas || !imageB64) return;
+        const img = new Image();
+        img.onload = () => {
+          visionPreviewCanvas.width = img.width;
+          visionPreviewCanvas.height = img.height;
+          const ctx = visionPreviewCanvas.getContext("2d");
+          ctx.clearRect(0, 0, visionPreviewCanvas.width, visionPreviewCanvas.height);
+          ctx.drawImage(img, 0, 0);
+          const matches = (result?.matches || result?.proposals || []);
+          const match = matches[0];
+          drawMatchOverlay(ctx, visionPreviewCanvas, match);
+          if (result?.result_pose || match?.pose_6d) {
+            drawPose6DAnnotation(ctx, result?.result_pose || match?.pose_6d);
+          }
+        };
+        const mime = result?.format ? `image/${result.format}` : "image/jpeg";
+        img.src = `data:${mime};base64,${imageB64}`;
+      }
+      function closeVisionStream() {
+        if (visionStream) {
+          visionStream.close();
+          visionStream = null;
+          lastStreamFrameId = null;
+        }
+        lastVisionResultFrameId = "";
+      }
+      function updateVisionPerf(evt) {
+        const latency = Number(evt?.produced_latency_ms);
+        if (Number.isFinite(latency) && latency >= 0) {
+          visionResultLatencyMs.textContent = `${latency.toFixed(1)} ms`;
+        } else {
+          visionResultLatencyMs.textContent = "- ms";
+        }
+        const publishFpsEstimate = Number(evt?.publish_fps_estimate);
+        const publishFpsInstant = Number(evt?.publish_fps_instant);
+        const fpsEstimate = Number(evt?.fps_estimate);
+        const fallbackEstimate = Number(evt?.result_fps_estimate);
+        const fpsInstant = Number(evt?.fps_instant);
+        const fallbackInstant = Number(evt?.result_fps_instant);
+        const fpsValue = Number.isFinite(publishFpsEstimate) && publishFpsEstimate > 0
+          ? publishFpsEstimate
+          : (Number.isFinite(publishFpsInstant) && publishFpsInstant > 0
+            ? publishFpsInstant
+            : (Number.isFinite(fpsEstimate) && fpsEstimate > 0 ? fpsEstimate : fpsInstant));
+        const fallbackValue =
+          Number.isFinite(fallbackEstimate) && fallbackEstimate > 0 ? fallbackEstimate : fallbackInstant;
+        const shown = Number.isFinite(fpsValue) && fpsValue > 0 ? fpsValue : fallbackValue;
+        visionResultFps.textContent =
+          Number.isFinite(shown) && shown > 0 ? `${shown.toFixed(1)} fps` : "-";
+      }
+      function handleVisionEvent(evt) {
+        if (!evt) {
+          visionResultStatus.textContent = "idle";
+          updateVisionPerf(null);
+          return null;
+        }
+        lastVisionResultFrameId = evt.frame_id || "";
+        updateVisionPerf(evt);
+        // Ensure transforms are up-to-date before computing base frame
+        updateCameraTransform();
+        console.log("[Vision] Event received, baseToCam available:", !!baseToCam);
+        const result = evt.result || {};
+        const matches = Array.isArray(result.matches)
+          ? result.matches
+          : Array.isArray(result.proposals)
+          ? result.proposals
+          : Array.isArray(result.cuboid_poses)
+          ? result.cuboid_poses
+          : [];
+        const match = matches[0];
+        if (match) {
+          const camera = match.center_xyz_m || match.center || match.center_uv || null;
+          const cameraPoint = camera && camera.length >= 3 ? camera.slice(0, 3) : null;
+          const base =
+            cameraPoint && baseToCam ? transformPoint(cameraPoint, baseToCam) : null;
+          console.log("[Vision] Match found:", {
+            cameraPoint,
+            baseToCam: baseToCam ? "present" : "missing",
+            base,
+          });
+          displayTargetData({
+            source: "vision",
+            camera: cameraPoint,
+            base,
+            yaw:
+              match.yaw_deg ??
+              match.yaw ??
+              (match.pose_6d && typeof match.pose_6d.yaw === "number"
+                ? match.pose_6d.yaw
+                : undefined),
+            raw: match,
+          });
+        } else {
+          const rejectReason = result?.reject_reason || "no_match";
+          displayTargetData({
+            source: "vision",
+            camera: null,
+            base: null,
+            yaw: undefined,
+            raw: { status: "no_target", reject_reason: rejectReason, result },
+          });
+        }
+        if (result.image_b64) {
+          drawVisionPreview(result.image_b64, result);
+        } else {
+          void refreshCameraFrameFallback(result, false);
+        }
+        const frameId = evt.frame_id || "-";
+        visionResultStatus.textContent = `frame ${frameId}`;
+        return match;
+      }
+      function startVisionStream(sessionId) {
+        closeVisionStream();
+        if (!sessionId) return;
+        const url = `/vision/stream?request_id=${encodeURIComponent(sessionId)}`;
+        visionStream = new EventSource(url);
+        visionStream.onmessage = (evt) => {
+          try {
+            const payload = JSON.parse(evt.data);
+            if (payload.frame_id && payload.frame_id === lastStreamFrameId) {
+              return;
+            }
+            lastStreamFrameId = payload.frame_id;
+            handleVisionEvent(payload);
+          } catch (err) {
+            console.error("vision stream parse error", err);
+          }
+        };
+        visionStream.onerror = () => {
+          visionResultStatus.textContent = "stream error";
+        };
+      }
+      async function refreshVisionPreview(force = false) {
+        if (!visionSessionId) return;
+        const res = await api(
+          `/vision/latest?request_id=${encodeURIComponent(visionSessionId)}&include_image=true`,
+          { silent: !force }
+        );
+        if (!res.ok || !res.body) {
+          if (force) {
+            clearPreviewCanvas();
+          }
+          return;
+        }
+        const result = res.body.result || {};
+        if (result.image_b64) {
+          drawVisionPreview(result.image_b64, result);
+        } else {
+          void refreshCameraFrameFallback(result, true);
+        }
+      }
+      function applyVisionConfig(visionCfg) {
+        if (!visionCameraSelect || !visionCfg) return;
+        runVisionConfig = visionCfg;
+        const cameraId =
+          visionCfg.camera_id ||
+          (visionCfg.params && visionCfg.params.camera_id);
+        if (cameraId) {
+          if (![...visionCameraSelect.options].some((opt) => opt.value === cameraId)) {
+            visionCameraSelect.insertAdjacentHTML(
+              "beforeend",
+              `<option value=\"${cameraId}\">${cameraId}</option>`
+            );
+          }
+          visionCameraSelect.value = cameraId;
+        }
+        if (visionCfg.module) {
+          visionModule.value = visionCfg.module;
+        }
+        if (visionCfg.process_mode) {
+          visionProcessMode.value = visionCfg.process_mode;
+        }
+        if (visionCfg.fps_limit !== undefined && visionCfg.fps_limit !== null) {
+          visionFps.value = String(visionCfg.fps_limit);
+        }
+        const params = extractModuleParams(visionCfg);
+        try {
+          if (params.templates_dir) {
+            params.templates_dir = normalizeTemplatesDir(params.templates_dir);
+          }
+          updateParamFieldInputs(params);
+        } catch (_) {
+          writeParamsText({});
+        }
+      }
+
+      async function refreshTaskVisionConfig(taskId) {
+        if (!taskId) return null;
+        const res = await api(`/tasks/${encodeURIComponent(taskId)}`);
+        if (!res.ok || !res.body) return null;
+        const task = res.body.task || {};
+        const visionCfg = task.vision || {};
+        applyVisionConfig(visionCfg);
+        return visionCfg;
+      }
+      function parseJsonInput(value) {
+        if (!value) return {};
+        try {
+          return JSON.parse(value);
+        } catch (_) {
+          return {};
+        }
+      }
+      function extractModuleParams(raw) {
+        if (!raw || typeof raw !== "object") return {};
+        const controlKeys = new Set([
+          "session_id",
+          "camera_id",
+          "module",
+          "fps_limit",
+          "process_mode",
+          "timeout_s",
+          "enable_shm_output",
+        ]);
+        const nested =
+          raw.params && typeof raw.params === "object" && !Array.isArray(raw.params)
+            ? raw.params
+            : null;
+        if (!nested) {
+          return { ...raw };
+        }
+        const topLevelParams = {};
+        Object.entries(raw).forEach(([key, value]) => {
+          if (key === "params" || controlKeys.has(key)) return;
+          topLevelParams[key] = value;
+        });
+        return { ...nested, ...topLevelParams };
+      }
+      function writeParamsText(params) {
+        if (!visionParams) return;
+        try {
+          visionParams.value = JSON.stringify(params || {}, null, 2);
+        } catch {
+          visionParams.value = "{}";
+        }
+      }
+      function updateParamFieldInputs(params) {
+        paramFieldConfig.forEach(({ id, key, type }) => {
+          const field = document.getElementById(id);
+          if (!field) return;
+          const value = params && key in params ? params[key] : undefined;
+          if (type === "boolean") {
+            field.checked = Boolean(value);
+          } else {
+            field.value = value !== undefined && value !== null ? value : "";
+          }
+        });
+        writeParamsText(params);
+      }
+      function applyFieldOverrides(params) {
+        const patched = { ...(params || {}) };
+        paramFieldConfig.forEach(({ id, key, type }) => {
+          const field = document.getElementById(id);
+          if (!field) return;
+          let value;
+          if (type === "boolean") {
+            value = field.checked;
+          } else if (type === "number") {
+            value = field.value !== "" ? Number(field.value) : undefined;
+          } else {
+            value = field.value;
+          }
+          if (value === undefined || value === "") {
+            delete patched[key];
+          } else {
+            patched[key] = value;
+          }
+        });
+        return patched;
+      }
+      function handleParamFieldInput() {
+        userIsEditing = true;
+        if (paramUpdateTimeout) clearTimeout(paramUpdateTimeout);
+        const base = parseJsonInput(visionParams.value);
+        const merged = applyFieldOverrides(base);
+        writeParamsText(merged);
+        // Clear editing flag after 5 seconds of inactivity
+        paramUpdateTimeout = setTimeout(() => {
+          userIsEditing = false;
+        }, 5000);
+      }
+      function markUserEditing() {
+        userIsEditing = true;
+        if (paramUpdateTimeout) clearTimeout(paramUpdateTimeout);
+        paramUpdateTimeout = setTimeout(() => {
+          userIsEditing = false;
+        }, 5000);
+      }
+      async function refreshVisionSessionResult(forceStatus = false) {
+        if (!visionSessionId) {
+          visionResultStatus.textContent = "idle";
+          return;
+        }
+        const res = await api(
+          `/vision/latest?request_id=${encodeURIComponent(visionSessionId)}&include_image=true`,
+          { silent: true }
+        );
+        if (!res.ok || !res.body || res.body.status !== "ok") {
+          if (forceStatus) {
+            visionResultStatus.textContent = res.body?.status || "pending";
+          }
+          return null;
+        }
+        const payload = {
+          frame_id: res.body.frame_id,
+          timestamp_ns: res.body.timestamp_ns,
+          produced_timestamp_ns: res.body.produced_timestamp_ns,
+          produced_latency_ms: res.body.produced_latency_ms,
+          process_time_ms: res.body.process_time_ms,
+          fps_instant: res.body.fps_instant,
+          fps_estimate: res.body.fps_estimate,
+          result_fps_instant: res.body.result_fps_instant,
+          result_fps_estimate: res.body.result_fps_estimate,
+          publish_fps_instant: res.body.publish_fps_instant,
+          publish_fps_estimate: res.body.publish_fps_estimate,
+          result: res.body.result || {},
+        };
+        if (forceStatus && res.body.fps_instant) {
+          visionResultStatus.textContent = `frame ${payload.frame_id || "-"} · fps ${res.body.fps_instant.toFixed(1)}`;
+        }
+        return handleVisionEvent(payload);
+      }
+      async function startVisionSession() {
+        if (!visionCameraSelect || !visionSessionStart) {
+          return false;
+        }
+        if (!visionCameraSelect.value) {
+          visionSessionStatus.textContent = "select camera";
+          return false;
+        }
+        await stopVisionSession();
+        const sessionId = `perception-${Date.now()}`;
+        const sessionParams = applyFieldOverrides(
+          extractModuleParams(parseJsonInput(visionParams.value))
+        );
+        if (sessionParams.include_image === undefined) {
+          sessionParams.include_image = true;
+        }
+        if (sessionParams.templates_dir) {
+          sessionParams.templates_dir = normalizeTemplatesDir(sessionParams.templates_dir);
+        }
+        writeParamsText(sessionParams);
+        const payload = {
+          session_id: sessionId,
+          camera_id: visionCameraSelect.value,
+          module: visionModule.value || "feature_matching",
+          fps_limit: (() => {
+            const fpsRaw = Number(visionFps.value);
+            return Number.isFinite(fpsRaw) && fpsRaw >= 0 ? fpsRaw : 20;
+          })(),
+          process_mode: visionProcessMode.value || "continuous",
+          params: sessionParams,
+          enable_shm_output: false,
+        };
+        const res = await api("/vision/sessions/start", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          visionSessionStatus.textContent = `start failed (${res.status})`;
+          return false;
+        }
+        visionSessionId = sessionId;
+        visionSessionStatus.textContent = "running";
+        if (visionSessionTimer) {
+          clearInterval(visionSessionTimer);
+        }
+        await refreshVisionSessionResult(true);
+        visionSessionTimer = setInterval(refreshVisionSessionResult, 2200);
+        startVisionStream(sessionId);
+        return true;
+      }
+      async function stopVisionSession() {
+        if (!visionSessionId) return;
+        await api("/vision/sessions/stop", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ session_id: visionSessionId }),
+        });
+        visionSessionId = "";
+        visionSessionStatus.textContent = "stopped";
+        visionResultStatus.textContent = "no data";
+        updateVisionPerf(null);
+        if (visionSessionTimer) {
+          clearInterval(visionSessionTimer);
+          visionSessionTimer = null;
+        }
+        closeVisionStream();
+      }
+      async function saveConfigToTask() {
+        const taskId = (taskIdInput?.value?.trim()) || presetTaskId;
+        if (!taskId) {
+          statusIndicator.textContent = "missing task id";
+          return;
+        }
+        const params = applyFieldOverrides(
+          extractModuleParams(parseJsonInput(visionParams.value))
+        );
+        const fpsRaw = Number(visionFps.value);
+        const fpsLimit = Number.isFinite(fpsRaw) && fpsRaw >= 0 ? fpsRaw : 20;
+        const payload = {
+          task: {
+            vision: {
+              camera_id: visionCameraSelect?.value || "",
+              module: visionModule?.value || "feature_matching",
+              fps_limit: fpsLimit,
+              process_mode: visionProcessMode?.value || "continuous",
+              params,
+            },
+          },
+        };
+        const res = await api(`/tasks/${encodeURIComponent(taskId)}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          statusIndicator.textContent = "config saved";
+          userIsEditing = false;
+          await refreshTaskVisionConfig(taskId);
+        } else {
+          statusIndicator.textContent = `save failed (${res.status})`;
+        }
+      }
+      async function refreshHandeye() {
+        const stationId = stationSelect.value;
+        if (!stationId) {
+          console.warn("[HandEye] No station selected");
+          handeyeDetails.textContent = "station missing";
+          lastHandeye = null;
+          return null;
+        }
+        console.log("[HandEye] Fetching for station:", stationId);
+        const res = await api(`/stations/${encodeURIComponent(stationId)}/calibration/handeye`, { silent: true });
+        if (!res.ok || !res.body) {
+          console.warn("[HandEye] Failed to fetch:", res.status, res.statusText);
+          handeyeDetails.textContent = "not calibrated";
+          lastHandeye = null;
+          return null;
+        }
+        console.log("[HandEye] Loaded:", res.body);
+        handeyeDetails.textContent = JSON.stringify(res.body, null, 2);
+        try {
+          let quat = res.body.rotation_quat_xyzw || res.body.quat_xyzw || [0, 0, 0, 1];
+          // Convert from RPY if needed
+          if (res.body.rotation_rpy_deg && !res.body.rotation_quat_xyzw && !res.body.quat_xyzw) {
+            quat = rpy2quat(res.body.rotation_rpy_deg);
+            console.log("[HandEye] Converted RPY to quaternion:", quat);
+          }
+          lastHandeye = {
+            translation_m: res.body.translation_m || [0, 0, 0],
+            rotation_quat_xyzw: quat,
+          };
+          console.log("[HandEye] Parsed handeye transform:", lastHandeye);
+        } catch (err) {
+          console.error("[HandEye] Parse error:", err);
+          lastHandeye = null;
+        }
+        updateCameraTransform();
+        return res.body;
+      }
+      function displayTargetData(info) {
+        if (!info) {
+          targetPosition.textContent = "no target yet";
+          targetYaw.textContent = "yaw: -";
+          targetCamera.textContent = "-";
+          targetBase.textContent = "-";
+          targetRaw.textContent = "waiting for the first match";
+          return;
+        }
+        const source = info.source || "vision";
+        const base = info.base || null;
+        const camera = info.camera || null;
+        targetPosition.textContent =
+          base && base.length === 3
+            ? `${source} base x ${base[0].toFixed(3)} · y ${base[1].toFixed(3)} · z ${base[2].toFixed(3)}`
+            : `${source} base —`;
+        targetYaw.textContent = `yaw ${info.yaw !== undefined ? info.yaw.toFixed(1) : "-"}°`;
+        targetCamera.textContent =
+          camera && camera.length === 3
+            ? `x ${camera[0].toFixed(3)} · y ${camera[1].toFixed(3)} · z ${camera[2].toFixed(3)}`
+            : "-";
+        
+        // Debug: show why base frame may be missing
+        let baseText = "-";
+        if (base && base.length === 3) {
+          baseText = `x ${base[0].toFixed(3)} · y ${base[1].toFixed(3)} · z ${base[2].toFixed(3)}`;
+        } else if (camera && camera.length === 3) {
+          // Camera coords exist but transform missing
+          if (!baseToCam) {
+            baseText = "(no transform: check robot state & handeye)";
+          } else {
+            baseText = "(transform error)";
+          }
+        }
+        targetBase.textContent = baseText;
+        targetRaw.textContent = `${source}\n${JSON.stringify(info.raw || {}, null, 2)}`;
+      }
+      async function refreshAll() {
+        const taskId = (taskIdInput?.value?.trim()) || presetTaskId;
+        if (taskId && !userIsEditing) {
+          await refreshTaskVisionConfig(taskId);
+        } else if (!taskId) {
+          displayTargetData(null);
+        }
+        await refreshRobotState();
+        await refreshHandeye();
+        await refreshVisionSessionResult();
+      }
+      function ensureVisionCameraSelection() {
+        if (!visionCameraSelect || !visionCameraSelect.options.length) {
+          return false;
+        }
+        if (!visionCameraSelect.value) {
+          visionCameraSelect.selectedIndex = 0;
+        }
+        return Boolean(visionCameraSelect.value);
+      }
+
+      async function startVisionForMonitor() {
+        if (!visionCameraSelect) {
+          visionSessionStatus.textContent = "no camera";
+          return false;
+        }
+        if (!ensureVisionCameraSelection()) {
+          visionSessionStatus.textContent = "no camera";
+          return false;
+        }
+        return startVisionSession();
+      }
+
+      async function startMonitor() {
+        if (monitorTimer) {
+          clearInterval(monitorTimer);
+        }
+        statusIndicator.textContent = "starting";
+        await refreshStations();
+        await refreshVisionCameras();
+        await refreshDataRoot();
+        await startVisionForMonitor();
+        await refreshAll();
+        monitorTimer = setInterval(refreshAll, 2200);
+        statusIndicator.textContent = visionSessionId ? "monitoring" : "vision ready";
+      }
+
+      function stopMonitor() {
+        if (monitorTimer) {
+          clearInterval(monitorTimer);
+          monitorTimer = null;
+        }
+        statusIndicator.textContent = "stopped";
+        closeVisionStream();
+      }
+      document.addEventListener("DOMContentLoaded", async () => {
+        await refreshDataRoot();
+        await refreshStations();
+        await refreshVisionCameras();
+        // Load initial form values from task config FIRST (before setting up listeners)
+        const taskId = presetTaskId || (taskIdInput?.value?.trim());
+        if (taskId) {
+          await refreshTaskVisionConfig(taskId);
+        }
+        // Initialize robot state and hand-eye transforms
+        await refreshRobotState();
+        await refreshHandeye();
+        startMonitorBtn.addEventListener("click", startMonitor);
+        stopMonitorBtn.addEventListener("click", stopMonitor);
+        refreshCamerasBtn?.addEventListener("click", () => {
+          refreshVisionCameras();
+          statusIndicator.textContent = "refreshing cameras";
+        });
+        refreshVisionPreviewBtn?.addEventListener("click", () => refreshVisionPreview(true));
+        visionSessionStart?.addEventListener("click", startVisionSession);
+        visionSessionStop?.addEventListener("click", stopVisionSession);
+        saveConfigBtn?.addEventListener("click", saveConfigToTask);
+        visionParams?.addEventListener("input", markUserEditing);
+        visionParams?.addEventListener("change", markUserEditing);
+        visionFps?.addEventListener("input", markUserEditing);
+        visionModule?.addEventListener("input", markUserEditing);
+        visionProcessMode?.addEventListener("change", markUserEditing);
+        visionCameraSelect?.addEventListener("change", markUserEditing);
+        paramFieldConfig.forEach(({ id }) => {
+          const field = document.getElementById(id);
+          if (!field) return;
+          const eventName = field.type === "checkbox" ? "change" : "input";
+          field.addEventListener(eventName, handleParamFieldInput);
+        });
+      });
+    </script>
+  </body>
+</html>

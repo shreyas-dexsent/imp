@@ -1,0 +1,20 @@
+environment:
+  obstacles:
+  - name: bin
+    type: mesh
+    path: obstacles/bin.stl
+    transform:
+      translation:
+      - 0.0
+      - 0.0
+      - 0.0
+      rotation:
+      - - 1
+        - 0
+        - 0
+      - - 0
+        - 1
+        - 0
+      - - 0
+        - 0
+        - 1

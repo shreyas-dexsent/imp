@@ -1,0 +1,64 @@
+{
+  "task_id": "task-bin-megapose-metal",
+  "asset_id": "asset-1",
+  "station_id": "station-1",
+  "name": "MegaPose Pose Test - Metal",
+  "description": "Vision-only MegaPose bin-picking task for metal object pose testing.",
+  "task_type": "bin_picking",
+  "task": {
+    "vision": {
+      "camera_id": "cam_rs_d405",
+      "module": "megapose_bin_picking",
+      "process_mode": "trigger_only",
+      "object_id": "metal",
+      "timeout_s": 120,
+      "use_fusion": false,
+      "fusion": {
+        "enabled": false
+      },
+      "params": {
+        "object_folder": "/home/imp/imp/data/stations/station-1/assets/asset-1/objects/metal",
+        "object_id": "metal",
+        "label_override": "metal",
+        "input_color_order": "bgr",
+        "yolo_conf": 0.4,
+        "selection_top_k": 20,
+        "selection_min_confidence": 0.8,
+        "selection_mode": "top_k_highest_z",
+        "mesh_units": "mm",
+        "mesh_scale": 1,
+        "model": "rgbd",
+        "device": "auto",
+        "refiner_iterations": 3,
+        "coarse_grid_size": 72,
+        "depth_ray_refinement": true,
+        "rerank_network_prior_weight": 0.2,
+        "all_poses_mode": false,
+        "all_poses_max": 20,
+        "render_all_poses_3d": true,
+        "safety_pcd_max_points": 1000,
+        "timing_log_enabled": false,
+        "save_outputs": true,
+        "first_frame_timeout_s": 5,
+        "prewarm_before_run": true
+      }
+    },
+    "robot": {
+      "gripper_type": "parallel_jaw",
+      "pick": {
+        "gripper_type": "parallel_jaw",
+        "fast_acquire": true,
+        "orientation_mode": "vision_pose",
+        "vision_pose_quat_offset_xyzw": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "segmentation_safety_ranking_enabled": true
+      }
+    }
+  },
+  "created_at": "2026-05-22T00:00:00Z",
+  "updated_at": "2026-05-22T00:00:00Z"
+}

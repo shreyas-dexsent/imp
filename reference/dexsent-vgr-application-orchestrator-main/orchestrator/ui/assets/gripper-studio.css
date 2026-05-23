@@ -1,0 +1,243 @@
+.gripper-studio-host {
+  display: block;
+  margin: 12px 0;
+}
+
+.gs-mini {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) 1fr;
+  gap: 12px;
+  border: 1px solid var(--stroke, rgba(54, 59, 68, 0.2));
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.65);
+  padding: 12px;
+  min-height: 420px;
+}
+
+.gs-mini-config {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+  overflow: auto;
+  max-height: 540px;
+  padding-right: 4px;
+}
+
+.gs-mini-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gsm-status {
+  font-size: 11px;
+  font-family: "IBM Plex Mono", monospace;
+  min-height: 14px;
+}
+
+.gsm-status.err {
+  color: #c0392b;
+}
+
+.gsm-asset-picker-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.gsm-asset-picker-wrap span {
+  color: var(--muted, #6b7280);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.gsm-asset-picker-wrap select {
+  width: 100%;
+  min-height: 34px;
+  border: 1px solid var(--stroke, rgba(54, 59, 68, 0.2));
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--ink, #363b44);
+  padding: 6px 8px;
+}
+
+.gs-mini-viewport-shell {
+  position: relative;
+  min-width: 0;
+  min-height: 420px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #101820;
+}
+
+.gs-mini-viewport {
+  position: absolute;
+  inset: 0;
+}
+
+.gs-mini-viewport canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.gs-mini-hud {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(13, 17, 21, 0.78);
+  color: #edf4f7;
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.gs-section {
+  border: 1px solid var(--stroke, rgba(54, 59, 68, 0.18));
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.55);
+  padding: 10px 12px;
+}
+
+.gs-section-title {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--muted, #6b7280);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.gs-frame-card[data-editing="true"] {
+  border-color: #1e3a8a;
+  box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.15);
+}
+
+.gs-frame-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.gs-frame-name {
+  flex: 1;
+  margin: 0;
+}
+
+.gs-frame-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.gs-dot-flange {
+  background: #ffa533;
+}
+
+.gs-dot-tcp {
+  background: #33d6ff;
+}
+
+.gs-edit-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--muted, #6b7280);
+}
+
+.gs-input-group-label {
+  margin: 8px 0 4px;
+  color: var(--muted, #6b7280);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.gs-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.gs-inputs-grid .workflow-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.gs-inputs-grid .workflow-field span {
+  font-size: 10px;
+  color: var(--muted, #6b7280);
+}
+
+.gs-inputs-grid .workflow-field input {
+  width: 100%;
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid var(--stroke, rgba(54, 59, 68, 0.2));
+  border-radius: 4px;
+}
+
+.gsm-stroke-row {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 8px;
+  align-items: center;
+}
+
+.gsm-stroke-row input[type="number"] {
+  width: 100%;
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid var(--stroke, rgba(54, 59, 68, 0.2));
+  border-radius: 4px;
+}
+
+.gsm-stroke-row input[type="range"] {
+  width: 100%;
+  accent-color: #1e3a8a;
+}
+
+.segmented {
+  display: flex;
+  border: 1px solid var(--stroke, rgba(54, 59, 68, 0.2));
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.segmented button {
+  flex: 1;
+  padding: 6px 10px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.segmented button.active {
+  background: #1e3a8a;
+  color: #fff;
+}
+
+.gs-save-row {
+  display: flex;
+  gap: 8px;
+}
+
+.gs-save-row button {
+  flex: 1;
+}
+
+@media (max-width: 900px) {
+  .gs-mini {
+    grid-template-columns: 1fr;
+  }
+  .gs-mini-viewport-shell {
+    min-height: 320px;
+  }
+}

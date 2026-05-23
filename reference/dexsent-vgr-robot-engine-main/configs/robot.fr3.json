@@ -1,0 +1,53 @@
+{
+  "robot": {
+    "robot_id": "fr3_01",
+    "type": "franka_fr3",
+    "robot_ip": "192.168.0.103",
+    "tool_frame": "fr3_tcp",
+    "home_q": [0.0, -0.785398, 0.0, -2.356194, 0.0, 1.570796, 0.785398]
+  },
+  "io": {
+    "command_plane": { "mode": "reqrep", "endpoint": "tcp://127.0.0.1:5571" },
+    "state_plane":   { "mode": "pub",   "endpoint": "tcp://127.0.0.1:5572", "rate_hz": 50 }
+  },
+  "safety": {
+    "motion_timeout_s": 20.0,
+    "max_lin_vel_mps": 0.25,
+    "max_ang_vel_rps": 0.8
+  },
+  "motion": {
+    "profile_scales": {
+      "verify": 0.45,
+      "calibration": 0.45,
+      "slow": 0.35,
+      "normal": 0.60,
+      "medium": 0.70,
+      "fast": 0.85
+    },
+    "joint_speed_rad_s": 1.74,
+    "joint_acceleration_rad_s2": 4.0,
+    "joint_jerk_rad_s3": 12.0,
+    "linear_speed_m_s": 0.384,
+    "linear_acceleration_m_s2": 0.8,
+    "linear_jerk_m_s3": 3.0,
+    "angular_speed_rad_s": 1.536,
+    "angular_acceleration_rad_s2": 3.2,
+    "angular_jerk_rad_s3": 10.0,
+    "elbow_speed_rad_s": 1.536,
+    "elbow_acceleration_rad_s2": 3.2,
+    "elbow_jerk_rad_s3": 10.0,
+    "gripper_open_width_m": 0.08,
+    "gripper_close_width_m": 0.0,
+    "gripper_open_threshold_m": 0.02,
+    "gripper_speed_m_s": 0.05,
+    "gripper_force_n": 40.0,
+    "gripper_epsilon_inner_m": 0.005,
+    "gripper_epsilon_outer_m": 0.005,
+    "gripper_home_on_connect": false,
+    "step_dt": 0.01
+  },
+  "viewer": {
+    "enabled": false
+  },
+  "logging": { "level": "INFO" }
+}

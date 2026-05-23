@@ -1,0 +1,71 @@
+{
+  "camera_events": {
+    "subscribe_endpoint": "tcp://127.0.0.1:5555",
+    "subscribe_topic": "camera"
+  },
+  "results": {
+    "publish_endpoint": "tcp://127.0.0.1:5556",
+    "publish_topic": "vision"
+  },
+  "control_plane": {
+    "mode": "reqrep",
+    "endpoint": "tcp://127.0.0.1:5561",
+    "bind_localhost_only": true
+  },
+  "vision": {
+    "fps_limit": 23,
+    "process_mode": "continuous",
+    "modules": [
+      {
+        "name": "template_matching",
+        "params": {
+          "templates_dir": "assets/templates",
+          "threshold": 0.82,
+          "rotations_deg": [-30, -15, 0, 15, 30],
+          "scales": [0.9, 1.0, 1.1],
+          "include_image": false
+        }
+      },
+      {
+        "name": "cuboid_pose_6d",
+        "params": {
+          "intrinsics": {
+            "fx": 634.5,
+            "fy": 634.5,
+            "cx": 320.0,
+            "cy": 240.0
+          },
+          "depth_min_m": 0.05,
+          "depth_max_m": 5.0,
+          "depth_downsample_stride": 1,
+          "depth_roi_margin_px": 20,
+          "ransac_iterations": 100,
+          "ransac_thresh_m": 0.01,
+          "min_inliers": 50,
+          "alpha_trans": 0.3,
+          "alpha_rot": 0.3,
+          "max_jump_m": 0.05,
+          "max_rot_deg": 15.0,
+          "lost_grace_s": 0.8,
+          "template_score_threshold": 0.6,
+          "require_template_match": false,
+          "cuboid_dims": {
+            "L": 100.0,
+            "B": 80.0,
+            "H": 60.0
+          },
+          "enable_debug_dumps": false,
+          "debug_dump_dir": "/tmp/cuboid_debug",
+          "debug_frame_interval": 30
+        }
+      }
+    ]
+  },
+  "shm": {
+    "frame_header_bytes": 64,
+    "result_max_json_bytes": 8192
+  },
+  "logging": {
+    "level": "INFO"
+  }
+}

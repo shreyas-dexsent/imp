@@ -1,0 +1,163 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dexsent Intelligent Manupulation Platform | Object Definition</title>
+    <link rel="icon" type="image/png" href="/ui/assets/favicon.png" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/tokens.css" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/operator.css" />
+  </head>
+  <body data-page="object-definition">
+    <div class="op-app">
+      <header class="op-header">
+        <div class="brand">
+          <img class="brand-logo" src="/ui/assets/logo-Blue.svg" alt="Dexsent logo" />
+          <div class="brand-copy">
+            <h1>Intelligent Manupulation Platform</h1>
+            <p>Operator UI: object definition</p>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <div class="chip"><span class="label">Camera</span><span class="led off" id="cameraLed"></span><span id="cameraText">off</span></div>
+          <div class="chip"><span class="label">Robot</span><span class="led off" id="robotLed"></span><span id="robotText">off</span></div>
+          <div class="chip"><span class="label">Vision</span><span class="led off" id="visionLed"></span><span id="visionText">off</span></div>
+          <div class="chip"><span class="label">Vision Mode</span><select id="visionTransportSelect"><option value="zmq">local</option><option value="websocket">blackwell</option></select></div>
+          <div class="chip"><span class="label">Server</span><span class="led off" id="serverLed"></span><span id="serverText">off</span></div>
+          <div class="chip"><span class="label">UI</span><span id="systemStatus">idle</span></div>
+        </div>
+      </header>
+
+      <div class="op-layout">
+        <aside class="op-sidebar">
+          <h2>Operator</h2>
+          <div class="nav-group">
+            <a class="nav-link" href="/ui/operator/assets" data-nav="asset-manager">Asset Manager</a>
+            <a class="nav-sub" href="/ui/operator/assets/robot-waypoints" data-nav="robot-waypoints">Robot Waypoints</a>
+            <a class="nav-sub active" href="/ui/operator/assets/object-definition" data-nav="object-definition">Object Definition</a>
+            <a class="nav-link" href="/ui/operator/task-flow" data-nav="task-flow">Task Flow</a>
+            <a class="nav-link" href="/ui/operator/monitor" data-nav="monitor">Monitor</a>
+            <a class="nav-sub" href="/ui/operator/robot-viz" data-nav="robot-viz">Robot Visualizer</a>
+          </div>
+          <div class="nav-hint">Build template library and cuboid geometry before running task flow.</div>
+        </aside>
+
+        <main class="op-content">
+          <section class="panel">
+            <h2>Context</h2>
+            <div class="context-grid">
+              <div>
+                <label for="stationSelect">Station</label>
+                <select id="stationSelect"></select>
+              </div>
+              <div>
+                <label for="assetSelect">Asset</label>
+                <select id="assetSelect"></select>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="secondary" id="refreshContextBtn" type="button">Refresh</button>
+            </div>
+            <div class="hint" id="pageInfo">Select asset to manage object templates.</div>
+          </section>
+
+          <section class="panel">
+            <h2>Templates</h2>
+            <div class="grid two">
+              <div class="card">
+                <label for="captureCameraId">Camera ID</label>
+                <input id="captureCameraId" value="cam_rs_d435i" />
+                <div class="canvas-shell">
+                  <canvas id="snapshot" height="300"></canvas>
+                </div>
+                <div class="actions">
+                  <button class="primary" id="captureSegmentBtn" type="button">Capture & Segment</button>
+                  <button class="secondary" id="clearCaptureBtn" type="button">Clear</button>
+                </div>
+
+                <label for="objectId">Object ID</label>
+                <input id="objectId" value="obj1" />
+                <label for="templateName">Template Name</label>
+                <input id="templateName" value="obj1_front" />
+                <label for="templateFile">Upload File (optional)</label>
+                <input id="templateFile" type="file" accept="image/*" />
+
+                <div class="actions">
+                  <button class="primary" id="saveTemplateBtn" type="button">Save Template</button>
+                </div>
+
+                <label>Detections</label>
+                <div class="proposal-list" id="proposalList">Capture a frame to see proposals.</div>
+
+                <label>Selected BBox (x, y, w, h)</label>
+                <div class="field-row">
+                  <input id="bboxX" placeholder="x" />
+                  <input id="bboxY" placeholder="y" />
+                  <input id="bboxW" placeholder="w" />
+                  <input id="bboxH" placeholder="h" />
+                </div>
+                <label for="bboxYaw">Yaw (deg)</label>
+                <input id="bboxYaw" placeholder="yaw" />
+
+                <div class="actions">
+                  <button class="secondary" id="applyBoxBtn" type="button">Apply Box</button>
+                  <button class="secondary" id="refreshTemplatesBtn" type="button">Refresh Templates</button>
+                </div>
+
+                <div class="object-list" id="objectLibrary">No templates yet.</div>
+              </div>
+
+              <div class="card">
+                <h3>Cuboid Geometry</h3>
+                <p class="page-sub" style="margin:0">Configure 3D box dimensions for tracking</p>
+
+                <label for="geometryObjectSelect">Object</label>
+                <select id="geometryObjectSelect"></select>
+
+                <div class="field-row">
+                  <div>
+                    <label for="geometryL">Length (mm)</label>
+                    <input id="geometryL" type="number" placeholder="0" min="0" step="1" />
+                  </div>
+                  <div>
+                    <label for="geometryB">Width (mm)</label>
+                    <input id="geometryB" type="number" placeholder="0" min="0" step="1" />
+                  </div>
+                  <div>
+                    <label for="geometryH">Height (mm)</label>
+                    <input id="geometryH" type="number" placeholder="0" min="0" step="1" />
+                  </div>
+                </div>
+
+                <label for="geometryAxisConvention">Axis Convention</label>
+                <select id="geometryAxisConvention">
+                  <option value="LBH_XYZ">L->X, B->Y, H->Z</option>
+                  <option value="LBH_XZY">L->X, B->Z, H->Y</option>
+                  <option value="LBH_YXZ">L->Y, B->X, H->Z</option>
+                  <option value="LBH_YZX">L->Y, B->Z, H->X</option>
+                  <option value="LBH_ZXY">L->Z, B->X, H->Y</option>
+                  <option value="LBH_ZYX">L->Z, B->Y, H->X</option>
+                </select>
+
+                <div id="geometryStatus" class="hint"></div>
+
+                <div class="actions">
+                  <button class="primary" id="saveGeometryBtn" type="button">Save Geometry</button>
+                  <button class="secondary" id="loadGeometryBtn" type="button">Load</button>
+                  <button class="ghost" id="clearGeometryBtn" type="button">Clear</button>
+                </div>
+              </div>
+            </div>
+
+            <pre class="log-box" id="objectLog">Object definition log ready.</pre>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/ui/assets/operator/js/api.js"></script>
+    <script src="/ui/assets/operator/js/operator-shell.js"></script>
+    <script src="/ui/assets/operator/js/operator-objects.js"></script>
+  </body>
+</html>

@@ -1,0 +1,48 @@
+{
+  "name": "franka_hand",
+  "type": "gripper",
+  "family": "Parallel jaw",
+  "gripper_type": "parallel_jaw",
+  "stroke_width": 70,
+  "urdf": "urdf/franka_hand.urdf",
+  "root_link": "fr3_hand",
+  "tcp_link": "fr3_hand_tcp",
+  "actuated_joints": [
+    "fr3_finger_joint1"
+  ],
+  "mimic_joints": {
+    "fr3_finger_joint2": {
+      "joint": "fr3_finger_joint1",
+      "multiplier": 1,
+      "offset": 0
+    }
+  },
+  "named_states": {
+    "open": {
+      "fr3_finger_joint1": 0.035,
+      "fr3_finger_joint2": 0.035
+    },
+    "close": {
+      "fr3_finger_joint1": 0,
+      "fr3_finger_joint2": 0
+    }
+  },
+  "planning_groups": {
+    "hand": {
+      "links": [
+        "fr3_hand",
+        "fr3_leftfinger",
+        "fr3_rightfinger"
+      ],
+      "joints": [
+        "fr3_finger_joint1",
+        "fr3_finger_joint2"
+      ]
+    }
+  },
+  "disabled_self_collisions": [
+    ["fr3_hand", "fr3_leftfinger"],
+    ["fr3_hand", "fr3_rightfinger"],
+    ["fr3_leftfinger", "fr3_rightfinger"]
+  ]
+}

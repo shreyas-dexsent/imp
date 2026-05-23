@@ -1,0 +1,39 @@
+{
+  "joints": [
+    -0.3897740318453779,
+    0.00535866436397463,
+    0.00010386902586745129,
+    -2.4765777556330844,
+    -0.004243879152109038,
+    2.4747237952446985,
+    0.3982933183627949
+  ],
+  "tcp_pose": {
+    "position_m": [
+      0.4351177435090825,
+      -0.17925486137083754,
+      0.08408928750856146
+    ],
+    "quat_xyzw": [
+      0.9999925575582448,
+      0.0003865261894524034,
+      -0.0038354216684870638,
+      -0.0001580071214224445
+    ],
+    "rotation_rpy_deg": [
+      -179.9817234334218,
+      0.43950098900219564,
+      0.0443630638290581
+    ],
+    "frame": "base",
+    "parent_frame": "base",
+    "child_frame": "tool_tcp",
+    "tcp_frame": "tool_tcp",
+    "pose_source": "tool_tcp",
+    "interpretation": "base_to_tool_tcp"
+  },
+  "frame_interpretation": {
+    "tcp_pose": "base_to_tool_tcp",
+    "joints": "robot joint positions captured at the same time"
+  }
+}

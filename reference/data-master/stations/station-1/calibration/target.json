@@ -1,0 +1,9 @@
+{
+  "type": "charuco",
+  "rows": 7,
+  "cols": 5,
+  "square_size_m": 0.04,
+  "saved_at": "2026-04-03T09:44:50.336150Z",
+  "marker_size_m": 0.025,
+  "aruco_dict": "DICT_5x5_250"
+}

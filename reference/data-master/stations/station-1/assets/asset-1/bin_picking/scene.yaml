@@ -1,0 +1,175 @@
+robot:
+  urdf_path: ../robot/urdf/franka_fr3.urdf
+  package_dirs:
+  - ../robot
+  - ../gripper
+gripper:
+  urdf_path: ../gripper/urdf/franka_hand.urdf
+  attach_to_link: fr3_link8
+  joint_name: fr3_hand_joint
+planning_groups:
+  arm:
+    base_link: fr3_link0
+    tip_link: fr3_link8
+    joints:
+    - fr3_joint1
+    - fr3_joint2
+    - fr3_joint3
+    - fr3_joint4
+    - fr3_joint5
+    - fr3_joint6
+    - fr3_joint7
+    default_seed:
+    - 0.0
+    - -0.785
+    - 0.0
+    - -2.356
+    - 0.0
+    - 1.571
+    - 0.785
+    tcp:
+      position_m:
+      - 0.0
+      - 0.0
+      - 0.204
+      rotation_rpy_deg:
+      - 0.0
+      - 0.0
+      - 0.0
+allowed_collisions:
+- - fr3_link0
+  - fr3_link1
+- - fr3_link0
+  - fr3_link2
+- - fr3_link0
+  - fr3_link3
+- - fr3_link0
+  - fr3_link4
+- - fr3_link1
+  - fr3_link2
+- - fr3_link1
+  - fr3_link3
+- - fr3_link1
+  - fr3_link4
+- - fr3_link2
+  - fr3_link3
+- - fr3_link2
+  - fr3_link4
+- - fr3_link2
+  - fr3_link6
+- - fr3_link3
+  - fr3_link4
+- - fr3_link3
+  - fr3_link5
+- - fr3_link3
+  - fr3_link6
+- - fr3_link3
+  - fr3_link7
+- - fr3_link4
+  - fr3_link5
+- - fr3_link4
+  - fr3_link6
+- - fr3_link4
+  - fr3_link7
+- - fr3_link4
+  - fr3_link8
+- - fr3_link5
+  - fr3_link6
+- - fr3_link5
+  - fr3_link7
+- - fr3_link6
+  - fr3_link7
+- - fr3_link6
+  - fr3_link8
+- - fr3_link7
+  - fr3_link8
+- - fr3_link8
+  - fr3_hand
+- - fr3_hand
+  - fr3_leftfinger
+- - fr3_hand
+  - fr3_rightfinger
+- - fr3_leftfinger
+  - fr3_rightfinger
+- - fr3_link7
+  - fr3_hand
+joint_limits:
+  fr3_joint1:
+    lower: -2.9007
+    upper: 2.9007
+    velocity: 2.62
+    acceleration: 10.0
+    jerk: 50.0
+  fr3_joint2:
+    lower: -1.8361
+    upper: 1.8361
+    velocity: 2.62
+    acceleration: 10.0
+    jerk: 50.0
+  fr3_joint3:
+    lower: -2.9007
+    upper: 2.9007
+    velocity: 2.62
+    acceleration: 10.0
+    jerk: 50.0
+  fr3_joint4:
+    lower: -3.077
+    upper: -0.1169
+    velocity: 2.62
+    acceleration: 10.0
+    jerk: 50.0
+  fr3_joint5:
+    lower: -2.8763
+    upper: 2.8763
+    velocity: 5.26
+    acceleration: 10.0
+    jerk: 50.0
+  fr3_joint6:
+    lower: 0.4398
+    upper: 4.6216
+    velocity: 4.18
+    acceleration: 10.0
+    jerk: 50.0
+  fr3_joint7:
+    lower: -3.0508
+    upper: 3.0508
+    velocity: 5.26
+    acceleration: 10.0
+    jerk: 50.0
+collision:
+  safety_margin: 0.01
+  self_collision:
+    enabled: true
+  world_collision:
+    enabled: true
+  pointcloud:
+    enabled: true
+    voxel_size: 0.01
+    inflation_radius: 0.005
+planner:
+  type: RRTConnect
+  timeout: 10.0
+  interpolation_waypoints: 80
+  simplify_path: true
+trajectory:
+  dt: 0.02
+environment:
+  obstacles:
+  - name: bin
+    type: mesh
+    path: obstacles/bin.stl
+    transform:
+      translation:
+      - 0.0
+      - 0.0
+      - 0.0
+      rotation:
+      - - 1
+        - 0
+        - 0
+      - - 0
+        - 1
+        - 0
+      - - 0
+        - 0
+        - 1

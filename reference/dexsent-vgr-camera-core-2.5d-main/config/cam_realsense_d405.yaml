@@ -1,0 +1,133 @@
+camera:
+  camera_id: cam_rs_d405
+  type: realsense_d405
+  mode: rgbd
+  fps: 30
+
+  sdk:
+    serial_number: "409122271039"
+
+    width: 1280
+    height: 720
+    fps: 30
+
+    color_width: 1280
+    color_height: 720
+    color_fps: 30
+    color_format: "rgb8"
+
+    depth_width: 1280
+    depth_height: 720
+    depth_fps: 30
+    depth_format: "z16"
+
+    align_to: "color"
+
+    # Common manual controls for both RGB and depth.
+    options:
+      color:
+        enable_auto_white_balance: true
+
+      depth:
+        enable_auto_exposure: false
+        exposure: 25000
+        gain: 35
+        visual_preset: "custom"
+        depth_units: 0.001
+
+    # ROI support is wired in the driver but disabled by default.
+    # Enable and adjust this later if you need a smaller sensor region.
+    roi:
+      enabled: false
+      target: "depth"
+      min_x: 0
+      min_y: 0
+      max_x: 847
+      max_y: 479
+
+    post_processing:
+      enabled: true
+      filter_order:
+        - decimation
+        - rotation
+        - hdr_merge
+        - threshold
+        - depth_to_disparity
+        - spatial
+        - temporal
+        - disparity_to_depth
+
+      decimation:
+        enabled: true
+        options:
+          filter_magnitude: 2
+
+      rotation:
+        enabled: false
+
+      hdr_merge:
+        enabled: true
+
+      sequence_id_filter:
+        enabled: false
+
+      threshold:
+        enabled: false
+        options:
+          min_distance: 0.10
+          max_distance: 2.00
+
+      depth_to_disparity:
+        enabled: true
+
+      spatial:
+        enabled: true
+        options:
+          filter_magnitude: 2
+          filter_smooth_alpha: 0.50
+          filter_smooth_delta: 20
+          holes_fill: 0
+
+      temporal:
+        enabled: true
+        options:
+          filter_smooth_alpha: 0.40
+          filter_smooth_delta: 20
+
+      hole_filling:
+        enabled: false
+        options:
+          holes_fill: 1
+
+      disparity_to_depth:
+        enabled: true
+
+shared_memory:
+  rgb:
+    name_prefix: "cam_cam_rs_d405_rgb"
+    width: 1280
+    height: 720
+    channels: 3
+    dtype: "uint8"
+    triple_buffers: ["A", "B", "C"]
+
+  depth:
+    name_prefix: "cam_cam_rs_d405_depth"
+    width: 1280
+    height: 720
+    dtype: "float32"
+    triple_buffers: ["A", "B", "C"]
+
+ipc:
+  zmq_pub: "tcp://127.0.0.1:5555"
+  topic: "camera"
+
+health:
+  port: 8096
+
+runtime:
+  log_level: "INFO"
+
+robot:
+  command_endpoint: "tcp://127.0.0.1:5571"
+  timeout_ms: 20000

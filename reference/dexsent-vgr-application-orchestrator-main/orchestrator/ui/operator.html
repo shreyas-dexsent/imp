@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dexsent Intelligent Manupulation Platform | Operator Task Flow</title>
+    <link rel="icon" type="image/png" href="/ui/assets/favicon.png" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/tokens.css" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/operator.css" />
+  </head>
+  <body data-page="task-flow">
+    <div class="op-app">
+      <header class="op-header">
+        <div class="brand">
+          <img class="brand-logo" src="/ui/assets/logo-Blue.svg" alt="Dexsent logo" />
+          <div class="brand-copy">
+            <h1>Intelligent Manupulation Platform</h1>
+            <p>Operator UI: workflow builder</p>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <div class="chip"><span class="label">Camera</span><span class="led off" id="cameraLed"></span><span id="cameraText">off</span></div>
+          <div class="chip"><span class="label">Robot</span><span class="led off" id="robotLed"></span><span id="robotText">off</span></div>
+          <div class="chip"><span class="label">Vision</span><span class="led off" id="visionLed"></span><span id="visionText">off</span></div>
+          <div class="chip"><span class="label">Vision Mode</span><select id="visionTransportSelect"><option value="zmq">local</option><option value="websocket">blackwell</option></select></div>
+          <div class="chip"><span class="label">Server</span><span class="led off" id="serverLed"></span><span id="serverText">off</span></div>
+          <div class="chip"><span class="label">UI</span><span id="systemStatus">idle</span></div>
+        </div>
+      </header>
+
+      <div class="op-layout">
+        <aside class="op-sidebar">
+          <h2>Operator</h2>
+          <div class="nav-group">
+            <a class="nav-link" href="/ui/operator/assets" data-nav="asset-manager">Asset Manager</a>
+            <a class="nav-sub" href="/ui/operator/assets/robot-waypoints" data-nav="robot-waypoints">Robot Waypoints</a>
+            <a class="nav-sub" href="/ui/operator/assets/object-definition" data-nav="object-definition">Object Definition</a>
+            <a class="nav-link active" href="/ui/operator/task-flow" data-nav="task-flow">Task Flow</a>
+            <a class="nav-link" href="/ui/operator/monitor" data-nav="monitor">Monitor</a>
+            <a class="nav-sub" href="/ui/operator/robot-viz" data-nav="robot-viz">Robot Visualizer</a>
+          </div>
+          <div class="nav-hint">Configure assets first, then compose runtime logic in Task Flow.</div>
+        </aside>
+
+        <main class="op-content task-flow-content">
+          <section class="panel">
+            <h2>Task Context</h2>
+            <div class="context-grid">
+              <div>
+                <label for="stationSelect">Station</label>
+                <select id="stationSelect"></select>
+              </div>
+              <div>
+                <label for="assetSelect">Asset</label>
+                <select id="assetSelect"></select>
+              </div>
+              <div>
+                <label for="taskSelect">Saved Task</label>
+                <select id="taskSelect"></select>
+              </div>
+              <div>
+                <label for="taskTypeSelect">Task Type</label>
+                <select id="taskTypeSelect"></select>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="secondary" id="refreshWorkspaceBtn" type="button">Refresh</button>
+              <input id="newTaskName" placeholder="new task name" />
+              <button class="primary" id="createTaskBtn" type="button">Create Task</button>
+            </div>
+            <div class="hint" id="uiInfo">Ready.</div>
+          </section>
+
+          <section class="panel task-params-panel" id="dummyTestingParamsPanel" hidden>
+            <h2>Dummy Testing Params</h2>
+            <div class="context-grid">
+              <div>
+                <label for="dummyPoseSelect">Pose Inventory</label>
+                <select id="dummyPoseSelect"></select>
+              </div>
+              <div>
+                <label for="dummyProfileSelect">Move Profile</label>
+                <select id="dummyProfileSelect">
+                  <option value="slow">slow</option>
+                  <option value="normal">normal</option>
+                  <option value="fast">fast</option>
+                </select>
+              </div>
+              <div>
+                <label for="dummyLoopIterations">Loop Iterations</label>
+                <input id="dummyLoopIterations" type="number" min="1" step="1" value="1" />
+              </div>
+            </div>
+            <div class="actions">
+              <button class="secondary" id="dummyAddPoseBtn" type="button">Add Pose</button>
+              <button class="primary" id="dummyApplyProgramBtn" type="button">Apply To Flow</button>
+              <button class="ghost" id="dummyClearProgramBtn" type="button">Clear Sequence</button>
+            </div>
+            <div class="dummy-sequence-list" id="dummyPoseSequence"></div>
+          </section>
+
+          <section class="panel">
+            <h2>Task Flow Builder</h2>
+            <div class="builder blockly-builder">
+              <div class="flow-tools">
+                <h3>Flow Controls</h3>
+                <div class="hint">Use task-mode blocks to mix multiple task types in one flow, and use While TRUE for continuous cycle logic.</div>
+                <div class="actions">
+                  <button class="secondary" id="fitFlowBtn" type="button">Fit Flow</button>
+                  <button class="ghost" id="normalizeFlowBtn" type="button">Auto Layout</button>
+                </div>
+              </div>
+
+              <div class="flow-canvas blockly-shell">
+                <div id="blocklyWorkspace" class="blockly-workspace"></div>
+              </div>
+
+              <div class="flow-preview-panel">
+                <h3>Flow Preview</h3>
+                <pre id="flowPreview" class="mini-log">No steps yet. Drag blocks from toolbox and connect below START.</pre>
+                <div class="hint">Only connected blocks below START are saved as task flow.</div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="primary" id="saveFlowBtn" type="button">Save Flow To Task</button>
+              <button class="ghost" id="resetFlowBtn" type="button">Clear Flow</button>
+            </div>
+          </section>
+
+          <div class="footer-links">
+            <a href="/ui">Open Engineering UI</a>
+          </div>
+
+          <section class="panel" style="display:none">
+            <input id="assetName" />
+            <button id="saveAssetBtn" type="button"></button>
+            <input id="poseNameInput" />
+            <select id="poseSelect"></select>
+            <button id="recordPoseBtn" type="button"></button>
+            <button id="deletePoseBtn" type="button"></button>
+            <button id="refreshPosesBtn" type="button"></button>
+            <input id="objectIdInput" />
+            <input id="templateNameInput" />
+            <input id="templateFile" type="file" />
+            <button id="uploadTemplateBtn" type="button"></button>
+            <button id="startRunBtn" type="button"></button>
+            <button id="stopRunBtn" type="button"></button>
+            <span class="led off" id="runStatusLed"></span>
+            <span id="runStatusText"></span>
+            <div id="objectList"></div>
+            <pre id="assetInfo"></pre>
+            <pre id="poseInfo"></pre>
+            <pre id="runInfo"></pre>
+            <pre id="runTimeline"></pre>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/blockly/blockly_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/blocks_compressed.js"></script>
+    <script src="https://unpkg.com/blockly/msg/en.js"></script>
+    <script src="/ui/assets/operator/js/api.js"></script>
+    <script src="/ui/assets/operator/js/operator.js"></script>
+  </body>
+</html>

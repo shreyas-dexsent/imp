@@ -1,0 +1,51 @@
+{
+  "name": "fanuc_crx10ia",
+  "model": "crx10ial",
+  "type": "robot_arm",
+  "urdf": "urdf/fanuc_crx10ia.urdf",
+  "base_link": "base_link",
+  "mount_link": "tool0",
+  "tcp_link": "tool0",
+  "actuated_joints": [
+    "joint_1",
+    "joint_2",
+    "joint_3",
+    "joint_4",
+    "joint_5",
+    "joint_6"
+  ],
+  "named_states": {
+    "home": {
+      "joint_1": 0,
+      "joint_2": 0,
+      "joint_3": 0,
+      "joint_4": 0,
+      "joint_5": 0,
+      "joint_6": 0
+    }
+  },
+  "planning_groups": {
+    "arm": {
+      "base_link": "base_link",
+      "tip_link": "tool0",
+      "joints": [
+        "joint_1",
+        "joint_2",
+        "joint_3",
+        "joint_4",
+        "joint_5",
+        "joint_6"
+      ]
+    }
+  },
+  "disabled_self_collisions": [
+    ["base_link", "link_1"],
+    ["link_1", "link_2"],
+    ["link_2", "link_3"],
+    ["link_3", "link_4"],
+    ["link_4", "link_5"],
+    ["link_5", "link_6"],
+    ["link_6", "flange"],
+    ["flange", "tool0"]
+  ]
+}

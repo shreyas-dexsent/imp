@@ -1,0 +1,77 @@
+{
+  "name": "franka_fr3",
+  "type": "robot_arm",
+  "urdf": "urdf/franka_fr3.urdf",
+  "base_link": "base",
+  "mount_link": "fr3_link8",
+  "tcp_link": "fr3_link8",
+  "actuated_joints": [
+    "fr3_joint1",
+    "fr3_joint2",
+    "fr3_joint3",
+    "fr3_joint4",
+    "fr3_joint5",
+    "fr3_joint6",
+    "fr3_joint7"
+  ],
+  "named_states": {
+    "ready": {
+      "fr3_joint1": 0,
+      "fr3_joint2": -0.7853981633974483,
+      "fr3_joint3": 0,
+      "fr3_joint4": -2.356194490192345,
+      "fr3_joint5": 0,
+      "fr3_joint6": 1.5707963267948966,
+      "fr3_joint7": 0.7853981633974483
+    },
+    "extended": {
+      "fr3_joint1": 0,
+      "fr3_joint2": 0,
+      "fr3_joint3": 0,
+      "fr3_joint4": -0.1,
+      "fr3_joint5": 0,
+      "fr3_joint6": 1.5707963267948966,
+      "fr3_joint7": 0.7853981633974483
+    }
+  },
+  "planning_groups": {
+    "arm": {
+      "base_link": "fr3_link0",
+      "tip_link": "fr3_link8",
+      "joints": [
+        "fr3_joint1",
+        "fr3_joint2",
+        "fr3_joint3",
+        "fr3_joint4",
+        "fr3_joint5",
+        "fr3_joint6",
+        "fr3_joint7"
+      ]
+    }
+  },
+  "disabled_self_collisions": [
+    ["fr3_link0", "fr3_link1"],
+    ["fr3_link0", "fr3_link2"],
+    ["fr3_link0", "fr3_link3"],
+    ["fr3_link0", "fr3_link4"],
+    ["fr3_link1", "fr3_link2"],
+    ["fr3_link1", "fr3_link3"],
+    ["fr3_link1", "fr3_link4"],
+    ["fr3_link2", "fr3_link3"],
+    ["fr3_link2", "fr3_link4"],
+    ["fr3_link2", "fr3_link6"],
+    ["fr3_link3", "fr3_link4"],
+    ["fr3_link3", "fr3_link5"],
+    ["fr3_link3", "fr3_link6"],
+    ["fr3_link3", "fr3_link7"],
+    ["fr3_link4", "fr3_link5"],
+    ["fr3_link4", "fr3_link6"],
+    ["fr3_link4", "fr3_link7"],
+    ["fr3_link4", "fr3_link8"],
+    ["fr3_link5", "fr3_link6"],
+    ["fr3_link5", "fr3_link7"],
+    ["fr3_link6", "fr3_link7"],
+    ["fr3_link6", "fr3_link8"],
+    ["fr3_link7", "fr3_link8"]
+  ]
+}

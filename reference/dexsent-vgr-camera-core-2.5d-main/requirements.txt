@@ -1,0 +1,14 @@
+# conda create --name vgr-camera python=3.9 -y
+# conda activate vgr-camera
+# pip install -r requirements.txt 
+pypylon
+numpy
+pyzmq
+pyyaml
+fastapi
+uvicorn
+pydantic
+opencv-contrib-python==4.12.0.88
+open3d>=0.18
+# PySpin
+pyrealsense2

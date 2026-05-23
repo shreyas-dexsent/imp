@@ -1,0 +1,32 @@
+runtime:
+  log_level: INFO
+
+data:
+  root: ../data
+
+vision_engine:
+  transport: "websocket"
+  websocket_url: "ws://100.100.10.10:8000/ws"
+  websocket_max_frame_fps: 0
+  http_url: "http://100.100.10.10:8000"
+  control_push: "tcp://127.0.0.1:5556"
+  control_topic: "camera"
+  results_sub: "tcp://127.0.0.1:5555"
+  results_push: "tcp://127.0.0.1:5556"
+  results_topic: "vision"
+
+camera_core:
+  pub_endpoint: "tcp://127.0.0.1:5555"
+  topic: "camera"
+  calibration_control_url: "http://127.0.0.1:8210"
+  calibration_frame_url: "http://127.0.0.1:8211"
+
+robot:
+  adapter: "zmq"
+  command_endpoint: "tcp://127.0.0.1:5571"
+  state_endpoint: "tcp://127.0.0.1:5572"
+  timeout_ms: 20000
+
+api:
+  host: "0.0.0.0"
+  port: 8100

@@ -1,0 +1,244 @@
+{
+  "ambient": {
+    "enabled": true,
+    "color": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "intensity": 0.06
+  },
+  "key": {
+    "enabled": true,
+    "light_type": "spot",
+    "color": [
+      1.95,
+      1.90,
+      1.80
+    ],
+    "intensity": 1.0,
+    "offset": [
+      -0.55,
+      1.15,
+      0.85
+    ],
+    "radius_scale": 4.5,
+    "camera_relative": true,
+    "aim_at_center": true,
+    "shadow_caster": true,
+    "shadow_buffer_size": 4096,
+    "lens_fov": 42.0,
+    "ortho_film_scale": 6.0,
+    "near_scale": 0.3,
+    "far_scale": 10.0,
+    "exponent": 24.0,
+    "max_distance": 1000.0,
+    "attenuation": [
+      1.0,
+      0.0,
+      0.0
+    ]
+  },
+  "fill": {
+    "enabled": true,
+    "light_type": "point",
+    "color": [
+      0.34,
+      0.35,
+      0.38
+    ],
+    "intensity": 1.0,
+    "offset": [
+      0.60,
+      1.00,
+      0.20
+    ],
+    "radius_scale": 4.0,
+    "camera_relative": true,
+    "aim_at_center": false,
+    "shadow_caster": false,
+    "shadow_buffer_size": 1024,
+    "lens_fov": 50.0,
+    "ortho_film_scale": 8.0,
+    "near_scale": 0.3,
+    "far_scale": 10.0,
+    "exponent": 8.0,
+    "max_distance": 1000.0,
+    "attenuation": [
+      1.0,
+      0.0,
+      0.08
+    ]
+  },
+  "rim": {
+    "enabled": false,
+    "light_type": "point",
+    "color": [
+      0.38,
+      0.40,
+      0.45
+    ],
+    "intensity": 1.0,
+    "offset": [
+      -1.40,
+      -0.35,
+      1.20
+    ],
+    "radius_scale": 4.0,
+    "camera_relative": true,
+    "aim_at_center": true,
+    "shadow_caster": false,
+    "shadow_buffer_size": 1024,
+    "lens_fov": 50.0,
+    "ortho_film_scale": 8.0,
+    "near_scale": 0.25,
+    "far_scale": 12.0,
+    "exponent": 12.0,
+    "max_distance": 1000.0,
+    "attenuation": [
+      1.0,
+      0.0,
+      0.35
+    ]
+  },
+  "top": {
+    "enabled": true,
+    "light_type": "point",
+    "color": [
+      0.24,
+      0.24,
+      0.22
+    ],
+    "intensity": 1.0,
+    "offset": [
+      0.10,
+      0.90,
+      1.20
+    ],
+    "radius_scale": 4.0,
+    "camera_relative": true,
+    "aim_at_center": false,
+    "shadow_caster": false,
+    "shadow_buffer_size": 1024,
+    "lens_fov": 50.0,
+    "ortho_film_scale": 8.0,
+    "near_scale": 0.3,
+    "far_scale": 10.0,
+    "exponent": 8.0,
+    "max_distance": 1000.0,
+    "attenuation": [
+      1.0,
+      0.0,
+      0.08
+    ]
+  },
+  "bounce": {
+    "enabled": true,
+    "light_type": "point",
+    "color": [
+      0.10,
+      0.09,
+      0.08
+    ],
+    "intensity": 1.0,
+    "offset": [
+      0.0,
+      0.75,
+      -0.85
+    ],
+    "radius_scale": 4.0,
+    "camera_relative": true,
+    "aim_at_center": false,
+    "shadow_caster": false,
+    "shadow_buffer_size": 1024,
+    "lens_fov": 50.0,
+    "ortho_film_scale": 8.0,
+    "near_scale": 0.3,
+    "far_scale": 10.0,
+    "exponent": 8.0,
+    "max_distance": 1000.0,
+    "attenuation": [
+      1.0,
+      0.0,
+      0.12
+    ]
+  },
+  "back": {
+    "enabled": false,
+    "light_type": "point",
+    "color": [
+      0.50,
+      0.50,
+      0.52
+    ],
+    "intensity": 1.0,
+    "offset": [
+      0.0,
+      -1.0,
+      0.0
+    ],
+    "radius_scale": 4.0,
+    "camera_relative": false,
+    "aim_at_center": false,
+    "shadow_caster": false,
+    "shadow_buffer_size": 1024,
+    "lens_fov": 50.0,
+    "ortho_film_scale": 8.0,
+    "near_scale": 0.25,
+    "far_scale": 12.0,
+    "exponent": 12.0,
+    "max_distance": 1000.0,
+    "attenuation": [
+      1.0,
+      0.0,
+      0.35
+    ]
+  },
+  "material": {
+    "enabled": true,
+    "base_color": [
+      0.14,
+      0.14,
+      0.14
+    ],
+    "ambient": 0.04,
+    "specular": 0.03,
+    "roughness": 0.96,
+    "shininess": 6.0,
+    "metallic": 0.0,
+    "two_sided": true
+  },
+  "ground": {
+    "enabled": false,
+    "z_offset_scale": 0.02,
+    "size_scale": 8.0,
+    "color": [
+      0.16,
+      0.16,
+      0.16
+    ],
+    "ambient": 0.05,
+    "specular": 0.05,
+    "roughness": 1.0,
+    "shininess": 2.0
+  },
+  "view": {
+    "background": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "camera_yaw_deg": 36.0,
+    "camera_pitch_deg": 18.0,
+    "camera_distance_scale": 5.8,
+    "camera_fov_deg": 38.0,
+    "look_at_offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "auto_spin": false,
+    "spin_speed_deg": 18.0,
+    "wireframe": false
+  }
+}

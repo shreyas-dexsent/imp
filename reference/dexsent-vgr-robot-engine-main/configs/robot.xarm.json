@@ -1,0 +1,33 @@
+{
+  "robot": {
+    "robot_id": "xarm_lite6_01",
+    "type": "xarm_lite6",
+    "host": "192.168.1.111",
+    "port": 18333,
+    "tool_frame": "xarm_tcp",
+    "gripper": "vacuum",
+    "joints_in_degrees": false
+  },
+  "io": {
+    "command_plane": { "mode": "reqrep", "endpoint": "tcp://127.0.0.1:5571" },
+    "state_plane":   { "mode": "pub",   "endpoint": "tcp://127.0.0.1:5572", "rate_hz": 60 }
+  },
+  "safety": {
+    "motion_timeout_s": 10.0
+  },
+  "motion": {
+    "linear_speed_mm_s": 87.0,
+    "linear_acceleration_mm_s2": 3000.0,
+    "joint_speed_deg_s": 5.0,
+    "joint_acceleration_deg_s2": 500.0,
+    "gripper_open_position": 850,
+    "gripper_close_position": 0,
+    "gripper_speed": 3000,
+    "gripper_wait": true,
+    "gripper_home_on_connect": false
+  },
+  "viewer": {
+    "enabled": false
+  },
+  "logging": { "level": "INFO" }
+}

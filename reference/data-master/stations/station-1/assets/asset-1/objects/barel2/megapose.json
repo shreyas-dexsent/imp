@@ -1,0 +1,22 @@
+{
+  "model": "rgb",
+  "mesh_path": "barel2.obj",
+  "cad_source_path": "barel2.stp",
+  "mesh_export": {
+    "recompute_vertex_normals": true,
+    "merge_vertices": false,
+    "process": false
+  },
+  "symmetry": {
+    "enabled": false,
+    "type": "continuous",
+    "axis": "y",
+    "samples": 64
+  },
+  "refiner_guard": {
+    "enabled": true,
+    "fallback": "coarse_input",
+    "max_translation_delta_m": 0.015,
+    "max_rotation_delta_deg": 12.0
+  }
+}

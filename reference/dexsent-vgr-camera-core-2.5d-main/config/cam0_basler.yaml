@@ -1,0 +1,39 @@
+camera:
+  camera_id: cam0
+  type: basler_gige
+  mode: rgb
+  fps: 15
+
+  sdk:
+    # Prefer serial if you have it (recommended)
+    serial_number: ""   # e.g. "40123456"
+    # Or you can select first camera if serial is empty
+    packet_size: 1500
+    inter_packet_delay: 0
+    exposure_time_us: 5000
+    gain: 0.0
+    pixel_format: "BayerRG8"   # common for Basler; we will convert to BGR
+    width: 2040
+    height: 2040
+    offset_x: 0
+    offset_y: 0
+
+shared_memory:
+  rgb:
+    name_prefix: "cam_cam0_rgb"
+    width: 2040
+    height: 2040
+    channels: 3
+    dtype: "uint8"
+    triple_buffers: ["A", "B", "C"]
+
+ipc:
+  zmq_pub: "tcp://127.0.0.1:5555"
+  topic: "camera"
+
+health:
+  host: "0.0.0.0"
+  port: 8091
+
+runtime:
+  log_level: "INFO"

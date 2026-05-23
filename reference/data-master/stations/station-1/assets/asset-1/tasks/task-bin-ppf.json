@@ -1,0 +1,181 @@
+{
+  "task_id": "task-bin-ppf",
+  "asset_id": "asset-1",
+  "station_id": "station-1",
+  "name": "Bin Picking PPF+ICP",
+  "description": "Calibrated PPF + ICP bin-picking baseline with best tested parameters.",
+  "task_type": "bin_picking",
+  "task": {
+    "vision": {
+      "camera_id": "cam_rs_d405",
+      "module": "ppf_icp_bin_picking",
+      "use_fusion": false,
+      "process_mode": "trigger_only",
+      "fusion": {
+        "enabled": false,
+        "virtual_camera_id": "cam_rs_d405_fused",
+        "publish_repeats": 4,
+        "publish_interval_s": 0.03,
+        "timeout_s": 90,
+        "fallback_to_live": true,
+        "settle_frames": 2,
+        "capture": {
+          "settle_s": 0.35,
+          "xy_offset_m": 0.06,
+          "toe_in_deg": 20,
+          "move_profile": "slow"
+        },
+        "pipeline": {
+          "depth_min_m": 0.07,
+          "depth_max_m": 0.5,
+          "view_max_distance_m": 1,
+          "voxel_size": 0.001,
+          "tsdf_voxel_length": 0.001,
+          "tsdf_sdf_trunc": 0.004,
+          "tsdf_depth_trunc": 0.5,
+          "tsdf_enable": true
+        }
+      },
+      "params": {
+        "intrinsics": {
+          "fx": 898.7319320604396,
+          "fy": 901.0339914392684,
+          "cx": 632.2141971176223,
+          "cy": 373.7354356196196,
+          "saved_at": "2026-03-30T09:37:15.559172Z",
+          "dist_coeffs": [
+            0.10563852712114531,
+            -0.18055003422551744,
+            -0.0008804180838919625,
+            -0.002220191535672352,
+            -0.10754968301755877
+          ],
+          "resolution": {
+            "width": 1280,
+            "height": 720
+          }
+        },
+        "object_folder": "/home/imp/imp/data/stations/station-1/assets/asset-1/objects/barel2",
+        "input_color_order": "bgr",
+        "yolo_conf": 0.3,
+        "selection_top_k": 20,
+        "selection_min_confidence": 0.5,
+        "selection_min_area_ratio": 0.01,
+        "selection_max_area_ratio": 0.2,
+        "depth_max_m": 1,
+        "selection_mode": "lowest_z_front",
+        "startup_warmup_frames": 0,
+        "segmentation_device": "cuda",
+        "mesh_units": "mm",
+        "mesh_scale": 1,
+        "all_poses_mode": true,
+        "all_poses_max": 8,
+        "render_all_poses_3d": true,
+        "timing_log_enabled": true,
+        "save_outputs": false,
+        "object_id": "barel",
+        "label_override": "barel",
+        "ppf_relative_sampling_step": 0.025,
+        "ppf_relative_distance_step": 0.025,
+        "ppf_num_angles": 60,
+        "ppf_scene_sample_step": 0.05,
+        "ppf_scene_distance": 0.015,
+        "ppf_search_position_threshold": -1,
+        "ppf_search_rotation_threshold": -1,
+        "ppf_weighted_clustering": false,
+        "ppf_model_sample_points": 1500,
+        "ppf_scene_max_points": 12000,
+        "ppf_normal_neighbors": 24,
+        "ppf_min_votes": 800,
+        "ppf_min_vote_ratio": 0.2,
+        "icp_enabled": true,
+        "icp_iterations": 80,
+        "icp_tolerance": 0.05,
+        "icp_rejection_scale": 4.0,
+        "icp_num_levels": 6,
+        "icp_sample_type": "uniform",
+        "icp_num_max_corr": 1,
+        "icp_max_residual_m": 0.03,
+        "first_frame_timeout_s": 5,
+        "prewarm_before_run": false,
+        "ppf_scene_voxel_size_m": 0.002
+      },
+      "timeout_s": 45,
+      "object_id": "barel"
+    },
+    "robot": {
+      "default_profile": "slow",
+      "capture_settle_s": 0.3,
+      "capture_arrival_timeout_s": 10,
+      "capture_position_tolerance_m": 0.004,
+      "capture_orientation_tolerance_deg": 5,
+      "capture_pose": {
+        "name": "mega",
+        "pose_path": "poses/mega.json"
+      },
+      "gripper_type": "parallel_jaw",
+      "pick": {
+        "approach_offset_m": [
+          0,
+          0,
+          0.01
+        ],
+        "retreat_offset_m": [
+          0,
+          0,
+          0.01
+        ],
+        "vacuum_pick_wait_s": 0.3,
+        "gripper_type": "parallel_jaw",
+        "align_with_surface": false,
+        "fast_acquire": true,
+        "orientation_mode": "vision_pose",
+        "vision_pose_quat_offset_xyzw": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "parallel_jaw_pregrasp_open_offset_m": 0.01,
+        "parallel_jaw_grasp_close_offset_m": -0.005,
+        "parallel_jaw_open_width_m": 0.11,
+        "parallel_jaw_close_width_m": 0.095,
+        "parallel_jaw_max_approach_angle_deg": 45,
+        "parallel_jaw_external_force_enabled": false,
+        "parallel_jaw_external_force_n": 40,
+        "parallel_jaw_internal_force_enabled": false,
+        "parallel_jaw_internal_force_n": 40,
+        "all_poses_mode": true,
+        "parallel_jaw_finger_width_m": 0.01,
+        "parallel_jaw_finger_length_m": 0.05,
+        "parallel_jaw_safety_margin_m": 0.003,
+        "parallel_jaw_pregrasp_descent_m": 0.05,
+        "parallel_jaw_prefer_inner_grasp": true,
+        "segmentation_safety_ranking_enabled": true,
+        "vacuum_cup_radius_m": 0.015,
+        "vacuum_safety_margin_m": 0.003,
+        "vacuum_pregrasp_descent_m": 0.05
+      },
+      "place": {
+        "approach_offset_m": [
+          0,
+          0,
+          0.01
+        ],
+        "retreat_offset_m": [
+          0,
+          0,
+          0.01
+        ]
+      },
+      "place_pose": {
+        "name": "place",
+        "pose_path": "poses/place.json"
+      },
+      "place_pose_name": "place",
+      "capture_pose_name": "mega"
+    }
+  },
+  "created_at": "2026-03-30T12:36:04Z",
+  "updated_at": "2026-04-26T19:49:31Z"
+}

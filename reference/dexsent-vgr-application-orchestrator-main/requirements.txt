@@ -1,0 +1,27 @@
+fastapi>=0.110
+uvicorn>=0.29
+python-multipart>=0.0.9
+pyyaml>=6.0
+pyzmq>=25.1
+pydantic>=2.6
+numpy>=1.24
+opencv-python-headless>=4.9
+trimesh>=4.0
+websockets>=12.0
+scipy>=1.10
+pin
+python-fcl
+
+#robot engine
+pin
+coal
+trimesh
+open3d
+numpy
+scipy
+ompl
+ruckig
+pyyaml
+meshcat
+pydantic
+pytest

@@ -1,0 +1,156 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dexsent Intelligent Manupulation Platform | Robot Waypoints</title>
+    <link rel="icon" type="image/png" href="/ui/assets/favicon.png" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/tokens.css" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/operator.css" />
+  </head>
+  <body data-page="robot-waypoints">
+    <div class="op-app">
+      <header class="op-header">
+        <div class="brand">
+          <img class="brand-logo" src="/ui/assets/logo-Blue.svg" alt="Dexsent logo" />
+          <div class="brand-copy">
+            <h1>Intelligent Manupulation Platform</h1>
+            <p>Operator UI: robot waypoints</p>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <div class="chip"><span class="label">Camera</span><span class="led off" id="cameraLed"></span><span id="cameraText">off</span></div>
+          <div class="chip"><span class="label">Robot</span><span class="led off" id="robotLed"></span><span id="robotText">off</span></div>
+          <div class="chip"><span class="label">Vision</span><span class="led off" id="visionLed"></span><span id="visionText">off</span></div>
+          <div class="chip"><span class="label">Vision Mode</span><select id="visionTransportSelect"><option value="zmq">local</option><option value="websocket">blackwell</option></select></div>
+          <div class="chip"><span class="label">Server</span><span class="led off" id="serverLed"></span><span id="serverText">off</span></div>
+          <div class="chip"><span class="label">UI</span><span id="systemStatus">idle</span></div>
+        </div>
+      </header>
+
+      <div class="op-layout">
+        <aside class="op-sidebar">
+          <h2>Operator</h2>
+          <div class="nav-group">
+            <a class="nav-link" href="/ui/operator/assets" data-nav="asset-manager">Asset Manager</a>
+            <a class="nav-sub active" href="/ui/operator/assets/robot-waypoints" data-nav="robot-waypoints">Robot Waypoints</a>
+            <a class="nav-sub" href="/ui/operator/assets/object-definition" data-nav="object-definition">Object Definition</a>
+            <a class="nav-link" href="/ui/operator/task-flow" data-nav="task-flow">Task Flow</a>
+            <a class="nav-link" href="/ui/operator/monitor" data-nav="monitor">Monitor</a>
+            <a class="nav-sub" href="/ui/operator/robot-viz" data-nav="robot-viz">Robot Visualizer</a>
+          </div>
+          <div class="nav-hint">Record and validate robot poses before final flow execution.</div>
+        </aside>
+
+        <main class="op-content">
+          <section class="panel">
+            <h2>Context</h2>
+            <div class="context-grid">
+              <div>
+                <label for="stationSelect">Station</label>
+                <select id="stationSelect"></select>
+              </div>
+              <div>
+                <label for="assetSelect">Asset</label>
+                <select id="assetSelect"></select>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="secondary" id="refreshContextBtn" type="button">Refresh</button>
+            </div>
+            <div class="hint" id="pageInfo">Select asset to manage waypoints.</div>
+          </section>
+
+          <section class="panel">
+            <h2>Robot Poses</h2>
+            <div class="grid two">
+              <div class="card">
+                <label for="stepSize">Step Size (m)</label>
+                <input id="stepSize" value="0.02" />
+                <label for="angleStep">Angle Step (deg)</label>
+                <input id="angleStep" value="5" />
+                <div class="teleop-grid">
+                  <button id="nudgeXp" type="button">+X</button>
+                  <button id="nudgeYp" type="button">+Y</button>
+                  <button id="nudgeZp" type="button">+Z</button>
+                  <button id="nudgeXn" type="button">-X</button>
+                  <button id="nudgeYn" type="button">-Y</button>
+                  <button id="nudgeZn" type="button">-Z</button>
+                  <button id="nudgeRollP" type="button">+Roll</button>
+                  <button id="nudgePitchP" type="button">+Pitch</button>
+                  <button id="nudgeYawP" type="button">+Yaw</button>
+                  <button id="nudgeRollN" type="button">-Roll</button>
+                  <button id="nudgePitchN" type="button">-Pitch</button>
+                  <button id="nudgeYawN" type="button">-Yaw</button>
+                  <button class="secondary" id="gripperOpenBtn" type="button">Open</button>
+                  <button class="secondary" id="gripperCloseBtn" type="button">Close</button>
+                  <button class="ghost" id="robotStopBtn" type="button">Stop</button>
+                </div>
+                <label>Custom TCP Pose <span style="font-weight:normal;font-size:0.85em;opacity:0.7">(fingertip wrt base)</span></label>
+                <div class="muted">Saved TCP pose is base -> custom_tcp. Save Pose stores joints and TCP together.</div>
+                <div class="field-row">
+                  <div>
+                    <label for="poseXInput">X (m)</label>
+                    <input id="poseXInput" type="number" step="0.001" />
+                  </div>
+                  <div>
+                    <label for="poseYInput">Y (m)</label>
+                    <input id="poseYInput" type="number" step="0.001" />
+                  </div>
+                  <div>
+                    <label for="poseZInput">Z (m)</label>
+                    <input id="poseZInput" type="number" step="0.001" />
+                  </div>
+                  <div>
+                    <label for="poseRollInput">Roll (deg)</label>
+                    <input id="poseRollInput" type="number" step="0.1" />
+                  </div>
+                  <div>
+                    <label for="posePitchInput">Pitch (deg)</label>
+                    <input id="posePitchInput" type="number" step="0.1" />
+                  </div>
+                  <div>
+                    <label for="poseYawInput">Yaw (deg)</label>
+                    <input id="poseYawInput" type="number" step="0.1" />
+                  </div>
+                </div>
+                <div class="actions">
+                  <button class="primary" id="moveManualPoseBtn" type="button">Move Manual TCP</button>
+                </div>
+              </div>
+
+              <div class="card">
+                <label for="poseName">Pose Name</label>
+                <input id="poseName" value="capture_pose" />
+                <label for="poseMode">Mode</label>
+                <select id="poseMode">
+                  <option value="auto">auto</option>
+                  <option value="joints">joints</option>
+                  <option value="tcp">tcp</option>
+                </select>
+                <div class="actions">
+                  <button class="primary" id="savePoseBtn" type="button">Save Pose</button>
+                  <button class="secondary" id="refreshPoseBtn" type="button">Refresh</button>
+                </div>
+
+                <label for="poseSelect">Saved Poses</label>
+                <select id="poseSelect" class="listbox" size="10"></select>
+                <div class="actions">
+                  <button class="secondary" id="movePoseBtn" type="button">Move To Pose</button>
+                  <button class="ghost" id="renamePoseBtn" type="button">Rename Pose</button>
+                  <button class="danger" id="deletePoseBtn" type="button">Delete Pose</button>
+                </div>
+              </div>
+            </div>
+            <pre class="log-box" id="waypointLog">Waypoint log ready.</pre>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/ui/assets/operator/js/api.js"></script>
+    <script src="/ui/assets/operator/js/operator-shell.js"></script>
+    <script src="/ui/assets/operator/js/operator-waypoints.js"></script>
+  </body>
+</html>

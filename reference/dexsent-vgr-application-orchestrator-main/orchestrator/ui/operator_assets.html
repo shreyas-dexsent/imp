@@ -1,0 +1,121 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dexsent Intelligent Manupulation Platform | Asset Manager</title>
+    <link rel="icon" type="image/png" href="/ui/assets/favicon.png" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/tokens.css" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/operator.css" />
+  </head>
+  <body data-page="asset-manager">
+    <div class="op-app">
+      <header class="op-header">
+        <div class="brand">
+          <img class="brand-logo" src="/ui/assets/logo-Blue.svg" alt="Dexsent logo" />
+          <div class="brand-copy">
+            <h1>Intelligent Manupulation Platform</h1>
+            <p>Operator UI: asset manager</p>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <div class="chip"><span class="label">Camera</span><span class="led off" id="cameraLed"></span><span id="cameraText">off</span></div>
+          <div class="chip"><span class="label">Robot</span><span class="led off" id="robotLed"></span><span id="robotText">off</span></div>
+          <div class="chip"><span class="label">Vision</span><span class="led off" id="visionLed"></span><span id="visionText">off</span></div>
+          <div class="chip"><span class="label">Vision Mode</span><select id="visionTransportSelect"><option value="zmq">local</option><option value="websocket">blackwell</option></select></div>
+          <div class="chip"><span class="label">Server</span><span class="led off" id="serverLed"></span><span id="serverText">off</span></div>
+          <div class="chip"><span class="label">UI</span><span id="systemStatus">idle</span></div>
+        </div>
+      </header>
+
+      <div class="op-layout">
+        <aside class="op-sidebar">
+          <h2>Operator</h2>
+          <div class="nav-group">
+            <a class="nav-link active" href="/ui/operator/assets" data-nav="asset-manager">Asset Manager</a>
+            <a class="nav-sub" href="/ui/operator/assets/robot-waypoints" data-nav="robot-waypoints">Robot Waypoints</a>
+            <a class="nav-sub" href="/ui/operator/assets/object-definition" data-nav="object-definition">Object Definition</a>
+            <a class="nav-link" href="/ui/operator/task-flow" data-nav="task-flow">Task Flow</a>
+            <a class="nav-link" href="/ui/operator/monitor" data-nav="monitor">Monitor</a>
+            <a class="nav-sub" href="/ui/operator/robot-viz" data-nav="robot-viz">Robot Visualizer</a>
+          </div>
+          <div class="nav-hint">Prepare robot waypoints and object templates before task flow deployment.</div>
+        </aside>
+
+        <main class="op-content">
+          <section class="panel">
+            <h2>Context</h2>
+            <div class="context-grid">
+              <div>
+                <label for="stationSelect">Station</label>
+                <select id="stationSelect"></select>
+              </div>
+              <div>
+                <label for="assetSelect">Asset</label>
+                <select id="assetSelect"></select>
+              </div>
+            </div>
+            <div class="actions">
+              <button class="secondary" id="refreshContextBtn" type="button">Refresh</button>
+            </div>
+            <div class="asset-admin-grid">
+              <div class="card">
+                <h3>Selected Asset</h3>
+                <label for="renameAssetName">Asset Name</label>
+                <input id="renameAssetName" placeholder="Default Asset" />
+                <div class="actions">
+                  <button class="secondary" id="renameAssetBtn" type="button">Rename Asset</button>
+                  <button class="danger" id="deleteAssetBtn" type="button">Delete Asset</button>
+                </div>
+              </div>
+
+              <div class="card">
+                <h3>Create Asset</h3>
+                <label for="newAssetName">Asset Name</label>
+                <input id="newAssetName" placeholder="New Asset" />
+                <label for="newAssetId">Asset ID (optional)</label>
+                <input id="newAssetId" placeholder="asset-2" />
+                <div class="actions">
+                  <button class="primary" id="createAssetBtn" type="button">Add Asset</button>
+                </div>
+              </div>
+            </div>
+
+            <label>Assets In Station</label>
+            <div class="object-list" id="assetList">No assets loaded.</div>
+            <div class="hint" id="pageInfo">Select context then open a manager page.</div>
+          </section>
+
+          <section class="panel">
+            <h2>Asset Manager</h2>
+            <div class="manager-grid">
+              <div class="manager-card">
+                <h3>Robot Waypoints</h3>
+                <p>Teleop robot, capture/manage poses, and keep pose naming clean for the operator task flow.</p>
+                <div class="actions">
+                  <a class="button-link primary" href="/ui/operator/assets/robot-waypoints">Open Robot Waypoints</a>
+                </div>
+              </div>
+
+              <div class="manager-card">
+                <h3>Object Definition</h3>
+                <p>Capture and segment product templates, edit detections, and maintain cuboid geometry.</p>
+                <div class="actions">
+                  <a class="button-link primary" href="/ui/operator/assets/object-definition">Open Object Definition</a>
+                </div>
+              </div>
+            </div>
+            <div class="actions">
+              <a class="button-link secondary" href="/ui/operator/task-flow">Go To Task Flow</a>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/ui/assets/operator/js/api.js"></script>
+    <script src="/ui/assets/operator/js/operator-shell.js"></script>
+    <script src="/ui/assets/operator/js/operator-assets.js"></script>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+{
+  "source": "https://github.com/google-deepmind/mujoco_menagerie/archive/refs/heads/main.zip",
+  "xml_in_zip": "mujoco_menagerie-main/universal_robots_ur5e/ur5e.xml",
+  "model_xml": "C:\\Users\\asus\\dexsent\\vgr\\dexsent-vgr-robot-controller-2.5d\\robot_controller\\assets\\models\\ur5e_mjcf\\ur5e.xml"
+}

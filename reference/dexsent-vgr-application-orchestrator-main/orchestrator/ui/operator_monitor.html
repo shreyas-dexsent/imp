@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dexsent Intelligent Manupulation Platform | Monitor</title>
+    <link rel="icon" type="image/png" href="/ui/assets/favicon.png" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/tokens.css" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/operator.css" />
+  </head>
+  <body data-page="monitor">
+    <div class="op-app monitor-app">
+      <header class="op-header">
+        <div class="brand">
+          <img class="brand-logo" src="/ui/assets/logo-Blue.svg" alt="Dexsent logo" />
+          <div class="brand-copy">
+            <h1>Intelligent Manupulation Platform</h1>
+            <p>Operator UI: monitor</p>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <div class="chip"><span class="label">Camera</span><span class="led off" id="cameraLed"></span><span id="cameraText">off</span></div>
+          <div class="chip"><span class="label">Robot</span><span class="led off" id="robotLed"></span><span id="robotText">off</span></div>
+          <div class="chip"><span class="label">Vision</span><span class="led off" id="visionLed"></span><span id="visionText">off</span></div>
+          <div class="chip"><span class="label">Vision Mode</span><select id="visionTransportSelect"><option value="zmq">local</option><option value="websocket">blackwell</option></select></div>
+          <div class="chip"><span class="label">Server</span><span class="led off" id="serverLed"></span><span id="serverText">off</span></div>
+          <div class="chip"><span class="label">UI</span><span id="systemStatus">idle</span></div>
+        </div>
+      </header>
+
+      <div class="op-layout monitor-shell">
+        <!-- Left nav sidebar (navigation only) -->
+        <aside class="op-sidebar">
+          <h2>Operator</h2>
+          <div class="nav-group">
+            <a class="nav-link" href="/ui/operator/assets" data-nav="asset-manager">Asset Manager</a>
+            <a class="nav-sub" href="/ui/operator/assets/robot-waypoints" data-nav="robot-waypoints">Robot Waypoints</a>
+            <a class="nav-sub" href="/ui/operator/assets/object-definition" data-nav="object-definition">Object Definition</a>
+            <a class="nav-link" href="/ui/operator/task-flow" data-nav="task-flow">Task Flow</a>
+            <a class="nav-link active" href="/ui/operator/monitor" data-nav="monitor">Monitor</a>
+            <a class="nav-sub" href="/ui/operator/robot-viz" data-nav="robot-viz">Robot Visualizer</a>
+          </div>
+          <div class="nav-hint">Run and supervise production without opening engineering controls.</div>
+        </aside>
+
+        <!-- Main run tab: slim control panel + full visualization -->
+        <main class="op-content monitor-content">
+          <div class="monitor-run-layout">
+
+            <!-- Slim left control panel -->
+            <aside class="monitor-control-panel">
+
+              <!-- Run context selects -->
+              <div class="mcp-section">
+                <div class="mcp-label">Station</div>
+                <select id="stationSelect" class="mcp-select"></select>
+                <div class="mcp-label">Asset</div>
+                <select id="assetSelect" class="mcp-select"></select>
+                <div class="mcp-label">Task</div>
+                <select id="taskSelect" class="mcp-select"></select>
+                <div class="mcp-label">Camera</div>
+                <select id="cameraIdSelect" class="mcp-select"></select>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="mcp-section mcp-actions">
+                <button class="primary run-btn" id="startRunBtn" type="button">Start</button>
+                <button class="secondary run-btn" id="pauseRunBtn" type="button">Pause</button>
+                <button class="danger run-btn" id="stopRunBtn" type="button">Stop</button>
+                <button class="ghost mcp-refresh" id="refreshMonitorBtn" type="button">Refresh</button>
+              </div>
+
+              <!-- Run meta pills -->
+              <div class="mcp-section mcp-meta">
+                <div class="mcp-meta-row"><span class="mcp-meta-label">Run ID</span><span id="metaRunId" class="mcp-meta-value">-</span></div>
+                <div class="mcp-meta-row"><span class="mcp-meta-label">State</span><span id="metaRunState" class="mcp-meta-value">idle</span></div>
+                <div class="mcp-meta-row"><span class="mcp-meta-label">Station</span><span id="metaStation" class="mcp-meta-value">-</span></div>
+                <div class="mcp-meta-row"><span class="mcp-meta-label">Asset</span><span id="metaAsset" class="mcp-meta-value">-</span></div>
+                <div class="mcp-meta-row"><span class="mcp-meta-label">Task</span><span id="metaTask" class="mcp-meta-value">-</span></div>
+              </div>
+
+              <!-- Robot state -->
+              <div class="mcp-section">
+                <div class="mcp-section-title">Robot State</div>
+                <div class="mcp-pose-grid">
+                  <div class="mcp-pose-cell"><span class="mcp-pose-key">X</span><span id="robotX" class="mcp-pose-val">0.000</span></div>
+                  <div class="mcp-pose-cell"><span class="mcp-pose-key">Y</span><span id="robotY" class="mcp-pose-val">0.000</span></div>
+                  <div class="mcp-pose-cell"><span class="mcp-pose-key">Z</span><span id="robotZ" class="mcp-pose-val">0.000</span></div>
+                  <div class="mcp-pose-cell"><span class="mcp-pose-key">R</span><span id="robotR" class="mcp-pose-val">0.0</span></div>
+                  <div class="mcp-pose-cell"><span class="mcp-pose-key">P</span><span id="robotP" class="mcp-pose-val">0.0</span></div>
+                  <div class="mcp-pose-cell"><span class="mcp-pose-key">Yaw</span><span id="robotYaw" class="mcp-pose-val">0.0</span></div>
+                </div>
+                <div class="mcp-info-row"><span class="mcp-info-label">Mode</span><span id="robotMode">idle</span></div>
+                <div class="mcp-info-row"><span class="mcp-info-label">Error</span><span id="robotError">none</span></div>
+              </div>
+
+              <!-- Live feed thumbnail -->
+              <div class="mcp-section mcp-feed-section">
+                <div class="mcp-section-title">Live Feed</div>
+                <div class="mcp-feed-shell">
+                  <img id="liveFeed" alt="Live camera and vision feed" />
+                  <div class="feed-annotation" id="liveFeedAnnotation"></div>
+                </div>
+                <div class="mcp-info-row"><span class="mcp-info-label">Source</span><span id="liveFeedMode">camera</span></div>
+                <div class="hint" id="liveFeedInfo">camera frame pending</div>
+              </div>
+
+              <!-- Run timeline log -->
+              <div class="mcp-section mcp-timeline">
+                <div class="mcp-section-title">
+                  Run <span class="led off" id="runLed" style="display:inline-block;vertical-align:middle"></span>
+                  <span id="runStateText" style="font-size:11px;color:var(--muted)">idle</span>
+                </div>
+                <pre class="mini-log mcp-event-log" id="runEventLog">No run events yet.</pre>
+              </div>
+
+              <div class="hint" id="pageInfo" style="font-size:11px">Select task and press Start.</div>
+            </aside>
+
+            <!-- Full-width visualization panel -->
+            <div class="monitor-viz-panel" id="monitorVizMount"></div>
+
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <script src="/ui/assets/operator/js/api.js"></script>
+    <script src="/ui/assets/operator/js/operator-shell.js"></script>
+    <script src="/ui/assets/operator/js/modal-host.js"></script>
+    <script src="/ui/assets/operator/js/operator-monitor.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "/ui/assets/operator/vendor/three/build/three.module.js",
+          "three/addons/": "/ui/assets/operator/vendor/three/examples/jsm/"
+        }
+      }
+    </script>
+    <script type="module" src="/ui/assets/operator/js/bin-picking-tools.js"></script>
+  </body>
+</html>

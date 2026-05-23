@@ -1,0 +1,20 @@
+environment:
+  obstacles:
+  - name: big_dummy_collision_box
+    type: mesh
+    path: obstacles/big_dummy_collision_box.stl
+    transform:
+      translation:
+      - -0.621727
+      - -0.163867
+      - 0.171529
+      rotation:
+      - - 1
+        - 0
+        - 0
+      - - 0
+        - 1
+        - 0
+      - - 0
+        - 0
+        - 1

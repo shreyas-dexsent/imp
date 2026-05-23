@@ -1,0 +1,10 @@
+{
+  "source_step": "/home/imp/imp/data/stations/station-1/assets/asset-1/objects/barel2/barel2.stp",
+  "generated_obj": "/home/imp/imp/data/stations/station-1/assets/asset-1/objects/barel2/barel2.obj",
+  "linear_deflection": 0.01,
+  "angular_deflection_rad": 0.1,
+  "vertex_count": 97078,
+  "triangle_count": 197036,
+  "face_count": 169,
+  "generated_by": "OCP step_to_obj_barel2.py"
+}

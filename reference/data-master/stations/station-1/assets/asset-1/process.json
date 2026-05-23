@@ -1,0 +1,11 @@
+{
+  "station_id": "station-1",
+  "name": "Default Asset",
+  "description": "",
+  "task_type": "pick_place_demo",
+  "camera_ids": [],
+  "robot_ids": [],
+  "created_at": "2026-04-09T15:47:18Z",
+  "updated_at": "2026-04-09T15:47:18Z",
+  "asset_id": "asset-1"
+}

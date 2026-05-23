@@ -1,0 +1,34 @@
+camera:
+  camera_id: cam_webcam
+  type: webcam_uvc
+  mode: rgb
+  fps: 30
+
+  sdk:
+    device_index: 0      # 0 = default laptop camera
+    width: 640
+    height: 480
+    fps: 30
+
+shared_memory:
+  rgb:
+    name_prefix: "cam_cam_webcam_rgb"
+    width: 640
+    height: 480
+    channels: 3
+    dtype: "uint8"
+    triple_buffers: ["A", "B", "C"]
+
+ipc:
+  zmq_pub: "tcp://127.0.0.1:5555"
+  topic: "camera"
+
+health:
+  host: "0.0.0.0"
+  port: 8093
+
+runtime:
+  log_level: "INFO"
+
+event_bus:
+  enabled: true     # 👈 start event bus inside this process

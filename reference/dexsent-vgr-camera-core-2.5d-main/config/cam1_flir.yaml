@@ -1,0 +1,33 @@
+camera:
+  camera_id: cam1
+  type: flir_blackfly_gige
+  mode: rgb
+  fps: 20
+
+  sdk:
+    serial_number: "20456789"
+    exposure_time_us: 4000
+    gain: 0.0
+    pixel_format: "BayerRG8"
+    packet_size: 1500
+    inter_packet_delay: 0
+
+shared_memory:
+  rgb:
+    name_prefix: "cam_cam1_rgb"
+    width: 2448
+    height: 2048
+    channels: 3
+    dtype: "uint8"
+    triple_buffers: ["A", "B", "C"]
+
+ipc:
+  zmq_pub: "tcp://127.0.0.1:5555"
+  topic: "camera"
+
+health:
+  host: "0.0.0.0"
+  port: 8092
+
+runtime:
+  log_level: "INFO"

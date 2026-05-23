@@ -1,0 +1,5005 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dexsent Intelligent Manupulation Platform | Calibration</title>
+    <link rel="icon" type="image/png" href="/ui/assets/favicon.png" />
+    <link rel="stylesheet" href="/ui/assets/gizmo-editor.css" />
+    <link rel="stylesheet" href="/ui/assets/gripper-studio.css" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+      :root {
+        color-scheme: dark;
+        --ink: #d4dde6;
+        --muted: rgba(180, 196, 210, 0.68);
+        --paper: #0f1318;
+        --sand: #1e2d3d;
+        --ocean: #4dc8d4;
+        --mint: #12c6cf;
+        --sun: #1e2d3d;
+        --rose: #d4dde6;
+        --card: #181e27;
+        --card-inner: #1e2633;
+        --stroke: rgba(180, 196, 210, 0.13);
+        --stroke-strong: rgba(77, 200, 212, 0.32);
+        --shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+        --input-bg: #141a22;
+        --input-border: rgba(180, 196, 210, 0.18);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Space Grotesk", sans-serif;
+        color: var(--ink);
+        background: radial-gradient(circle at 10% 14%, rgba(20, 50, 80, 0.4) 0%, transparent 42%),
+          radial-gradient(circle at 92% 10%, rgba(18, 100, 120, 0.18) 0%, transparent 34%),
+          var(--paper);
+        min-height: 100vh;
+      }
+
+      input, select, textarea {
+        background: var(--input-bg, #141a22) !important;
+        color: var(--ink) !important;
+        border-color: var(--input-border, rgba(180,196,210,0.18)) !important;
+      }
+
+      input[readonly], select[disabled] {
+        color: var(--muted) !important;
+      }
+
+      .app {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        padding: 24px clamp(16px, 4vw, 48px) 40px;
+      }
+
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .title h1 {
+        margin: 0;
+        font-size: clamp(22px, 2.6vw, 30px);
+        letter-spacing: -0.01em;
+        color: var(--ocean);
+      }
+
+      .title p {
+        margin: 6px 0 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .status-bar {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        flex-wrap: wrap;
+        background: var(--card);
+        padding: 10px 14px;
+        border-radius: 14px;
+        border: 1px solid var(--stroke);
+        box-shadow: var(--shadow);
+        font-size: 13px;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: rgba(30, 50, 70, 0.75);
+        border: 1px solid rgba(77, 200, 212, 0.28);
+        color: var(--ocean);
+        font-weight: 600;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: rgba(30, 50, 70, 0.75);
+        color: var(--ocean);
+        border: 1px solid rgba(77, 200, 212, 0.32);
+        font-weight: 600;
+        font-size: 11px;
+      }
+
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      button.primary {
+        background: linear-gradient(135deg, var(--ocean) 0%, var(--mint) 100%);
+        color: #ffffff;
+        box-shadow: 0 10px 20px rgba(17, 90, 155, 0.25);
+      }
+
+      button.secondary {
+        background: rgba(30, 55, 80, 0.8);
+        border: 1px solid rgba(77, 200, 212, 0.38);
+        color: var(--ocean);
+      }
+
+      button.ghost {
+        background: transparent;
+        border: 1px solid rgba(77, 200, 212, 0.3);
+        color: var(--ocean);
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: minmax(220px, 270px) minmax(0, 1fr);
+        gap: 20px;
+      }
+
+      .steps {
+        background: var(--card);
+        border-radius: 18px;
+        padding: 16px;
+        border: 1px solid var(--stroke);
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 24px;
+        align-self: start;
+      }
+
+      .steps h2 {
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin: 0 0 12px;
+        color: var(--ocean);
+      }
+
+      .step-btn {
+        width: 100%;
+        text-align: left;
+        border: none;
+        background: transparent;
+        padding: 12px 12px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--ink);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition: all 0.2s ease;
+      }
+
+      .step-btn span {
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .step-btn.active {
+        background: linear-gradient(
+          125deg,
+          rgba(30, 55, 80, 0.7) 0%,
+          rgba(24, 30, 39, 0.98) 100%
+        );
+        border: 1px solid rgba(77, 200, 212, 0.24);
+        box-shadow: inset 0 0 0 1px rgba(77, 200, 212, 0.12);
+      }
+
+      .panel {
+        background: var(--card);
+        border-radius: 20px;
+        padding: clamp(16px, 3vw, 28px);
+        border: 1px solid var(--stroke);
+        box-shadow: var(--shadow);
+        min-height: 640px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .panel::after {
+        content: "";
+        position: absolute;
+        inset: auto -60px -140px auto;
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(18, 198, 207, 0.22) 0%, transparent 70%);
+      }
+
+      .step-panel {
+        display: none;
+        animation: rise 0.35s ease;
+      }
+
+      .step-panel.active {
+        display: block;
+      }
+
+      @keyframes rise {
+        from {
+          opacity: 0;
+          transform: translateY(12px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .section-title {
+        font-size: 20px;
+        margin: 0 0 10px;
+      }
+
+      .section-sub {
+        color: var(--muted);
+        margin: 0 0 16px;
+        font-size: 14px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+      }
+
+      .card {
+        background: var(--card-inner, #1e2633);
+        border-radius: 14px;
+        border: 1px solid var(--stroke);
+        padding: 14px;
+      }
+
+      .card h3 {
+        font-size: 13px;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--ocean);
+      }
+
+      label {
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted);
+        display: block;
+        margin-bottom: 6px;
+      }
+
+      input:not([type="checkbox"]):not([type="radio"]),
+      select,
+      textarea {
+        width: 100%;
+        min-height: 40px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid var(--stroke);
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 14px;
+        background: var(--input-bg, #141a22);
+        color: var(--ink);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      }
+
+      select {
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        padding-right: 40px;
+        background-image: linear-gradient(45deg, transparent 50%, var(--ocean) 50%),
+          linear-gradient(135deg, var(--ocean) 50%, transparent 50%),
+          linear-gradient(
+            to right,
+            rgba(77, 200, 212, 0.22),
+            rgba(77, 200, 212, 0.22)
+          );
+        background-position: calc(100% - 18px) calc(50% - 3px),
+          calc(100% - 13px) calc(50% - 3px), calc(100% - 34px) 50%;
+        background-size: 5px 5px, 5px 5px, 1px 68%;
+        background-repeat: no-repeat;
+        background-color: var(--input-bg, #141a22);
+      }
+
+      select:hover {
+        border-color: rgba(77, 200, 212, 0.5);
+        background-color: var(--input-bg, #141a22);
+      }
+
+      select option {
+        color: var(--ink);
+        background: var(--card-inner, #1e2633);
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        outline: none;
+        border-color: rgba(77, 200, 212, 0.5);
+        box-shadow: 0 0 0 3px rgba(77, 200, 212, 0.18);
+      }
+
+      textarea {
+        min-height: 120px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+      }
+
+      .field-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+        gap: 10px;
+      }
+
+      .btn-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .preview {
+        background: #0d1219;
+        border: 1px solid rgba(77, 200, 212, 0.2);
+        border-radius: 12px;
+        min-height: 160px;
+        color: #b8c8d8;
+        padding: 10px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        overflow: auto;
+        white-space: pre-wrap;
+      }
+
+      .frame {
+        background: #0d1219;
+        border: 1px solid rgba(77, 200, 212, 0.2);
+        border-radius: 14px;
+        padding: 10px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .frame img {
+        width: 100%;
+        height: auto;
+        border-radius: 10px;
+        background: #363b44;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      .table th,
+      .table td {
+        text-align: left;
+        padding: 6px 8px;
+        border-bottom: 1px solid rgba(17, 90, 155, 0.18);
+      }
+
+      .table th {
+        color: var(--muted);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 11px;
+      }
+
+      .teleop-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .teleop-grid button {
+        padding: 10px;
+        border-radius: 10px;
+        background: rgba(170, 237, 246, 0.72);
+        border: 1px solid rgba(18, 198, 207, 0.38);
+        color: var(--ocean);
+      }
+
+      .steps-card {
+        margin-top: 16px;
+      }
+
+      .steps-card .frame {
+        margin: 8px 0;
+      }
+
+      .flow-camera-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .flow-camera-meta {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .flow-camera-select {
+        width: 100%;
+      }
+
+      .flow-camera-frame {
+        position: relative;
+        width: 100%;
+        border-radius: 12px;
+        border: 1px solid var(--stroke-strong);
+        background: #363b44;
+        overflow: hidden;
+        aspect-ratio: 4 / 3;
+      }
+
+      .flow-camera-frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        background: #363b44;
+      }
+
+      .log {
+        margin-top: 20px;
+        background: #363b44;
+        border: 1px solid rgba(170, 237, 246, 0.28);
+        color: #f6f6f6;
+        padding: 12px;
+        border-radius: 12px;
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px;
+        min-height: 140px;
+        white-space: pre-wrap;
+      }
+
+      @media (max-width: 980px) {
+        .layout {
+          grid-template-columns: 1fr;
+        }
+
+        .steps {
+          position: relative;
+          top: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <div class="title">
+          <h1>Calibration Lab</h1>
+          <p>Guided hand-eye workflow with live preview, sample capture, and quality metrics.</p>
+        </div>
+        <div class="status-bar">
+          <div class="chip">Server <span id="serverStatus">idle</span></div>
+          <button class="secondary" onclick="stopCalibrationServer()">Stop Server</button>
+          <button class="ghost" onclick="window.location.href='/ui'">Back to Main</button>
+        </div>
+      </header>
+
+      <div class="layout">
+        <aside class="steps">
+          <h2>Steps</h2>
+          <button class="step-btn active" data-step="0">1. Connect <span>setup</span></button>
+          <button class="step-btn" data-step="1">2. Sample <span>capture</span></button>
+          <button class="step-btn" data-step="2">3. TCP <span>flange</span></button>
+          <button class="step-btn" data-step="3">4. Solve <span>save</span></button>
+          <div class="card steps-card">
+            <h3>Live Camera</h3>
+            <div class="flow-camera-meta" id="calibLiveCameraCount">Cameras: 0</div>
+            <div class="flow-camera-list" id="calibLiveCameraList">
+              <span class="badge">none</span>
+            </div>
+            <label for="calibLiveCameraSelect">Active Camera</label>
+            <select id="calibLiveCameraSelect" class="flow-camera-select"></select>
+            <div class="flow-camera-frame">
+              <img id="calibLiveImage" alt="Camera preview" />
+            </div>
+            <div class="flow-camera-meta" id="calibLiveStatus">idle</div>
+            <div class="flow-camera-meta" id="calibLiveFps">FPS: --</div>
+          </div>
+        </aside>
+
+        <main class="panel">
+          <section class="step-panel active" data-step="0">
+            <h2 class="section-title">Connect & Configure</h2>
+            <p class="section-sub">Pick the station, camera, and calibration target before running detection.</p>
+            <div class="grid">
+              <div class="card">
+                <h3>Station</h3>
+                <label>Station</label>
+                <select id="stationSelect"></select>
+                <div class="btn-row">
+                  <button class="secondary" onclick="refreshStations()">Refresh</button>
+                </div>
+              </div>
+              <div class="card">
+                <h3>Camera</h3>
+                <label>Camera</label>
+                <select id="cameraSelect"></select>
+                <div class="btn-row">
+                  <button class="secondary" onclick="refreshCameras()">Refresh</button>
+                </div>
+              </div>
+                <div class="card">
+                  <h3>Target</h3>
+                  <label>Type</label>
+                  <select id="targetType">
+                    <option value="charuco" selected>Charuco</option>
+                    <option value="chessboard">Chessboard</option>
+                  </select>
+                  <div class="field-row">
+                    <div>
+                      <label>Rows</label>
+                      <input id="targetRows" value="9" />
+                    </div>
+                    <div>
+                      <label>Cols</label>
+                      <input id="targetCols" value="6" />
+                    </div>
+                    <div>
+                      <label>Square (m)</label>
+                      <input id="squareSize" value="0.03" />
+                    </div>
+                  </div>
+                <div class="field-row" id="charucoFields">
+                  <div>
+                    <label>Marker (m)</label>
+                    <input id="markerSize" value="0.022" />
+                  </div>
+                    <div>
+                      <label>Aruco Dict</label>
+                    <input id="arucoDict" value="DICT_4X4_50" />
+                  </div>
+                </div>
+                <div class="btn-row">
+                  <button class="secondary" onclick="loadCalibrationTarget()">Load Saved</button>
+                  <button class="primary" onclick="saveCalibrationTarget()">Save Target</button>
+                </div>
+                <div class="preview" id="targetSaveResult">Using in-memory target settings.</div>
+              </div>
+              <div class="card">
+                <h3>Intrinsics</h3>
+                <div class="field-row">
+                  <div>
+                    <label>fx</label>
+                    <input id="fx" value="1230" />
+                  </div>
+                  <div>
+                    <label>fy</label>
+                    <input id="fy" value="1230" />
+                  </div>
+                  <div>
+                    <label>cx</label>
+                    <input id="cx" value="640" />
+                  </div>
+                  <div>
+                    <label>cy</label>
+                    <input id="cy" value="360" />
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div>
+                    <label>Width</label>
+                    <input id="intrinsicWidth" value="1280" />
+                  </div>
+                  <div>
+                    <label>Height</label>
+                    <input id="intrinsicHeight" value="720" />
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div>
+                    <label>k1</label>
+                    <input id="k1" value="0" />
+                  </div>
+                  <div>
+                    <label>k2</label>
+                    <input id="k2" value="0" />
+                  </div>
+                  <div>
+                    <label>p1</label>
+                    <input id="p1" value="0" />
+                  </div>
+                  <div>
+                    <label>p2</label>
+                    <input id="p2" value="0" />
+                  </div>
+                  <div>
+                    <label>k3</label>
+                    <input id="k3" value="0" />
+                  </div>
+                </div>
+                <div class="btn-row">
+                  <button class="secondary" onclick="loadIntrinsics()">Load Saved</button>
+                  <button class="secondary" onclick="fetchCameraIntrinsics()">Fetch Camera</button>
+                  <button class="primary" onclick="saveIntrinsics()">Save Intrinsics</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="step-panel" data-step="1">
+            <h2 class="section-title">Capture Samples</h2>
+            <p class="section-sub">Record robot poses and corresponding target detections.</p>
+            <div class="grid">
+              <div class="card">
+                <h3>Sample Controls</h3>
+                <div class="btn-row">
+                  <button class="primary" onclick="captureSample()">Capture Sample</button>
+                  <button class="secondary" onclick="refreshSamples()">Refresh Count</button>
+                  <button class="secondary" onclick="loadSavedSamples()">Load Saved Samples</button>
+                  <button class="ghost" onclick="clearSamples()">Clear Samples</button>
+                </div>
+                <div class="chip" id="sampleCounter">Samples 0 / 20</div>
+                <div class="preview" id="sampleSummary">No samples yet. Captured poses are stored in the active calibration session.</div>
+                <div class="preview" id="robotPose">Robot pose: not loaded.</div>
+              </div>
+              <div class="card">
+                <h3>Auto Capture</h3>
+                <label>Count</label>
+                <input id="autoCount" value="20" />
+                <label>Min Charuco Corners</label>
+                <input id="minCharucoCorners" value="20" />
+                <label>Workspace Preset</label>
+                <div class="btn-row">
+                  <select id="workspacePreset">
+                    <option value="large">large (Franka)</option>
+                    <option value="medium">medium</option>
+                    <option value="small">small (xArm / ufactory)</option>
+                  </select>
+                  <button class="secondary" onclick="applyWorkspacePreset()">Apply Preset</button>
+                </div>
+                <div class="preview" id="workspacePresetSummary">
+                  Large preset loaded. Offsets are applied around the saved calib pose.
+                </div>
+                <div class="field-row">
+                  <div>
+                    <label>X- Offset (m)</label>
+                    <input id="minX" value="-0.144" />
+                  </div>
+                  <div>
+                    <label>X+ Offset (m)</label>
+                    <input id="maxX" value="0.144" />
+                  </div>
+                  <div>
+                    <label>Y- Offset (m)</label>
+                    <input id="minY" value="-0.144" />
+                  </div>
+                  <div>
+                    <label>Y+ Offset (m)</label>
+                    <input id="maxY" value="0.144" />
+                  </div>
+                  <div>
+                    <label>Z- Offset (m)</label>
+                    <input id="minZ" value="-0.096" />
+                  </div>
+                  <div>
+                    <label>Z+ Offset (m)</label>
+                    <input id="maxZ" value="0.096" />
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div>
+                    <label>Qx</label>
+                    <input id="autoQx" value="0" />
+                  </div>
+                  <div>
+                    <label>Qy</label>
+                    <input id="autoQy" value="0" />
+                  </div>
+                  <div>
+                    <label>Qz</label>
+                    <input id="autoQz" value="0" />
+                  </div>
+                  <div>
+                    <label>Qw</label>
+                    <input id="autoQw" value="1" />
+                  </div>
+                </div>
+                <label>Profile</label>
+                <input id="autoProfile" value="medium" />
+                  <label>Settle (s)</label>
+                  <input id="autoSettle" value="1.0" />
+                  <div class="field-row">
+                    <div>
+                      <label>Roll jitter (deg)</label>
+                      <input id="autoRollJitter" value="36" />
+                    </div>
+                    <div>
+                      <label>Pitch jitter (deg)</label>
+                      <input id="autoPitchJitter" value="36" />
+                    </div>
+                    <div>
+                      <label>Yaw jitter (deg)</label>
+                      <input id="autoYawJitter" value="54" />
+                    </div>
+                  </div>
+                  <div class="btn-row">
+                    <button class="secondary" onclick="useCurrentOrientation()">Use Current Orientation</button>
+                    <button class="primary" onclick="autoCaptureSamples()">Run Auto Capture</button>
+                    <button class="ghost" onclick="abortAutoCapture()">Stop</button>
+                  </div>
+              </div>
+              <div class="card">
+                <h3>Teleop</h3>
+                <label>Step Size (m)</label>
+                <input id="stepSize" value="0.02" />
+                <label>Angle Step (deg)</label>
+                <input id="angleStep" value="5" />
+                <div class="teleop-grid">
+                  <button onclick="nudge('x', 1)">+X</button>
+                  <button onclick="nudge('y', 1)">+Y</button>
+                  <button onclick="nudge('z', 1)">+Z</button>
+                  <button onclick="nudge('x', -1)">-X</button>
+                  <button onclick="nudge('y', -1)">-Y</button>
+                  <button onclick="nudge('z', -1)">-Z</button>
+                  <button onclick="nudgeRotation('roll', 1)">+Roll</button>
+                  <button onclick="nudgeRotation('pitch', 1)">+Pitch</button>
+                  <button onclick="nudgeRotation('yaw', 1)">+Yaw</button>
+                  <button onclick="nudgeRotation('roll', -1)">-Roll</button>
+                  <button onclick="nudgeRotation('pitch', -1)">-Pitch</button>
+                  <button onclick="nudgeRotation('yaw', -1)">-Yaw</button>
+                  <button class="secondary" onclick="openGripper()">Open</button>
+                  <button class="secondary" onclick="closeGripper()">Close</button>
+                  <button class="ghost" onclick="stopRobot()">Stop</button>
+                </div>
+              </div>
+              <div class="card">
+                <h3>Poses</h3>
+                <label>Asset</label>
+                <select id="processSelect"></select>
+                <div class="btn-row">
+                  <button class="secondary" onclick="refreshProcesses()">Refresh</button>
+                </div>
+                <label>Pose Name</label>
+                <input id="poseName" placeholder="capture_pose" />
+                <label>Mode</label>
+                <select id="poseMode">
+                  <option value="auto">auto</option>
+                  <option value="joints">joints</option>
+                  <option value="tcp">tcp</option>
+                </select>
+                <label>Custom TCP Pose <span style="font-weight:normal;font-size:0.85em;opacity:0.7">(base -> custom_tcp)</span></label>
+                <div class="preview">Save Pose stores joints and this custom TCP pose together.</div>
+                <div class="field-row">
+                  <div>
+                    <label>X (m)</label>
+                    <input id="poseX" type="number" step="0.001" />
+                  </div>
+                  <div>
+                    <label>Y (m)</label>
+                    <input id="poseY" type="number" step="0.001" />
+                  </div>
+                  <div>
+                    <label>Z (m)</label>
+                    <input id="poseZ" type="number" step="0.001" />
+                  </div>
+                  <div>
+                    <label>Roll (deg)</label>
+                    <input id="poseRoll" type="number" step="0.1" />
+                  </div>
+                  <div>
+                    <label>Pitch (deg)</label>
+                    <input id="posePitch" type="number" step="0.1" />
+                  </div>
+                  <div>
+                    <label>Yaw (deg)</label>
+                    <input id="poseYaw" type="number" step="0.1" />
+                  </div>
+                </div>
+                <div class="btn-row">
+                  <button class="primary" onclick="moveManualPose()">Move Manual TCP</button>
+                  <button class="primary" onclick="recordPose()">Save Pose</button>
+                  <button class="secondary" onclick="refreshPoses()">Refresh Poses</button>
+                </div>
+                <label>Saved Poses</label>
+                <select id="poseSelect"></select>
+                <div class="btn-row">
+                  <button class="secondary" onclick="moveToPose()">Move To Pose</button>
+                  <button class="ghost" onclick="deletePose()">Delete Pose</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="step-panel" data-step="2">
+            <h2 class="section-title">TCP Calibration</h2>
+            <p class="section-sub">Define the calibration TCP as a flange-relative transform before solving hand-eye.</p>
+            <div class="grid">
+              <div class="card">
+                <h3>Flange To Calibration TCP</h3>
+                <div class="field-row">
+                  <div>
+                    <label>TCP X Offset (m)</label>
+                    <input id="gripperXOffset" type="number" step="0.001" value="0.000" />
+                  </div>
+                  <div>
+                    <label>TCP Y Offset (m)</label>
+                    <input id="gripperYOffset" type="number" step="0.001" value="0.000" />
+                  </div>
+                  <div>
+                    <label>TCP Z Offset (m)</label>
+                    <input id="gripperZOffset" type="number" step="0.001" value="0.000" />
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div>
+                    <label>TCP Roll Offset (deg)</label>
+                    <input id="gripperRollOffset" type="number" step="0.1" value="0.000" />
+                  </div>
+                  <div>
+                    <label>TCP Pitch Offset (deg)</label>
+                    <input id="gripperPitchOffset" type="number" step="0.1" value="0.000" />
+                  </div>
+                  <div>
+                    <label>TCP Yaw Offset (deg)</label>
+                    <input id="gripperYawOffset" type="number" step="0.1" value="0.000" />
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div>
+                    <label>Grasp Up Axis</label>
+                    <select id="tcpGraspUpAxis">
+                      <option value="">Disabled</option>
+                      <option value="x">TCP +X</option>
+                      <option value="-x">TCP -X</option>
+                      <option value="y">TCP +Y</option>
+                      <option value="-y">TCP -Y</option>
+                      <option value="z">TCP +Z</option>
+                      <option value="-z">TCP -Z</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label>Min Up Dot</label>
+                    <input id="tcpGraspUpMinDot" type="number" step="0.01" min="-1" max="1" value="0.000" />
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div>
+                    <label>Gripper Jaw Axis</label>
+                    <select id="tcpJawAxis">
+                      <option value="">Default (Y)</option>
+                      <option value="x">TCP +X</option>
+                      <option value="-x">TCP -X</option>
+                      <option value="y">TCP +Y</option>
+                      <option value="-y">TCP -Y</option>
+                      <option value="z">TCP +Z</option>
+                      <option value="-z">TCP -Z</option>
+                    </select>
+                  </div>
+                </div>
+                <div id="tcpGripperStudio" class="gripper-studio-mount"></div>
+                <div class="btn-row">
+                  <button class="secondary" onclick="loadTcpCalibration()">Load Saved TCP</button>
+                  <button class="primary" onclick="saveTcpCalibration()">Save TCP</button>
+                </div>
+                <div class="preview" id="tcpOffsetSummary">TCP calibration: flange frame, zero offset.</div>
+              </div>
+            </div>
+          </section>
+
+          <section class="step-panel" data-step="3">
+            <h2 class="section-title">Solve & Save</h2>
+            <p class="section-sub">Compute intrinsics first, then compute hand-eye, save it, and verify with a direct Charuco target move.</p>
+            <div class="grid">
+              <div class="card">
+                <h3>Detection Annotation</h3>
+                <div class="frame">
+                  <img id="overlayImage" alt="Detection overlay" />
+                </div>
+                <div class="btn-row">
+                  <button class="primary" onclick="runDetection()">Detect Target</button>
+                </div>
+              </div>
+              <div class="card">
+                <h3>Intrinsics</h3>
+                <div class="btn-row">
+                  <button class="primary" onclick="computeIntrinsics()">Compute Intrinsics</button>
+                  <button class="secondary" onclick="refreshTargetPosesFromLatestIntrinsics()">Refresh Target Poses</button>
+                  <button class="secondary" onclick="saveIntrinsics()">Save Intrinsics</button>
+                </div>
+                <div class="preview" id="intrinsicsResult">Load or compute intrinsics first.</div>
+              </div>
+              <div class="card">
+                <h3>Compute</h3>
+                <label>Method</label>
+                <select id="handeyeMethod">
+                  <option value="Andreff">Andreff</option>
+                  <option value="Tsai">Tsai</option>
+                  <option value="Park">Park</option>
+                  <option value="Horaud">Horaud</option>
+                  <option value="Daniilidis">Daniilidis</option>
+                </select>
+                <label>Mode</label>
+                <select id="handeyeMode">
+                  <option value="eye_in_hand">Eye-in-hand</option>
+                </select>
+                <div class="btn-row">
+                  <button class="primary" onclick="computeHandEye()">Compute Hand-Eye</button>
+                </div>
+                <div class="preview" id="computeResult">No results yet.</div>
+              </div>
+              <div class="card">
+                <h3>Save</h3>
+                <div class="field-row">
+                  <div>
+                    <label>Tx (m)</label>
+                    <input id="saveHeTx" value="0.000000" />
+                  </div>
+                  <div>
+                    <label>Ty (m)</label>
+                    <input id="saveHeTy" value="0.000000" />
+                  </div>
+                  <div>
+                    <label>Tz (m)</label>
+                    <input id="saveHeTz" value="0.000000" />
+                  </div>
+                </div>
+                <div class="field-row">
+                  <div>
+                    <label>Roll (deg)</label>
+                    <input id="saveHeRoll" value="0.000000" />
+                  </div>
+                  <div>
+                    <label>Pitch (deg)</label>
+                    <input id="saveHePitch" value="0.000000" />
+                  </div>
+                  <div>
+                    <label>Yaw (deg)</label>
+                    <input id="saveHeYaw" value="0.000000" />
+                  </div>
+                </div>
+                <label>Hand-Eye Frame</label>
+                <select id="saveHandEyeFrame">
+                  <option value="camera_in_gripper">camera_in_gripper</option>
+                  <option value="base_to_camera">base_to_camera</option>
+                </select>
+                <div id="handEyeGizmoEditor" class="gizmo-editor-mount"></div>
+                <div class="btn-row">
+                  <button class="secondary" onclick="loadHandEyeOffset()">Load Saved</button>
+                  <button class="primary" onclick="saveHandEye()">Save to Station</button>
+                </div>
+                <div class="preview" id="savedHandEyeSummary">Saved hand-eye: not loaded yet.</div>
+                <div class="preview" id="saveResult">Waiting to save.</div>
+              </div>
+              <div class="card">
+                <h3>Verify</h3>
+                <label>Pause At Target (s)</label>
+                <input id="verifyPauseS" value="1.0" />
+                <label>Move Profile</label>
+                <select id="verifyMoveProfile">
+                  <option value="verify" selected>verify</option>
+                  <option value="slow">slow</option>
+                  <option value="medium">medium</option>
+                  <option value="fast">fast</option>
+                </select>
+                <label>Orientation</label>
+                <select id="verifyOrientationMode">
+                  <option value="target_matched_staged" selected>target matched staged</option>
+                  <option value="keep_current">keep current</option>
+                  <option value="target_matched">target matched direct</option>
+                </select>
+                <label>TCP Stand-off Above Target (m)</label>
+                <input id="verifyStandOffM" value="0.010" />
+                <label>Return After Verify</label>
+                <input id="verifyAutoReturn" type="checkbox" checked />
+                <div class="btn-row">
+                  <button class="primary" onclick="checkHandEye()">Check Hand-Eye</button>
+                </div>
+                <div class="preview" id="verifyResult">Waiting to verify.</div>
+              </div>
+            </div>
+          </section>
+
+          <div class="log" id="log">Calibration log initialized.</div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      const serverStatus = document.getElementById("serverStatus");
+      const stationSelect = document.getElementById("stationSelect");
+      const cameraSelect = document.getElementById("cameraSelect");
+      const targetType = document.getElementById("targetType");
+      const targetRows = document.getElementById("targetRows");
+      const targetCols = document.getElementById("targetCols");
+      const squareSize = document.getElementById("squareSize");
+      const markerSize = document.getElementById("markerSize");
+      const arucoDict = document.getElementById("arucoDict");
+      const charucoFields = document.getElementById("charucoFields");
+      const minCharucoCornersInput = document.getElementById("minCharucoCorners");
+      const autoCountInput = document.getElementById("autoCount");
+      const previewImage = document.getElementById("previewImage");
+      const overlayImage = document.getElementById("overlayImage");
+      const detectDebug = document.getElementById("detectDebug");
+      const robotPose = document.getElementById("robotPose");
+      const sampleCounter = document.getElementById("sampleCounter");
+      const sampleSummary = document.getElementById("sampleSummary");
+      const computeResult = document.getElementById("computeResult");
+      const saveResult = document.getElementById("saveResult");
+      const intrinsicsResult = document.getElementById("intrinsicsResult");
+      const verifyResult = document.getElementById("verifyResult");
+      const logEl = document.getElementById("log");
+      const calibLiveImage = document.getElementById("calibLiveImage");
+      const calibLiveCameraCount = document.getElementById("calibLiveCameraCount");
+      const calibLiveCameraList = document.getElementById("calibLiveCameraList");
+      const calibLiveCameraSelect = document.getElementById("calibLiveCameraSelect");
+      const calibLiveStatus = document.getElementById("calibLiveStatus");
+      const calibLiveFps = document.getElementById("calibLiveFps");
+      const gripperXOffset = document.getElementById("gripperXOffset");
+      const gripperYOffset = document.getElementById("gripperYOffset");
+      const gripperZOffset = document.getElementById("gripperZOffset");
+      const gripperRollOffset = document.getElementById("gripperRollOffset");
+      const gripperPitchOffset = document.getElementById("gripperPitchOffset");
+      const gripperYawOffset = document.getElementById("gripperYawOffset");
+      const tcpOffsetSummary = document.getElementById("tcpOffsetSummary");
+      const saveHeTx = document.getElementById("saveHeTx");
+      const saveHeTy = document.getElementById("saveHeTy");
+      const saveHeTz = document.getElementById("saveHeTz");
+      const saveHeRoll = document.getElementById("saveHeRoll");
+      const saveHePitch = document.getElementById("saveHePitch");
+      const saveHeYaw = document.getElementById("saveHeYaw");
+      const saveHandEyeFrame = document.getElementById("saveHandEyeFrame");
+      const targetSaveResult = document.getElementById("targetSaveResult");
+      const savedHandEyeSummary = document.getElementById("savedHandEyeSummary");
+      const processSelect = document.getElementById("processSelect");
+      const poseName = document.getElementById("poseName");
+      const poseMode = document.getElementById("poseMode");
+      const poseSelect = document.getElementById("poseSelect");
+
+      let calibBaseUrl = "";
+      const previewPollMs = 100;
+      let previewTimer = null;
+      let teleopPoseRefreshTimer = null;
+      let lastPreviewUrl = "";
+      let previewFrameId = "";
+      let previewPendingId = "";
+      const previewBuffer = new Image();
+      let lastCalibrationFpsRefreshMs = 0;
+      let lastCompute = null;
+      let lastIntrinsicsCompute = null;
+      let currentToolMount = {
+        parent_frame: "robot_flange",
+        child_frame: "gripper_base",
+        translation_m: [0, 0, 0],
+        rotation_rpy_deg: [0, 0, -45],
+      };
+      let autoCaptureActive = false;
+      let autoCaptureStop = false;
+      let autoBoundsApplied = false;
+      let autoSphereCenter = null;
+      let autoSphereRadius = null;
+      let currentStationId = "";
+      let currentProcessId = "";
+      let processesCache = [];
+      let posesCache = [];
+      let reconnectWatcherStarted = false;
+      let reconnectWasOffline = false;
+      let reconnectStartupToken = null;
+      const AUTO_CAPTURE_STORAGE_KEY = "dexsent_calibration_auto_capture_v1";
+      const WORKSPACE_PRESETS = {
+        large: {
+          label: "large",
+          robot: "Franka",
+          bounds: {
+            minX: -0.144,
+            maxX: 0.144,
+            minY: -0.144,
+            maxY: 0.144,
+            minZ: -0.096,
+            maxZ: 0.096,
+          },
+        },
+        medium: {
+          label: "medium",
+          robot: "mid-size robots",
+          bounds: {
+            minX: -0.108,
+            maxX: 0.108,
+            minY: -0.108,
+            maxY: 0.108,
+            minZ: -0.072,
+            maxZ: 0.072,
+          },
+        },
+        small: {
+          label: "small",
+          robot: "xArm / ufactory",
+          bounds: {
+            minX: -0.072,
+            maxX: 0.072,
+            minY: -0.072,
+            maxY: 0.072,
+            minZ: -0.048,
+            maxZ: 0.048,
+          },
+        },
+      };
+      const AUTO_CAPTURE_FIELD_IDS = [
+        "autoCount",
+        "minCharucoCorners",
+        "workspacePreset",
+        "minX",
+        "maxX",
+        "minY",
+        "maxY",
+        "minZ",
+        "maxZ",
+        "autoQx",
+        "autoQy",
+        "autoQz",
+        "autoQw",
+        "autoProfile",
+        "autoSettle",
+        "autoRollJitter",
+        "autoPitchJitter",
+        "autoYawJitter",
+      ];
+
+      function log(msg) {
+        const stamp = new Date().toLocaleTimeString();
+        logEl.textContent = `[${stamp}] ${msg}\n` + logEl.textContent;
+      }
+
+      function formatWorkspaceBounds(bounds) {
+        if (!bounds) return "";
+        return `X ${bounds.minX.toFixed(3)} to ${bounds.maxX.toFixed(3)} m, Y ${bounds.minY.toFixed(3)} to ${bounds.maxY.toFixed(3)} m, Z ${bounds.minZ.toFixed(3)} to ${bounds.maxZ.toFixed(3)} m relative to calib`;
+      }
+
+      function updateWorkspacePresetSummary() {
+        const presetSelect = document.getElementById("workspacePreset");
+        const summaryEl = document.getElementById("workspacePresetSummary");
+        if (!summaryEl) return;
+        const preset = WORKSPACE_PRESETS[presetSelect?.value] || null;
+        if (!preset) {
+          summaryEl.textContent = "Custom workspace offsets in use.";
+          return;
+        }
+        summaryEl.textContent = `${preset.label} preset for ${preset.robot}. ${formatWorkspaceBounds(preset.bounds)}`;
+      }
+
+      function applyWorkspacePreset(shouldLog = true) {
+        const presetSelect = document.getElementById("workspacePreset");
+        const presetKey = String(presetSelect?.value || "large");
+        const preset = WORKSPACE_PRESETS[presetKey] || WORKSPACE_PRESETS.large;
+        Object.entries(preset.bounds).forEach(([id, value]) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.value = String(value);
+        });
+        updateWorkspacePresetSummary();
+        persistAutoCaptureSettings();
+        if (shouldLog) {
+          log(`Applied ${preset.label} workspace preset for ${preset.robot}.`);
+        }
+      }
+
+      function persistAutoCaptureSettings() {
+        try {
+          const payload = {};
+          AUTO_CAPTURE_FIELD_IDS.forEach((id) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            payload[id] = String(el.value ?? "");
+          });
+          localStorage.setItem(AUTO_CAPTURE_STORAGE_KEY, JSON.stringify(payload));
+        } catch (_) {
+          // Ignore storage failures.
+        }
+      }
+
+      function restoreAutoCaptureSettings() {
+        try {
+          const raw = localStorage.getItem(AUTO_CAPTURE_STORAGE_KEY);
+          if (!raw) {
+            updateWorkspacePresetSummary();
+            return;
+          }
+          const payload = JSON.parse(raw);
+          if (!payload || typeof payload !== "object") return;
+          AUTO_CAPTURE_FIELD_IDS.forEach((id) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            if (Object.prototype.hasOwnProperty.call(payload, id)) {
+              el.value = String(payload[id] ?? "");
+            }
+          });
+          updateWorkspacePresetSummary();
+        } catch (_) {
+          // Ignore storage failures.
+        }
+      }
+
+      function bindAutoCaptureSettingsPersistence() {
+        AUTO_CAPTURE_FIELD_IDS.forEach((id) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          el.addEventListener("input", persistAutoCaptureSettings);
+          el.addEventListener("change", persistAutoCaptureSettings);
+        });
+        const presetSelect = document.getElementById("workspacePreset");
+        if (presetSelect) {
+          presetSelect.addEventListener("input", updateWorkspacePresetSummary);
+          presetSelect.addEventListener("change", updateWorkspacePresetSummary);
+        }
+      }
+
+      function updateSampleSummary(sampleCount = null, extra = "") {
+        const targetCount = Math.max(1, Number(autoCountInput?.value || 1));
+        const count = Math.max(0, Number(sampleCount || 0));
+        if (sampleCounter) {
+          sampleCounter.textContent = `Samples ${count} / ${targetCount}`;
+        }
+        if (sampleSummary) {
+          const suffix = extra ? ` ${extra}` : "";
+          sampleSummary.textContent =
+            count > 0
+              ? `Captured ${count} pose${count === 1 ? "" : "s"} in the active calibration session.${suffix}`
+              : "No samples yet. Captured poses are stored in the active calibration session.";
+        }
+      }
+
+      function setStep(index) {
+        document.querySelectorAll(".step-btn").forEach((btn) => {
+          btn.classList.toggle("active", Number(btn.dataset.step) === index);
+        });
+        document.querySelectorAll(".step-panel").forEach((panel) => {
+          panel.classList.toggle("active", Number(panel.dataset.step) === index);
+        });
+      }
+
+      document.querySelectorAll(".step-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          setStep(Number(btn.dataset.step));
+        });
+      });
+
+      async function api(path, options = {}) {
+        const opts = { ...options };
+        if (opts.body && !opts.headers) {
+          opts.headers = { "Content-Type": "application/json" };
+        }
+        try {
+          const res = await fetch(path, opts);
+          let body = null;
+          try {
+            body = await res.json();
+          } catch (_) {
+            body = null;
+          }
+          return { ok: res.ok, status: res.status, body };
+        } catch (err) {
+          return { ok: false, status: 0, body: { error: String(err) } };
+        }
+      }
+
+      async function probeReadyForReload() {
+        try {
+          const res = await fetch("/ready", { cache: "no-store" });
+          if (!res.ok) {
+            reconnectWasOffline = true;
+            return;
+          }
+          const body = await res.json();
+          const token = String(body?.startup_token || "");
+          if (!token) {
+            reconnectWasOffline = false;
+            return;
+          }
+          if (!reconnectStartupToken) {
+            reconnectStartupToken = token;
+            reconnectWasOffline = false;
+            return;
+          }
+          if (reconnectWasOffline || reconnectStartupToken !== token) {
+            window.location.reload();
+            return;
+          }
+          reconnectWasOffline = false;
+        } catch (_) {
+          reconnectWasOffline = true;
+        }
+      }
+
+      function startReconnectWatcher() {
+        if (reconnectWatcherStarted) return;
+        reconnectWatcherStarted = true;
+        void probeReadyForReload();
+        window.setInterval(() => {
+          void probeReadyForReload();
+        }, 2000);
+        window.addEventListener("online", () => {
+          void probeReadyForReload();
+        });
+      }
+
+      function startTeleopPoseRefresh() {
+        if (teleopPoseRefreshTimer) return;
+        void loadCurrentPoseIntoEditor(true);
+        teleopPoseRefreshTimer = window.setInterval(() => {
+          void loadCurrentPoseIntoEditor(true);
+        }, 2000);
+      }
+
+      async function calibApi(path, options = {}) {
+        if (!calibBaseUrl) {
+          return { ok: false, status: 0, body: { error: "calibration_server_not_ready" } };
+        }
+        const url = `/camera/calibration/api${path}`;
+        const opts = { ...options };
+        if (opts.body && !opts.headers) {
+          opts.headers = { "Content-Type": "application/json" };
+        }
+        try {
+          const res = await fetch(url, opts);
+          let body = null;
+          const contentType = res.headers.get("content-type") || "";
+          if (contentType.includes("application/json")) {
+            body = await res.json();
+          } else {
+            body = await res.text();
+          }
+          return { ok: res.ok, status: res.status, body };
+        } catch (err) {
+          return { ok: false, status: 0, body: { error: String(err) } };
+        }
+      }
+
+      async function startCalibrationServer() {
+        const res = await api("/camera/calibration/start", { method: "POST" });
+        if (!res.ok) {
+          serverStatus.textContent = "error";
+          log(`Failed to start calibration server: ${res.body?.error || res.status}`);
+          return;
+        }
+        calibBaseUrl = res.body.url || "";
+        serverStatus.textContent = res.body.status || "starting";
+        log(`Calibration server: ${calibBaseUrl}`);
+        await waitForCalibrationServerReady();
+      }
+
+      async function waitForCalibrationServerReady(timeoutMs = 5000) {
+        const deadline = Date.now() + Math.max(500, Number(timeoutMs) || 0);
+        while (Date.now() < deadline) {
+          const statusRes = await api("/camera/calibration/status", { silent: true });
+          if (statusRes.ok && String(statusRes.body?.status || "").toLowerCase() === "running") {
+            serverStatus.textContent = "running";
+            return true;
+          }
+          await sleep(150);
+        }
+        serverStatus.textContent = "starting";
+        return false;
+      }
+
+      async function ensureCalibrationServerReady() {
+        const statusRes = await api("/camera/calibration/status", { silent: true });
+        if (statusRes.ok && String(statusRes.body?.status || "").toLowerCase() === "running") {
+          serverStatus.textContent = "running";
+          return true;
+        }
+        await startCalibrationServer();
+        return waitForCalibrationServerReady();
+      }
+
+      async function stopCalibrationServer() {
+        if (!calibBaseUrl) return;
+        const res = await api("/camera/calibration/stop", { method: "POST" });
+        serverStatus.textContent = res.ok ? res.body.status || "stopped" : "error";
+        log("Calibration server stop requested.");
+        stopPreview();
+      }
+
+      async function refreshStations() {
+        const res = await api("/stations");
+        if (!res.ok) return;
+        stationSelect.innerHTML = "";
+        res.body.stations.forEach((st) => {
+          const opt = document.createElement("option");
+          opt.value = st.station_id;
+          opt.textContent = st.name || st.station_id;
+          stationSelect.appendChild(opt);
+        });
+        if (!stationSelect.value && stationSelect.options.length) {
+          stationSelect.value = stationSelect.options[0].value;
+        }
+        currentStationId = stationSelect.value;
+        await loadCalibrationTarget();
+        await loadHandEyeOffset();
+        await refreshProcesses();
+      }
+
+      async function refreshCameras() {
+        const res = await api("/camera/cameras");
+        if (!res.ok) {
+          if (calibLiveCameraCount) calibLiveCameraCount.textContent = "Cameras: 0";
+          if (calibLiveCameraList) calibLiveCameraList.innerHTML = '<span class="badge">offline</span>';
+          if (calibLiveStatus) calibLiveStatus.textContent = "camera core offline";
+          if (calibLiveFps) calibLiveFps.textContent = "FPS: --";
+          cameraSelect.innerHTML = "";
+          if (calibLiveCameraSelect) calibLiveCameraSelect.innerHTML = "";
+          return;
+        }
+        const cameras = (res.body.cameras || []).map((cam) => cam.camera_id || cam).filter(Boolean);
+        const current = cameraSelect.value || calibLiveCameraSelect?.value || "";
+        cameraSelect.innerHTML = "";
+        if (calibLiveCameraSelect) calibLiveCameraSelect.innerHTML = "";
+        cameras.forEach((cam) => {
+          const opt = document.createElement("option");
+          opt.value = cam;
+          opt.textContent = cam;
+          cameraSelect.appendChild(opt);
+          if (calibLiveCameraSelect) {
+            calibLiveCameraSelect.appendChild(opt.cloneNode(true));
+          }
+        });
+        if (calibLiveCameraCount) calibLiveCameraCount.textContent = `Cameras: ${cameras.length}`;
+        if (calibLiveCameraList) {
+          calibLiveCameraList.innerHTML = "";
+          if (!cameras.length) {
+            calibLiveCameraList.innerHTML = '<span class="badge">none</span>';
+          } else {
+            cameras.forEach((cam) => {
+              const badge = document.createElement("span");
+              badge.className = "badge";
+              badge.textContent = cam;
+              calibLiveCameraList.appendChild(badge);
+            });
+          }
+        }
+        const desired = current && cameras.includes(current) ? current : (cameras[0] || "");
+        if (desired) {
+          cameraSelect.value = desired;
+          if (calibLiveCameraSelect) calibLiveCameraSelect.value = desired;
+        }
+        if (!desired) {
+          if (calibLiveStatus) calibLiveStatus.textContent = "no cameras";
+          if (calibLiveFps) calibLiveFps.textContent = "FPS: --";
+          return;
+        }
+        await refreshCalibrationLiveFps(true);
+      }
+
+      function syncCalibrationCameraSelect(cameraId) {
+        const id = String(cameraId || "").trim();
+        if (!id) return;
+        if (cameraSelect && cameraSelect.value !== id) cameraSelect.value = id;
+        if (calibLiveCameraSelect && calibLiveCameraSelect.value !== id) calibLiveCameraSelect.value = id;
+        if (calibLiveStatus) calibLiveStatus.textContent = `camera ${id}`;
+      }
+
+      async function refreshCalibrationLiveFps(silent = true) {
+        const cameraId = cameraSelect.value || calibLiveCameraSelect?.value || "";
+        if (!cameraId) {
+          if (calibLiveFps) calibLiveFps.textContent = "FPS: --";
+          return;
+        }
+        const params = new URLSearchParams({ camera_id: cameraId });
+        const res = await api(`/camera/fps?${params.toString()}`, { silent });
+        if (!res.ok || !res.body) {
+          if (calibLiveFps) calibLiveFps.textContent = "FPS: --";
+          return;
+        }
+        const fps = Number(
+          res.body.fps_recent ??
+          res.body.fps ??
+          res.body.window_fps ??
+          res.body.estimated_fps
+        );
+        if (calibLiveFps) {
+          calibLiveFps.textContent =
+            Number.isFinite(fps) && fps > 0 ? `FPS: ${fps.toFixed(1)}` : "FPS: --";
+        }
+      }
+
+      function finiteNumber(value, fallback = 0) {
+        const num = Number(value);
+        return Number.isFinite(num) ? num : fallback;
+      }
+
+      function readNumberInput(el, fallback = 0) {
+        return finiteNumber(el?.value, fallback);
+      }
+
+      function hasTcpCalibration(payload) {
+        if (!payload || typeof payload !== "object") return false;
+        return Boolean(
+          Array.isArray(payload.tcp_offset_m) ||
+          Array.isArray(payload.tcp_offset_rpy_deg) ||
+          payload.gripper_x_offset_m != null ||
+          payload.gripper_y_offset_m != null ||
+          payload.gripper_z_offset_m != null ||
+          payload.gripper_roll_offset_deg != null ||
+          payload.gripper_pitch_offset_deg != null ||
+          payload.gripper_yaw_offset_deg != null ||
+          payload.tcp_x_offset_m != null ||
+          payload.tcp_y_offset_m != null ||
+          payload.tcp_z_offset_m != null ||
+          payload.tcp_roll_offset_deg != null ||
+          payload.tcp_pitch_offset_deg != null ||
+          payload.tcp_yaw_offset_deg != null
+        );
+      }
+
+      function extractTcpTranslation(payload, allowTransformAlias = false) {
+        if (Array.isArray(payload?.tcp_offset_m) && payload.tcp_offset_m.length >= 3) {
+          return payload.tcp_offset_m.slice(0, 3).map((value) => finiteNumber(value, 0));
+        }
+        if (allowTransformAlias && Array.isArray(payload?.translation_m) && payload.translation_m.length >= 3) {
+          return payload.translation_m.slice(0, 3).map((value) => finiteNumber(value, 0));
+        }
+        return [
+          finiteNumber(payload?.tcp_x_offset_m ?? payload?.gripper_x_offset_m, 0),
+          finiteNumber(payload?.tcp_y_offset_m ?? payload?.gripper_y_offset_m, 0),
+          finiteNumber(payload?.tcp_z_offset_m ?? payload?.gripper_z_offset_m, 0),
+        ];
+      }
+
+      function extractTcpRpy(payload, allowTransformAlias = false) {
+        if (Array.isArray(payload?.tcp_offset_rpy_deg) && payload.tcp_offset_rpy_deg.length >= 3) {
+          return payload.tcp_offset_rpy_deg.slice(0, 3).map((value) => finiteNumber(value, 0));
+        }
+        if (allowTransformAlias && Array.isArray(payload?.rotation_rpy_deg) && payload.rotation_rpy_deg.length >= 3) {
+          return payload.rotation_rpy_deg.slice(0, 3).map((value) => finiteNumber(value, 0));
+        }
+        return [
+          finiteNumber(payload?.tcp_roll_offset_deg ?? payload?.gripper_roll_offset_deg, 0),
+          finiteNumber(payload?.tcp_pitch_offset_deg ?? payload?.gripper_pitch_offset_deg, 0),
+          finiteNumber(payload?.tcp_yaw_offset_deg ?? payload?.gripper_yaw_offset_deg, 0),
+        ];
+      }
+
+      function normalizeAxisName(value, fallback = "") {
+        const raw = String(value ?? "").trim().toLowerCase();
+        return ["x", "-x", "y", "-y", "z", "-z"].includes(raw) ? raw : fallback;
+      }
+
+      function extractTcpGraspUpAxis(payload) {
+        return normalizeAxisName(
+          payload?.grasp_up_axis ?? payload?.grasp_candidate_up_axis,
+          ""
+        );
+      }
+
+      function extractTcpJawAxis(payload) {
+        return normalizeAxisName(
+          payload?.jaw_tool_axis ?? payload?.parallel_jaw_jaw_tool_axis,
+          ""
+        );
+      }
+
+      function extractTcpGraspUpMinDot(payload) {
+        return Math.max(
+          -1,
+          Math.min(
+            1,
+            finiteNumber(
+              payload?.grasp_up_min_dot ?? payload?.grasp_candidate_up_min_dot,
+              0
+            )
+          )
+        );
+      }
+
+      function readTcpCalibration() {
+        return {
+          frame: "flange",
+          translation_m: [
+            readNumberInput(gripperXOffset, 0),
+            readNumberInput(gripperYOffset, 0),
+            readNumberInput(gripperZOffset, 0),
+          ],
+          rotation_rpy_deg: [
+            readNumberInput(gripperRollOffset, 0),
+            readNumberInput(gripperPitchOffset, 0),
+            readNumberInput(gripperYawOffset, 0),
+          ],
+          grasp_up_axis: normalizeAxisName(tcpGraspUpAxis?.value, ""),
+          grasp_up_min_dot: Math.max(-1, Math.min(1, readNumberInput(tcpGraspUpMinDot, 0))),
+          jaw_tool_axis: normalizeAxisName(tcpJawAxis?.value, ""),
+        };
+      }
+
+      function gripperStudioFrameToSection(frame, parentFrame, childFrame) {
+        const posMm = Array.isArray(frame?.position) ? frame.position : [0, 0, 0];
+        const rotDeg = Array.isArray(frame?.rotation) ? frame.rotation : [0, 0, 0];
+        return {
+          parent_frame: parentFrame,
+          child_frame: childFrame,
+          translation_m: [
+            finiteNumber(posMm[0], 0) / 1000,
+            finiteNumber(posMm[1], 0) / 1000,
+            finiteNumber(posMm[2], 0) / 1000,
+          ],
+          rotation_rpy_deg: [
+            finiteNumber(rotDeg[0], 0),
+            finiteNumber(rotDeg[1], 0),
+            finiteNumber(rotDeg[2], 0),
+          ],
+        };
+      }
+
+      function applyGripperStudioFramesToCalibration(frames, source = "gripper_studio") {
+        if (!frames || typeof frames !== "object") return;
+        if (frames.flange) {
+          currentToolMount = gripperStudioFrameToSection(
+            frames.flange,
+            "robot_flange",
+            "gripper_base"
+          );
+        }
+        if (frames.tcp) {
+          const customTcp = gripperStudioFrameToSection(
+            frames.tcp,
+            "gripper_base",
+            "tool_tcp"
+          );
+          if (gripperXOffset) gripperXOffset.value = String(customTcp.translation_m[0]);
+          if (gripperYOffset) gripperYOffset.value = String(customTcp.translation_m[1]);
+          if (gripperZOffset) gripperZOffset.value = String(customTcp.translation_m[2]);
+          if (gripperRollOffset) gripperRollOffset.value = String(customTcp.rotation_rpy_deg[0]);
+          if (gripperPitchOffset) gripperPitchOffset.value = String(customTcp.rotation_rpy_deg[1]);
+          if (gripperYawOffset) gripperYawOffset.value = String(customTcp.rotation_rpy_deg[2]);
+        }
+        updateTcpCalibrationSummary(source);
+      }
+
+      function getTcpCalibrationPayload() {
+        const tcp = readTcpCalibration();
+        return {
+          tool_mount: currentToolMount,
+          custom_tcp: {
+            parent_frame: "gripper_base",
+            child_frame: "tool_tcp",
+            translation_m: tcp.translation_m,
+            rotation_rpy_deg: tcp.rotation_rpy_deg,
+          },
+          tcp_offset_frame: tcp.frame,
+          tcp_offset_m: tcp.translation_m,
+          tcp_offset_rpy_deg: tcp.rotation_rpy_deg,
+          gripper_x_offset_m: tcp.translation_m[0],
+          gripper_y_offset_m: tcp.translation_m[1],
+          gripper_z_offset_m: tcp.translation_m[2],
+          gripper_roll_offset_deg: tcp.rotation_rpy_deg[0],
+          gripper_pitch_offset_deg: tcp.rotation_rpy_deg[1],
+          gripper_yaw_offset_deg: tcp.rotation_rpy_deg[2],
+          grasp_up_axis: tcp.grasp_up_axis,
+          grasp_candidate_up_axis: tcp.grasp_up_axis,
+          grasp_up_min_dot: tcp.grasp_up_min_dot,
+          grasp_candidate_up_min_dot: tcp.grasp_up_min_dot,
+          jaw_tool_axis: tcp.jaw_tool_axis || undefined,
+          parallel_jaw_jaw_tool_axis: tcp.jaw_tool_axis || undefined,
+        };
+      }
+
+      function getTcpComputePayload() {
+        const tcp = readTcpCalibration();
+        return {
+          frame: tcp.frame,
+          translation_m: tcp.translation_m,
+          rotation_rpy_deg: tcp.rotation_rpy_deg,
+          grasp_up_axis: tcp.grasp_up_axis,
+          grasp_up_min_dot: tcp.grasp_up_min_dot,
+          jaw_tool_axis: tcp.jaw_tool_axis || undefined,
+        };
+      }
+
+      function updateTcpCalibrationSummary(source = "editor") {
+        if (!tcpOffsetSummary) return;
+        const tcp = readTcpCalibration();
+        tcpOffsetSummary.textContent = JSON.stringify(
+          {
+            status: source,
+            tool_mount: currentToolMount,
+            custom_tcp: {
+              parent_frame: "gripper_base",
+              child_frame: "tool_tcp",
+              translation_m: tcp.translation_m,
+              rotation_rpy_deg: tcp.rotation_rpy_deg,
+            },
+            grasp_up_filter: {
+              axis: tcp.grasp_up_axis || "disabled",
+              min_dot_with_base_z: tcp.grasp_up_min_dot,
+            },
+            jaw_tool_axis: tcp.jaw_tool_axis || "default (y)",
+          },
+          null,
+          2
+        );
+      }
+
+      function applyTcpCalibration(payload, allowTransformAlias = false, source = "saved") {
+        const toolMountPayload = payload?.tool_mount || payload?.combined_calibration?.tool_mount;
+        if (toolMountPayload && typeof toolMountPayload === "object") {
+          currentToolMount = {
+            parent_frame: String(toolMountPayload.parent_frame || "robot_flange"),
+            child_frame: String(toolMountPayload.child_frame || "gripper_base"),
+            translation_m: extractTcpTranslation(toolMountPayload, true),
+            rotation_rpy_deg: extractTcpRpy(toolMountPayload, true),
+          };
+        }
+        const pos = extractTcpTranslation(payload || {}, allowTransformAlias);
+        const rpy = extractTcpRpy(payload || {}, allowTransformAlias);
+        if (gripperXOffset) gripperXOffset.value = String(pos[0]);
+        if (gripperYOffset) gripperYOffset.value = String(pos[1]);
+        if (gripperZOffset) gripperZOffset.value = String(pos[2]);
+        if (gripperRollOffset) gripperRollOffset.value = String(rpy[0]);
+        if (gripperPitchOffset) gripperPitchOffset.value = String(rpy[1]);
+        if (gripperYawOffset) gripperYawOffset.value = String(rpy[2]);
+        if (tcpGraspUpAxis) tcpGraspUpAxis.value = extractTcpGraspUpAxis(payload || {});
+        if (tcpGraspUpMinDot) tcpGraspUpMinDot.value = String(extractTcpGraspUpMinDot(payload || {}));
+        if (tcpJawAxis) tcpJawAxis.value = extractTcpJawAxis(payload || {});
+        updateTcpCalibrationSummary(source);
+        window.impGizmoEditors?.syncAll?.();
+      }
+
+      function resetTcpCalibration(source = "zero") {
+        applyTcpCalibration(
+          {
+            tcp_offset_m: [0, 0, 0],
+            tcp_offset_rpy_deg: [0, 0, 0],
+            grasp_up_axis: "x",
+            grasp_up_min_dot: 0,
+          },
+          false,
+          source
+        );
+      }
+
+      async function loadTcpCalibration() {
+        const stationId = stationSelect.value;
+        if (!stationId) {
+          updateTcpCalibrationSummary("select_station_first");
+          return false;
+        }
+        const res = await api(`/stations/${encodeURIComponent(stationId)}/calibration/tcp`);
+        if (!res.ok || !res.body || res.body.status === "pending") {
+          resetTcpCalibration("not_saved");
+          log("No saved TCP calibration for this station.");
+          return false;
+        }
+        applyTcpCalibration(res.body, true, "saved");
+        log("Loaded TCP calibration.");
+        return true;
+      }
+
+      async function saveTcpCalibration() {
+        const stationId = stationSelect.value;
+        if (!stationId) {
+          updateTcpCalibrationSummary("select_station_first");
+          return false;
+        }
+        const res = await api(`/stations/${encodeURIComponent(stationId)}/calibration/tcp`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(getTcpCalibrationPayload()),
+        });
+        if (!res.ok) {
+          if (tcpOffsetSummary) tcpOffsetSummary.textContent = res.body?.detail || "Save TCP calibration failed.";
+          return false;
+        }
+        applyTcpCalibration(res.body?.tcp_calibration || getTcpCalibrationPayload(), true, "saved");
+        log("TCP calibration saved.");
+        return true;
+      }
+
+      function bindTcpCalibrationInputs() {
+        [
+          gripperXOffset,
+          gripperYOffset,
+          gripperZOffset,
+          gripperRollOffset,
+          gripperPitchOffset,
+          gripperYawOffset,
+          tcpGraspUpAxis,
+          tcpGraspUpMinDot,
+          tcpJawAxis,
+        ].forEach((el) => {
+          if (!el) return;
+          el.addEventListener("input", () => updateTcpCalibrationSummary("editor"));
+          el.addEventListener("change", () => updateTcpCalibrationSummary("editor"));
+        });
+      }
+
+      async function loadHandEyeOffset() {
+        const stationId = stationSelect.value;
+        if (!stationId) return;
+        const res = await api(`/stations/${encodeURIComponent(stationId)}/calibration/handeye`);
+        let handEyeLoaded = false;
+        let tcpLoadedFromHandEye = false;
+        if (!res.ok || !res.body || res.body.status === "pending") {
+          if (saveHeTx) saveHeTx.value = "0";
+          if (saveHeTy) saveHeTy.value = "0";
+          if (saveHeTz) saveHeTz.value = "0";
+          if (saveHeRoll) saveHeRoll.value = "0";
+          if (saveHePitch) saveHePitch.value = "0";
+          if (saveHeYaw) saveHeYaw.value = "0";
+          if (saveHandEyeFrame) saveHandEyeFrame.value = "camera_in_gripper";
+          window.impGizmoEditors?.syncAll?.();
+        } else {
+          handEyeLoaded = true;
+          const tx = Number(res.body?.translation_m?.[0] || 0);
+          const ty = Number(res.body?.translation_m?.[1] || 0);
+          const tz = Number(res.body?.translation_m?.[2] || 0);
+          const rpy = Array.isArray(res.body?.rotation_rpy_deg) && res.body.rotation_rpy_deg.length >= 3
+            ? res.body.rotation_rpy_deg
+            : (
+                Array.isArray(res.body?.rotation_quat_xyzw) && res.body.rotation_quat_xyzw.length >= 4
+                  ? quatToRpyDeg(res.body.rotation_quat_xyzw)
+                  : [0, 0, 0]
+              );
+          const frame = String(res.body?.hand_eye_frame || res.body?.frame || "camera_in_gripper");
+          if (saveHeTx) saveHeTx.value = String(tx);
+          if (saveHeTy) saveHeTy.value = String(ty);
+          if (saveHeTz) saveHeTz.value = String(tz);
+          if (saveHeRoll) saveHeRoll.value = String(Number(rpy[0] || 0));
+          if (saveHePitch) saveHePitch.value = String(Number(rpy[1] || 0));
+          if (saveHeYaw) saveHeYaw.value = String(Number(rpy[2] || 0));
+          if (saveHandEyeFrame) saveHandEyeFrame.value = frame;
+          window.impGizmoEditors?.syncAll?.();
+          if (hasTcpCalibration(res.body)) {
+            applyTcpCalibration(res.body, false, "handeye");
+            tcpLoadedFromHandEye = true;
+          }
+        }
+
+        const tcpRes = await api(`/stations/${encodeURIComponent(stationId)}/calibration/tcp`);
+        if (tcpRes.ok && tcpRes.body && tcpRes.body.status !== "pending") {
+          applyTcpCalibration(tcpRes.body, true, "saved");
+        } else if (!tcpLoadedFromHandEye) {
+          resetTcpCalibration("not_saved");
+        }
+
+        if (savedHandEyeSummary) {
+          const tx = Number(saveHeTx?.value || 0);
+          const ty = Number(saveHeTy?.value || 0);
+          const tz = Number(saveHeTz?.value || 0);
+          const rpy = [
+            Number(saveHeRoll?.value || 0),
+            Number(saveHePitch?.value || 0),
+            Number(saveHeYaw?.value || 0),
+          ];
+          const frame = String(saveHandEyeFrame?.value || "camera_in_gripper");
+          const tcp = readTcpCalibration();
+          savedHandEyeSummary.textContent =
+            handEyeLoaded
+              ? `Saved hand-eye: T=[${tx.toFixed(4)}, ${ty.toFixed(4)}, ${tz.toFixed(4)}] m | RPY=[${Number(rpy[0] || 0).toFixed(2)}, ${Number(rpy[1] || 0).toFixed(2)}, ${Number(rpy[2] || 0).toFixed(2)}] deg | TCP xyz=[${tcp.translation_m.map((value) => Number(value).toFixed(3)).join(", ")}] m | TCP rpy=[${tcp.rotation_rpy_deg.map((value) => Number(value).toFixed(2)).join(", ")}] deg | frame=${frame}`
+              : "Saved hand-eye: not found. TCP calibration loaded separately if available.";
+        }
+      }
+
+      async function loadCalibrationTarget() {
+        const stationId = stationSelect.value;
+        if (!stationId) return;
+        const res = await api(`/stations/${encodeURIComponent(stationId)}/calibration/target`);
+        if (!res.ok || !res.body || res.body.status === "pending") {
+          if (targetSaveResult) targetSaveResult.textContent = "Saved target: not found. Using current values.";
+          updateTargetFields();
+          return;
+        }
+        const target = res.body || {};
+        if (target.type != null && targetType) targetType.value = String(target.type);
+        if (target.rows != null) targetRows.value = String(target.rows);
+        if (target.cols != null) targetCols.value = String(target.cols);
+        if (target.square_size_m != null) squareSize.value = String(target.square_size_m);
+        if (target.marker_size_m != null && markerSize) markerSize.value = String(target.marker_size_m);
+        if (target.aruco_dict != null && arucoDict) arucoDict.value = String(target.aruco_dict);
+        updateTargetFields();
+        if (targetSaveResult) {
+          targetSaveResult.textContent =
+            `Saved target loaded: ${String(target.type || "charuco")} ${String(target.rows || "")}x${String(target.cols || "")}, square=${Number(target.square_size_m || 0).toFixed(4)} m`;
+        }
+      }
+
+      async function saveCalibrationTarget() {
+        const stationId = stationSelect.value;
+        if (!stationId) {
+          if (targetSaveResult) targetSaveResult.textContent = "Select a station first.";
+          return;
+        }
+        const payload = {
+          type: String(targetType?.value || "charuco"),
+          rows: Number(targetRows?.value || 0),
+          cols: Number(targetCols?.value || 0),
+          square_size_m: Number(squareSize?.value || 0),
+          marker_size_m: Number(markerSize?.value || 0),
+          aruco_dict: String(arucoDict?.value || ""),
+        };
+        const res = await api(`/stations/${encodeURIComponent(stationId)}/calibration/target`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          if (targetSaveResult) targetSaveResult.textContent = res.body?.detail || "Save target failed.";
+          return;
+        }
+        if (targetSaveResult) targetSaveResult.textContent = `Saved target to station ${stationId}.`;
+      }
+
+      function getAssetId(process) {
+        if (!process || typeof process !== "object") return "";
+        return String(process.asset_id || process.process_id || "").trim();
+      }
+
+      async function refreshProcesses() {
+        const stationId = stationSelect.value;
+        if (!stationId) return;
+        const res = await api(`/stations/${encodeURIComponent(stationId)}/processes`);
+        if (!res.ok || !res.body) return;
+        processesCache = res.body.processes || [];
+        if (!processSelect) return;
+        processSelect.innerHTML = "";
+        processesCache.forEach((process) => {
+          const opt = document.createElement("option");
+          const assetId = getAssetId(process);
+          opt.value = assetId;
+          opt.textContent = process.name || assetId;
+          processSelect.appendChild(opt);
+        });
+        let desired = currentProcessId;
+        if (!desired || !processesCache.find((p) => getAssetId(p) === desired)) {
+          desired = processesCache[0] ? getAssetId(processesCache[0]) : "";
+        }
+        if (desired) {
+          currentProcessId = desired;
+          processSelect.value = desired;
+          await refreshPoses();
+        } else {
+          currentProcessId = "";
+        }
+      }
+
+      async function refreshPoses() {
+        if (!currentProcessId) return;
+        const res = await api(`/processes/${encodeURIComponent(currentProcessId)}/poses`);
+        if (!res.ok) return;
+        posesCache = res.body.poses || [];
+        if (!poseSelect) return;
+        const current = poseSelect.value;
+        poseSelect.innerHTML = "";
+        posesCache.forEach((pose) => {
+          const opt = document.createElement("option");
+          opt.value = pose.name;
+          opt.textContent = pose.name;
+          poseSelect.appendChild(opt);
+        });
+        if (current && posesCache.some((pose) => pose.name === current)) {
+          poseSelect.value = current;
+        } else {
+          const calibPose = posesCache.find((pose) => pose.name === "calib");
+          if (calibPose) {
+            poseSelect.value = calibPose.name;
+          }
+        }
+        const calibPose = posesCache.find((pose) => pose.name === "calib");
+        if (calibPose?.tcp_pose?.position_m) {
+          applyAutoBoundsFromPose(calibPose.tcp_pose, calibPose.name);
+        }
+      }
+
+      async function recordPose() {
+        if (!currentProcessId) {
+          log("Select an asset before recording poses.");
+          return;
+        }
+        const name = (poseName?.value || "").trim();
+        if (!name) {
+          log("Provide a pose name.");
+          return;
+        }
+        const currentPose = await loadCurrentPoseIntoEditor(true);
+        if (!currentPose || !currentPose.position_m) {
+          log("Robot state unavailable.");
+          return;
+        }
+        const payload = {
+          name,
+          mode: poseMode?.value || "auto",
+          position_m: currentPose.position_m,
+          rotation_rpy_deg: Array.isArray(currentPose.rotation_rpy_deg) && currentPose.rotation_rpy_deg.length >= 3
+            ? currentPose.rotation_rpy_deg
+            : quatToRpyDeg(currentPose.quat_xyzw || [0, 0, 0, 1]),
+          frame: currentPose.frame || "base",
+        };
+        await api(`/processes/${encodeURIComponent(currentProcessId)}/poses`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        await refreshPoses();
+      }
+
+      async function moveToPose() {
+        const name = poseSelect?.value;
+        const pose = posesCache.find((p) => p.name === name);
+        if (!pose) return;
+        if (pose.tcp_pose && pose.tcp_pose.position_m) {
+          await api("/robot/movel_custom_tcp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              position_m: pose.tcp_pose.position_m,
+              quat_xyzw: pose.tcp_pose.quat_xyzw || [0, 0, 0, 1],
+              frame: pose.tcp_pose.frame || "base",
+              profile: "slow",
+            }),
+          });
+          return;
+        }
+        if (pose.joints && pose.joints.length) {
+          await api("/robot/movej", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ joints: pose.joints, profile: "slow" }),
+          });
+        }
+      }
+
+      async function moveToPoseByName(name) {
+        const pose = posesCache.find((p) => p.name === name);
+        if (!pose) return false;
+        if (pose.tcp_pose && pose.tcp_pose.position_m) {
+          await api("/robot/movel_custom_tcp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              position_m: pose.tcp_pose.position_m,
+              quat_xyzw: pose.tcp_pose.quat_xyzw || [0, 0, 0, 1],
+              frame: pose.tcp_pose.frame || "base",
+              profile: "slow",
+            }),
+          });
+          return true;
+        }
+        if (pose.joints && pose.joints.length) {
+          await api("/robot/movej", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ joints: pose.joints, profile: "slow" }),
+          });
+          return true;
+        }
+        return false;
+      }
+
+      function poseJointsByName(name) {
+        const pose = posesCache.find((p) => p.name === name);
+        const joints = pose?.joints;
+        return Array.isArray(joints) && joints.length === 7
+          ? joints.map((value) => Number(value))
+          : null;
+      }
+
+      async function ensurePoseCacheLoaded() {
+        if (!currentProcessId) return;
+        if (!posesCache.length) {
+          await refreshPoses();
+        }
+      }
+
+      async function poseJointsByNameFresh(name) {
+        let joints = poseJointsByName(name);
+        if (!joints && currentProcessId) {
+          await refreshPoses();
+          joints = poseJointsByName(name);
+        }
+        return joints;
+      }
+
+      function getCalibrationPoseOrThrow() {
+        const pose = posesCache.find((item) => item.name === "calib");
+        if (!pose) {
+          throw new Error("Missing saved pose named 'calib'.");
+        }
+        const tcpPose = pose.tcp_pose;
+        if (!tcpPose || !Array.isArray(tcpPose.position_m) || tcpPose.position_m.length < 3) {
+          throw new Error("Saved pose 'calib' does not include a valid TCP pose.");
+        }
+        return pose;
+      }
+
+      async function deletePose() {
+        if (!currentProcessId) return;
+        const name = poseSelect?.value;
+        if (!name) return;
+        if (!confirm(`Delete pose ${name}?`)) return;
+        await api(`/processes/${encodeURIComponent(currentProcessId)}/poses/${encodeURIComponent(name)}`, {
+          method: "DELETE",
+        });
+        await refreshPoses();
+      }
+
+      function applyAutoBoundsFromPose(pose, label) {
+        if (!pose || !pose.position_m || pose.position_m.length < 3) {
+          log("Pose does not include a TCP position.");
+          return;
+        }
+        const pos = pose.position_m;
+        const q = pose.quat_xyzw || [0, 0, 0, 1];
+        const xyMargin = 0.144;
+        const zMargin = 0.096;
+        const radius = 0.144;
+        document.getElementById("autoQx").value = q[0] ?? 0;
+        document.getElementById("autoQy").value = q[1] ?? 0;
+        document.getElementById("autoQz").value = q[2] ?? 0;
+        document.getElementById("autoQw").value = q[3] ?? 1;
+        autoSphereCenter = [pos[0], pos[1], pos[2]];
+        autoSphereRadius = radius;
+        autoBoundsApplied = true;
+        log(
+          `Using workspace offsets around ${label} pose (XY +/-${(xyMargin * 100).toFixed(0)}cm, Z +/-${(zMargin * 100).toFixed(0)}cm reference sphere).`
+        );
+      }
+
+      async function loadIntrinsics() {
+        const stationId = stationSelect.value;
+        if (!stationId) return false;
+        const res = await api(`/stations/${encodeURIComponent(stationId)}/calibration/intrinsics`);
+        if (!res.ok) {
+          log("No intrinsics stored for this station.");
+          return false;
+        }
+        const data =
+          res.body && typeof res.body === "object" && res.body.intrinsics && typeof res.body.intrinsics === "object"
+            ? res.body.intrinsics
+            : res.body || {};
+        const fx = Number(data.fx);
+        const fy = Number(data.fy);
+        if (
+          String(res.body?.status || "").toLowerCase() === "pending" ||
+          !Number.isFinite(fx) ||
+          !Number.isFinite(fy) ||
+          fx <= 0 ||
+          fy <= 0
+        ) {
+          log("No saved station intrinsics yet. Using camera intrinsics if available.");
+          return false;
+        }
+        applyIntrinsicsFields(res.body);
+        log("Loaded intrinsics from station.");
+        return true;
+      }
+
+      function applyIntrinsicsFields(payload) {
+        const data =
+          payload && typeof payload === "object" && payload.intrinsics && typeof payload.intrinsics === "object"
+            ? payload.intrinsics
+            : payload || {};
+        document.getElementById("fx").value = data.fx ?? 0;
+        document.getElementById("fy").value = data.fy ?? 0;
+        document.getElementById("cx").value = data.cx ?? 0;
+        document.getElementById("cy").value = data.cy ?? 0;
+        const dist = Array.isArray(data.dist_coeffs) ? data.dist_coeffs : [];
+        document.getElementById("k1").value = dist[0] ?? 0;
+        document.getElementById("k2").value = dist[1] ?? 0;
+        document.getElementById("p1").value = dist[2] ?? 0;
+        document.getElementById("p2").value = dist[3] ?? 0;
+        document.getElementById("k3").value = dist[4] ?? 0;
+        const reso = data.resolution || {};
+        if (typeof reso.width === "number") {
+          document.getElementById("intrinsicWidth").value = reso.width;
+        }
+        if (typeof reso.height === "number") {
+          document.getElementById("intrinsicHeight").value = reso.height;
+        }
+      }
+
+      function getIntrinsicsPayload() {
+        return {
+          fx: Number(document.getElementById("fx").value || 0),
+          fy: Number(document.getElementById("fy").value || 0),
+          cx: Number(document.getElementById("cx").value || 0),
+          cy: Number(document.getElementById("cy").value || 0),
+          dist_coeffs: [
+            Number(document.getElementById("k1").value || 0),
+            Number(document.getElementById("k2").value || 0),
+            Number(document.getElementById("p1").value || 0),
+            Number(document.getElementById("p2").value || 0),
+            Number(document.getElementById("k3").value || 0),
+          ],
+        };
+      }
+
+      function getCurrentTargetPayload() {
+        return {
+          type: targetType ? targetType.value : "chessboard",
+          rows: Number(targetRows ? targetRows.value : 0),
+          cols: Number(targetCols ? targetCols.value : 0),
+          square_size_m: Number(squareSize ? squareSize.value : 0),
+          marker_size_m: Number(markerSize ? markerSize.value : 0),
+          aruco_dict: String(arucoDict ? arucoDict.value : ""),
+        };
+      }
+
+      function applyComputedIntrinsics(result) {
+        applyIntrinsicsFields(result);
+        const size = Array.isArray(result?.image_size) ? result.image_size : [];
+        if (size.length >= 2) {
+          document.getElementById("intrinsicWidth").value = size[0];
+          document.getElementById("intrinsicHeight").value = size[1];
+        }
+      }
+
+      async function fetchCameraIntrinsics() {
+        const cameraId = cameraSelect.value;
+        if (!cameraId) {
+          intrinsicsResult.textContent = "Select a camera before fetching intrinsics.";
+          return;
+        }
+        const res = await calibApi(
+          `/camera/intrinsics?camera_id=${encodeURIComponent(cameraId)}`
+        );
+        if (!res.ok) {
+          intrinsicsResult.textContent =
+            res.body?.detail || "Fetch camera intrinsics failed.";
+          return;
+        }
+        applyIntrinsicsFields(res.body);
+        intrinsicsResult.textContent = JSON.stringify(res.body, null, 2);
+        log(`Fetched intrinsics from camera ${cameraId}.`);
+      }
+
+      function updateTargetFields() {
+        const isCharuco = targetType && targetType.value === "charuco";
+        if (charucoFields) {
+          charucoFields.style.display = isCharuco ? "flex" : "none";
+        }
+        if (isCharuco) {
+          if (targetRows && !targetRows.value) targetRows.value = "9";
+          if (targetCols && !targetCols.value) targetCols.value = "6";
+          if (squareSize && (!squareSize.value || Number(squareSize.value) === 0.025)) {
+            squareSize.value = "0.03";
+          }
+          if (markerSize && (!markerSize.value || Number(markerSize.value) === 0.02)) {
+            markerSize.value = "0.022";
+          }
+          if (arucoDict && !arucoDict.value) {
+            arucoDict.value = "DICT_4X4_50";
+          }
+        }
+      }
+
+      if (targetType) {
+        targetType.addEventListener("change", updateTargetFields);
+        updateTargetFields();
+      }
+
+      if (autoCountInput) {
+        autoCountInput.addEventListener("input", () => updateSampleSummary());
+      }
+
+      function quatToRpyDeg(q) {
+        const x = q[0] || 0;
+        const y = q[1] || 0;
+        const z = q[2] || 0;
+        const w = q[3] || 1;
+        const sinr = 2 * (w * x + y * z);
+        const cosr = 1 - 2 * (x * x + y * y);
+        const roll = Math.atan2(sinr, cosr);
+        const sinp = 2 * (w * y - z * x);
+        const pitch = Math.abs(sinp) >= 1 ? Math.sign(sinp) * Math.PI / 2 : Math.asin(sinp);
+        const siny = 2 * (w * z + x * y);
+        const cosy = 1 - 2 * (y * y + z * z);
+        const yaw = Math.atan2(siny, cosy);
+        return [roll * 180 / Math.PI, pitch * 180 / Math.PI, yaw * 180 / Math.PI];
+      }
+
+      function formatPoseNumber(value, digits) {
+        const num = Number(value);
+        return Number.isFinite(num) ? num.toFixed(digits) : (0).toFixed(digits);
+      }
+
+      function rpyDegToQuat(r, p, y) {
+        const roll = r * Math.PI / 180;
+        const pitch = p * Math.PI / 180;
+        const yaw = y * Math.PI / 180;
+        const cy = Math.cos(yaw * 0.5);
+        const sy = Math.sin(yaw * 0.5);
+        const cp = Math.cos(pitch * 0.5);
+        const sp = Math.sin(pitch * 0.5);
+        const cr = Math.cos(roll * 0.5);
+        const sr = Math.sin(roll * 0.5);
+        const qw = cr * cp * cy + sr * sp * sy;
+        const qx = sr * cp * cy - cr * sp * sy;
+        const qy = cr * sp * cy + sr * cp * sy;
+        const qz = cr * cp * sy - sr * sp * cy;
+        return [qx, qy, qz, qw];
+      }
+
+      function setPoseEditorFromPose(pose) {
+        if (!pose) return;
+        const pos = Array.isArray(pose.position_m) ? pose.position_m : [0, 0, 0];
+        const rpy = Array.isArray(pose.rotation_rpy_deg) && pose.rotation_rpy_deg.length >= 3
+          ? pose.rotation_rpy_deg
+          : quatToRpyDeg(pose.quat_xyzw || [0, 0, 0, 1]);
+        if (document.getElementById("poseX")) document.getElementById("poseX").value = formatPoseNumber(pos[0], 4);
+        if (document.getElementById("poseY")) document.getElementById("poseY").value = formatPoseNumber(pos[1], 4);
+        if (document.getElementById("poseZ")) document.getElementById("poseZ").value = formatPoseNumber(pos[2], 4);
+        if (document.getElementById("poseRoll")) document.getElementById("poseRoll").value = formatPoseNumber(rpy[0], 2);
+        if (document.getElementById("posePitch")) document.getElementById("posePitch").value = formatPoseNumber(rpy[1], 2);
+        if (document.getElementById("poseYaw")) document.getElementById("poseYaw").value = formatPoseNumber(rpy[2], 2);
+      }
+
+      function readPoseEditorPayload() {
+        return {
+          position_m: [
+            Number(document.getElementById("poseX")?.value || 0),
+            Number(document.getElementById("poseY")?.value || 0),
+            Number(document.getElementById("poseZ")?.value || 0),
+          ],
+          rotation_rpy_deg: [
+            Number(document.getElementById("poseRoll")?.value || 0),
+            Number(document.getElementById("posePitch")?.value || 0),
+            Number(document.getElementById("poseYaw")?.value || 0),
+          ],
+        };
+      }
+
+      function angleStepDeg() {
+        return Number(document.getElementById("angleStep")?.value || 5);
+      }
+
+      function requireCustomTcpPose(robotBody, context = "calibration") {
+        const pose = robotBody?.custom_tcp_pose;
+        if (!pose || !Array.isArray(pose.position_m) || pose.position_m.length < 3) {
+          const detail = robotBody?.custom_tcp_error || "custom_tcp_pose missing from robot state";
+          throw new Error(`${context}: custom TCP transform unavailable (${detail}).`);
+        }
+        return pose;
+      }
+
+      async function loadCurrentPoseIntoEditor(silent = false) {
+        const robot = await api("/robot/state");
+        if (!robot.ok || !robot.body) {
+          if (!silent) {
+            log("Robot state unavailable.");
+          }
+          return null;
+        }
+        let pose = null;
+        try {
+          pose = requireCustomTcpPose(robot.body, "current pose");
+        } catch (err) {
+          if (!silent) {
+            log(err.message);
+          }
+          return null;
+        }
+        robotPose.textContent = JSON.stringify(pose, null, 2);
+        setPoseEditorFromPose(pose);
+        return pose;
+      }
+
+      function randomJitter(deg) {
+        const mag = Math.abs(Number(deg) || 0);
+        if (mag <= 0) return 0;
+        return (Math.random() * 2 - 1) * mag;
+      }
+
+      function cycleSequenceValue(index) {
+        const seq = [0, -1, 1, -0.5, 0.5, -0.85, 0.85, -0.25, 0.25, -0.7, 0.7];
+        const idx = ((Number(index) || 0) % seq.length + seq.length) % seq.length;
+        return seq[idx];
+      }
+
+      function vecLength(v) {
+        const x = Number(v?.[0] || 0);
+        const y = Number(v?.[1] || 0);
+        const z = Number(v?.[2] || 0);
+        return Math.sqrt(x * x + y * y + z * z);
+      }
+
+      function normalizeVec(v, fallback = [0, 0, 1]) {
+        const n = vecLength(v);
+        if (n <= 1e-9) {
+          return fallback.slice(0, 3);
+        }
+        return [
+          Number(v?.[0] || 0) / n,
+          Number(v?.[1] || 0) / n,
+          Number(v?.[2] || 0) / n,
+        ];
+      }
+
+      function subtractVec(a, b) {
+        return [
+          Number(a?.[0] || 0) - Number(b?.[0] || 0),
+          Number(a?.[1] || 0) - Number(b?.[1] || 0),
+          Number(a?.[2] || 0) - Number(b?.[2] || 0),
+        ];
+      }
+
+      function cross3(a, b) {
+        return [
+          Number(a?.[1] || 0) * Number(b?.[2] || 0) - Number(a?.[2] || 0) * Number(b?.[1] || 0),
+          Number(a?.[2] || 0) * Number(b?.[0] || 0) - Number(a?.[0] || 0) * Number(b?.[2] || 0),
+          Number(a?.[0] || 0) * Number(b?.[1] || 0) - Number(a?.[1] || 0) * Number(b?.[0] || 0),
+        ];
+      }
+
+      function chooseOrthogonalAxis(v) {
+        const unit = normalizeVec(v, [0, 0, 1]);
+        const absVec = unit.map((value) => Math.abs(Number(value || 0)));
+        if (absVec[0] <= absVec[1] && absVec[0] <= absVec[2]) return [1, 0, 0];
+        if (absVec[1] <= absVec[0] && absVec[1] <= absVec[2]) return [0, 1, 0];
+        return [0, 0, 1];
+      }
+
+      function quatFromUnitVectors(fromVec, toVec) {
+        const from = normalizeVec(fromVec, [0, 0, 1]);
+        const to = normalizeVec(toVec, [0, 0, 1]);
+        const d = Math.max(-1, Math.min(1, dot(from, to)));
+        if (d >= 0.999999) {
+          return [0, 0, 0, 1];
+        }
+        if (d <= -0.999999) {
+          const ortho = chooseOrthogonalAxis(from);
+          const axis = normalizeVec(cross3(from, ortho), [1, 0, 0]);
+          return [axis[0], axis[1], axis[2], 0];
+        }
+        const axis = cross3(from, to);
+        const s = Math.sqrt((1 + d) * 2);
+        const invS = 1 / s;
+        return normalizeQuat([
+          axis[0] * invS,
+          axis[1] * invS,
+          axis[2] * invS,
+          s * 0.5,
+        ]);
+      }
+
+      function buildAutoCaptureCandidate(
+        attemptIndex,
+        center,
+        radius,
+        zRange,
+        referencePosition,
+        referenceQuat,
+        referenceLookDirection,
+        boardPosition,
+        jitters,
+        desiredCount
+      ) {
+        const exploreBias = Math.min(1, Math.max(0, attemptIndex / Math.max(6, desiredCount * 2)));
+        const angle = Math.random() * Math.PI * 2;
+        const radialPhase = Math.random();
+        const zPhase = Math.random();
+        const baseRadius =
+          (0.12 + (0.72 + 0.16 * exploreBias) * Math.sqrt(radialPhase)) * radius;
+        const radiusNudge = (Math.random() * 2 - 1) * radius * 0.08;
+        const xyRadius = Math.max(0, Math.min(radius, baseRadius + radiusNudge));
+        const zSpan = Math.max(0, Number(zRange.max) - Number(zRange.min));
+        const position = [
+          Number(center?.[0] || 0) + xyRadius * Math.cos(angle),
+          Number(center?.[1] || 0) + xyRadius * Math.sin(angle),
+          Number(zRange.min || 0) + zPhase * zSpan,
+        ];
+        const desiredLookDirection = normalizeVec(
+          subtractVec(boardPosition, position),
+          referenceLookDirection
+        );
+        const referenceLook = normalizeVec(
+          subtractVec(boardPosition, referencePosition),
+          referenceLookDirection
+        );
+        const lookDelta = quatFromUnitVectors(referenceLook, desiredLookDirection);
+        const aimedQuat = normalizeQuat(quatMultiply(lookDelta, referenceQuat));
+        const roll = (Math.random() * 2 - 1) * Number(jitters?.roll || 0);
+        const pitch = (Math.random() * 2 - 1) * Number(jitters?.pitch || 0);
+        const yaw =
+          (Math.random() * 2 - 1) * Number(jitters?.yaw || 0) +
+          (Math.random() * 2 - 1) * Math.min(10, Math.abs(Number(jitters?.yaw || 0)));
+        return {
+          position_m: position,
+          quat_xyzw: normalizeQuat(quatMultiply(aimedQuat, rpyDegToQuat(roll, pitch, yaw))),
+        };
+      }
+
+      function buildAutoCaptureOrientationRetries(pitchJitterDeg, yawJitterDeg) {
+        const pitchStep = Math.max(4, Math.min(12, Math.abs(Number(pitchJitterDeg) || 0) * 0.4 || 6));
+        const yawStep = Math.max(4, Math.min(14, Math.abs(Number(yawJitterDeg) || 0) * 0.35 || 8));
+        return [
+          { pitch: 0, yaw: 0 },
+          { pitch: -pitchStep, yaw: 0 },
+          { pitch: pitchStep, yaw: 0 },
+          { pitch: 0, yaw: -yawStep },
+          { pitch: 0, yaw: yawStep },
+          { pitch: -pitchStep, yaw: -yawStep },
+          { pitch: -pitchStep, yaw: yawStep },
+          { pitch: pitchStep, yaw: -yawStep },
+          { pitch: pitchStep, yaw: yawStep },
+        ];
+      }
+
+      function autoCaptureMotionScore(position, quat, currentPosition, currentQuat) {
+        const posDist = distance3(position, currentPosition);
+        const angDist = quatAngleDeg(quat, currentQuat);
+        return posDist + (angDist * 0.0025);
+      }
+
+      function distance3(a, b) {
+        const dx = (Number(a?.[0]) || 0) - (Number(b?.[0]) || 0);
+        const dy = (Number(a?.[1]) || 0) - (Number(b?.[1]) || 0);
+        const dz = (Number(a?.[2]) || 0) - (Number(b?.[2]) || 0);
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+      }
+
+      function normalizeQuat(q) {
+        const x = q[0] || 0;
+        const y = q[1] || 0;
+        const z = q[2] || 0;
+        const w = q[3] || 1;
+        const n = Math.sqrt(x * x + y * y + z * z + w * w);
+        if (n < 1e-9) return [0, 0, 0, 1];
+        return [x / n, y / n, z / n, w / n];
+      }
+
+      function quatConjugate(q) {
+        return [-(q[0] || 0), -(q[1] || 0), -(q[2] || 0), q[3] || 1];
+      }
+
+      function quatMultiply(a, b) {
+        const ax = a[0] || 0;
+        const ay = a[1] || 0;
+        const az = a[2] || 0;
+        const aw = a[3] || 1;
+        const bx = b[0] || 0;
+        const by = b[1] || 0;
+        const bz = b[2] || 0;
+        const bw = b[3] || 1;
+        return [
+          aw * bx + ax * bw + ay * bz - az * by,
+          aw * by - ax * bz + ay * bw + az * bx,
+          aw * bz + ax * by - ay * bx + az * bw,
+          aw * bw - ax * bx - ay * by - az * bz,
+        ];
+      }
+
+      function rvecToQuat(rvec) {
+        const rx = Number(rvec?.[0] || 0);
+        const ry = Number(rvec?.[1] || 0);
+        const rz = Number(rvec?.[2] || 0);
+        const angle = Math.sqrt(rx * rx + ry * ry + rz * rz);
+        if (angle < 1e-9) {
+          return [0, 0, 0, 1];
+        }
+        const half = angle * 0.5;
+        const s = Math.sin(half) / angle;
+        return normalizeQuat([
+          rx * s,
+          ry * s,
+          rz * s,
+          Math.cos(half),
+        ]);
+      }
+
+      function composeTransform(tA, qA, tB, qB) {
+        const qa = normalizeQuat(qA);
+        const qb = normalizeQuat(qB);
+        const tbRot = quatRotate(qa, tB || [0, 0, 0]);
+        return {
+          translation_m: [
+            (tA?.[0] || 0) + tbRot[0],
+            (tA?.[1] || 0) + tbRot[1],
+            (tA?.[2] || 0) + tbRot[2],
+          ],
+          rotation_quat_xyzw: normalizeQuat(quatMultiply(qa, qb)),
+        };
+      }
+
+      function invertTransform(t, q) {
+        const qi = normalizeQuat(quatConjugate(normalizeQuat(q)));
+        const ti = quatRotate(qi, [-(t?.[0] || 0), -(t?.[1] || 0), -(t?.[2] || 0)]);
+        return { translation_m: ti, rotation_quat_xyzw: qi };
+      }
+
+      function dot(a, b) {
+        return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+      }
+
+      function quatAngleDeg(a, b) {
+        const qa = normalizeQuat(a || [0, 0, 0, 1]);
+        const qb = normalizeQuat(b || [0, 0, 0, 1]);
+        const d = Math.abs(
+          (qa[0] || 0) * (qb[0] || 0) +
+          (qa[1] || 0) * (qb[1] || 0) +
+          (qa[2] || 0) * (qb[2] || 0) +
+          (qa[3] || 1) * (qb[3] || 1)
+        );
+        const clamped = Math.max(-1, Math.min(1, d));
+        return 2 * Math.acos(clamped) * 180 / Math.PI;
+      }
+
+      function quatSlerp(a, b, t) {
+        const qa = normalizeQuat(a || [0, 0, 0, 1]);
+        let qb = normalizeQuat(b || [0, 0, 0, 1]);
+        let dotQ =
+          (qa[0] || 0) * (qb[0] || 0) +
+          (qa[1] || 0) * (qb[1] || 0) +
+          (qa[2] || 0) * (qb[2] || 0) +
+          (qa[3] || 1) * (qb[3] || 1);
+        if (dotQ < 0) {
+          qb = qb.map((value) => -value);
+          dotQ = -dotQ;
+        }
+        const clampedT = Math.max(0, Math.min(1, Number(t) || 0));
+        if (dotQ > 0.9995) {
+          return normalizeQuat([
+            qa[0] + clampedT * (qb[0] - qa[0]),
+            qa[1] + clampedT * (qb[1] - qa[1]),
+            qa[2] + clampedT * (qb[2] - qa[2]),
+            qa[3] + clampedT * (qb[3] - qa[3]),
+          ]);
+        }
+        const theta0 = Math.acos(Math.max(-1, Math.min(1, dotQ)));
+        const theta = theta0 * clampedT;
+        const sinTheta = Math.sin(theta);
+        const sinTheta0 = Math.sin(theta0);
+        const s0 = Math.cos(theta) - dotQ * sinTheta / sinTheta0;
+        const s1 = sinTheta / sinTheta0;
+        return normalizeQuat([
+          s0 * qa[0] + s1 * qb[0],
+          s0 * qa[1] + s1 * qb[1],
+          s0 * qa[2] + s1 * qb[2],
+          s0 * qa[3] + s1 * qb[3],
+        ]);
+      }
+
+      function clampAutoCaptureProfile(profile) {
+        const key = String(profile || "medium").trim().toLowerCase();
+        if (key === "fast") return "medium";
+        if (key === "slow" || key === "medium" || key === "normal") return key;
+        return "medium";
+      }
+
+      function chooseAutoCaptureMoveProfile(baseProfile, fromPosition, fromQuat, targetPosition, targetQuat) {
+        const boundedBase = clampAutoCaptureProfile(baseProfile);
+        const posDistM = distance3(fromPosition || [0, 0, 0], targetPosition || [0, 0, 0]);
+        const angDistDeg = quatAngleDeg(fromQuat || [0, 0, 0, 1], targetQuat || [0, 0, 0, 1]);
+        let profile = boundedBase;
+        if (posDistM >= 0.16 || angDistDeg >= 35) {
+          profile = "slow";
+        } else if (posDistM >= 0.08 || angDistDeg >= 18) {
+          profile = boundedBase === "slow" ? "slow" : "medium";
+        }
+        return {
+          profile,
+          posDistM,
+          angDistDeg,
+        };
+      }
+
+      function quatRotate(q, v) {
+        const x = q[0] || 0;
+        const y = q[1] || 0;
+        const z = q[2] || 0;
+        const w = q[3] || 1;
+        const uvx = y * v[2] - z * v[1];
+        const uvy = z * v[0] - x * v[2];
+        const uvz = x * v[1] - y * v[0];
+        const uuvx = y * uvz - z * uvy;
+        const uuvy = z * uvx - x * uvz;
+        const uuvz = x * uvy - y * uvx;
+        return [
+          v[0] + 2 * (w * uvx + uuvx),
+          v[1] + 2 * (w * uvy + uuvy),
+          v[2] + 2 * (w * uvz + uuvz),
+        ];
+      }
+
+      function getAutoCaptureIntrinsics() {
+        return {
+          fx: Number(document.getElementById("fx")?.value || 0),
+          fy: Number(document.getElementById("fy")?.value || 0),
+          cx: Number(document.getElementById("cx")?.value || 0),
+          cy: Number(document.getElementById("cy")?.value || 0),
+          width: Number(document.getElementById("intrinsicWidth")?.value || 0),
+          height: Number(document.getElementById("intrinsicHeight")?.value || 0),
+        };
+      }
+
+      function projectCameraPoint(pointCam, intrinsics) {
+        if (!Array.isArray(pointCam) || pointCam.length < 3 || !intrinsics) return null;
+        const z = Number(pointCam[2] || 0);
+        if (!(z > 1e-6)) return null;
+        return [
+          Number(intrinsics.fx || 0) * (Number(pointCam[0] || 0) / z) + Number(intrinsics.cx || 0),
+          Number(intrinsics.fy || 0) * (Number(pointCam[1] || 0) / z) + Number(intrinsics.cy || 0),
+        ];
+      }
+
+      function buildDetectionGuidedOrientationRetries(detection) {
+        const imageSize = detection?.image_size || [];
+        const centroid = detection?.charuco_centroid_uv || detection?.marker_centroid_uv || null;
+        if (!Array.isArray(imageSize) || imageSize.length < 2 || !Array.isArray(centroid) || centroid.length < 2) {
+          return [];
+        }
+        const width = Number(imageSize[0] || 0);
+        const height = Number(imageSize[1] || 0);
+        if (!(width > 1) || !(height > 1)) {
+          return [];
+        }
+        const dx = (Number(centroid[0] || 0) - width * 0.5) / (width * 0.5);
+        const dy = (Number(centroid[1] || 0) - height * 0.5) / (height * 0.5);
+        const yawStep = Math.max(3, Math.min(12, Math.abs(dx) * 18));
+        const pitchStep = Math.max(3, Math.min(12, Math.abs(dy) * 18));
+        const yawPrimary = dx >= 0 ? -yawStep : yawStep;
+        const pitchPrimary = dy >= 0 ? -pitchStep : pitchStep;
+        const fineYaw = Math.max(2, yawStep * 0.45);
+        const finePitch = Math.max(2, pitchStep * 0.45);
+        return [
+          { pitch: pitchPrimary, yaw: yawPrimary },
+          { pitch: pitchPrimary, yaw: 0 },
+          { pitch: 0, yaw: yawPrimary },
+          { pitch: pitchPrimary * 0.5, yaw: yawPrimary * 0.5 },
+          { pitch: finePitch, yaw: 0 },
+          { pitch: 0, yaw: fineYaw },
+          { pitch: -pitchPrimary * 0.5, yaw: yawPrimary * 0.5 },
+          { pitch: pitchPrimary * 0.5, yaw: -yawPrimary * 0.5 },
+        ];
+      }
+
+      function detectionCornerCount(detection) {
+        return Number(
+          detection?.corners ?? detection?.charuco_corners ?? detection?.corner_count ?? 0
+        );
+      }
+
+      function detectionCenterOffsetNorm(detection) {
+        const imageSize = detection?.image_size || [];
+        const centroid = detection?.charuco_centroid_uv || detection?.marker_centroid_uv || null;
+        if (!Array.isArray(imageSize) || imageSize.length < 2 || !Array.isArray(centroid) || centroid.length < 2) {
+          return 1.0;
+        }
+        const width = Number(imageSize[0] || 0);
+        const height = Number(imageSize[1] || 0);
+        if (!(width > 1) || !(height > 1)) {
+          return 1.0;
+        }
+        const dx = (Number(centroid[0] || 0) - width * 0.5) / (width * 0.5);
+        const dy = (Number(centroid[1] || 0) - height * 0.5) / (height * 0.5);
+        return Math.sqrt(dx * dx + dy * dy);
+      }
+
+      function detectionRefinementScore(detection, minCorners) {
+        if (!detection) return -1e9;
+        const corners = detectionCornerCount(detection);
+        const markers = Number(detection?.marker_count || 0);
+        const centered = detectionCenterOffsetNorm(detection);
+        const reproj = Number(detection?.reprojection_rmse_px || 0);
+        const okBonus = detection?.status === "ok" ? 100000 : 0;
+        const completeBonus = corners >= minCorners ? 1000000 : 0;
+        return (
+          completeBonus +
+          okBonus +
+          Math.min(corners, minCorners) * 1200 +
+          corners * 50 +
+          markers * 8 -
+          centered * 180 -
+          reproj * 35
+        );
+      }
+
+      function detectionMeetsCornerThreshold(detection, minCorners) {
+        return Boolean(
+          detection &&
+          detection.status === "ok" &&
+          detectionCornerCount(detection) >= Math.max(0, Number(minCorners || 0))
+        );
+      }
+
+      function buildAdvancedRefinementCandidates(position, quat, detection, referenceBoardDistanceM, minCorners) {
+        const candidates = [];
+        const seen = new Set();
+        const pushCandidate = (candidatePosition, candidateQuat) => {
+          const pos = [
+            Number(candidatePosition?.[0] || 0),
+            Number(candidatePosition?.[1] || 0),
+            Number(candidatePosition?.[2] || 0),
+          ];
+          const q = normalizeQuat(candidateQuat || [0, 0, 0, 1]);
+          const key = [
+            pos[0].toFixed(5),
+            pos[1].toFixed(5),
+            pos[2].toFixed(5),
+            q[0].toFixed(4),
+            q[1].toFixed(4),
+            q[2].toFixed(4),
+            q[3].toFixed(4),
+          ].join("|");
+          if (seen.has(key)) {
+            return;
+          }
+          seen.add(key);
+          candidates.push({ position_m: pos, quat_xyzw: q });
+        };
+
+        const currentCorners = detectionCornerCount(detection);
+        const guidedRetries = buildDetectionGuidedOrientationRetries(detection);
+        for (const retry of guidedRetries) {
+          pushCandidate(
+            position,
+            normalizeQuat(
+              quatMultiply(
+                quat,
+                rpyDegToQuat(0, Number(retry.pitch || 0), Number(retry.yaw || 0))
+              )
+            )
+          );
+        }
+
+        const fineStep = currentCorners < minCorners ? 4 : 2.5;
+        const finePairs = [
+          [fineStep, 0],
+          [-fineStep, 0],
+          [0, fineStep],
+          [0, -fineStep],
+          [fineStep, fineStep],
+          [fineStep, -fineStep],
+          [-fineStep, fineStep],
+          [-fineStep, -fineStep],
+        ];
+        for (const [pitchDeg, yawDeg] of finePairs) {
+          pushCandidate(
+            position,
+            normalizeQuat(quatMultiply(quat, rpyDegToQuat(0, pitchDeg, yawDeg)))
+          );
+        }
+
+        const viewDir = normalizeVec(quatRotate(quat, [0, 0, 1]), [0, 0, 1]);
+        const depthM = Math.abs(Number(detection?.tvec?.[2] || 0));
+        const translationSteps = [];
+        const referenceDelta =
+          referenceBoardDistanceM > 1e-6 && depthM > 1e-6
+            ? Math.max(-0.015, Math.min(0.015, depthM - referenceBoardDistanceM))
+            : 0;
+        if (Math.abs(referenceDelta) > 0.003) {
+          translationSteps.push(referenceDelta, referenceDelta * 0.5);
+        }
+        if (currentCorners < minCorners) {
+          translationSteps.push(0.006, 0.012, -0.006);
+        }
+        for (const step of translationSteps) {
+          const translated = [
+            Number(position?.[0] || 0) + viewDir[0] * step,
+            Number(position?.[1] || 0) + viewDir[1] * step,
+            Number(position?.[2] || 0) + viewDir[2] * step,
+          ];
+          pushCandidate(translated, quat);
+          for (const retry of guidedRetries.slice(0, 4)) {
+            pushCandidate(
+              translated,
+              normalizeQuat(
+                quatMultiply(
+                  quat,
+                  rpyDegToQuat(0, Number(retry.pitch || 0), Number(retry.yaw || 0))
+                )
+              )
+            );
+          }
+        }
+
+        return candidates;
+      }
+
+      async function refineDetectionLocally(
+        position,
+        quat,
+        detection,
+        profile,
+        settle,
+        minCorners,
+        referenceBoardDistanceM,
+        captureIntrinsics,
+        baseToBoardEstimate,
+        maxAttempts = 5
+      ) {
+        let currentPosition = [
+          Number(position?.[0] || 0),
+          Number(position?.[1] || 0),
+          Number(position?.[2] || 0),
+        ];
+        let currentQuat = normalizeQuat(quat || [0, 0, 0, 1]);
+        let currentDetection = detection;
+        let currentScore = detectionRefinementScore(detection, minCorners);
+        let lastTriedPosition = currentPosition.slice();
+        let lastTriedQuat = currentQuat.slice();
+        let refined = false;
+        let attemptsUsed = 0;
+
+        for (let iter = 0; iter < 3; iter += 1) {
+          let improved = false;
+          const candidates = buildAdvancedRefinementCandidates(
+            currentPosition,
+            currentQuat,
+            currentDetection,
+            referenceBoardDistanceM,
+            minCorners
+          );
+          for (const candidate of candidates) {
+            const samePose =
+              distance3(candidate.position_m, currentPosition) <= 1e-6 &&
+              quatAngleDeg(candidate.quat_xyzw, currentQuat) <= 1e-3;
+            if (samePose) {
+              continue;
+            }
+            if (attemptsUsed >= maxAttempts) {
+              return {
+                moveFailed: false,
+                detection: currentDetection,
+                position_m: currentPosition,
+                quat_xyzw: currentQuat,
+                refined,
+                attemptsUsed,
+                retryLimitReached: true,
+              };
+            }
+            if (
+              captureIntrinsics &&
+              baseToBoardEstimate &&
+              !isBoardVisibleForPose(
+                candidate.position_m,
+                candidate.quat_xyzw,
+                baseToBoardEstimate,
+                captureIntrinsics,
+                minCorners
+              )
+            ) {
+              continue;
+            }
+            const moveRes = await api("/robot/movel_custom_tcp", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                position_m: candidate.position_m,
+                quat_xyzw: candidate.quat_xyzw,
+                frame: "base",
+                profile,
+              }),
+            });
+            if (!moveRes.ok) {
+              return {
+                moveFailed: true,
+                detection: currentDetection,
+                position_m: currentPosition,
+                quat_xyzw: currentQuat,
+                refined,
+                attemptsUsed,
+                retryLimitReached: false,
+              };
+            }
+            lastTriedPosition = candidate.position_m.slice();
+            lastTriedQuat = candidate.quat_xyzw.slice();
+            if (settle > 0) {
+              await sleep(settle * 1000);
+            }
+            const refinedDetection = await detectForSample(true, nowTimestampNs(), 1500);
+            attemptsUsed += 1;
+            if (refinedDetection && refinedDetection.status === "ok" && detectionCornerCount(refinedDetection) >= minCorners) {
+              return {
+                moveFailed: false,
+                detection: refinedDetection,
+                position_m: candidate.position_m,
+                quat_xyzw: candidate.quat_xyzw,
+                refined: true,
+                attemptsUsed,
+                retryLimitReached: false,
+              };
+            }
+            const refinedScore = detectionRefinementScore(refinedDetection, minCorners);
+            if (refinedScore > currentScore + 25) {
+              currentPosition = candidate.position_m.slice();
+              currentQuat = candidate.quat_xyzw.slice();
+              currentDetection = refinedDetection;
+              currentScore = refinedScore;
+              refined = true;
+              improved = true;
+              log(
+                `Local Charuco refinement improved visibility to ${detectionCornerCount(refinedDetection)}/${minCorners} corners.`
+              );
+              break;
+            }
+          }
+          if (!improved) {
+            const drifted =
+              distance3(lastTriedPosition, currentPosition) > 1e-6 ||
+              quatAngleDeg(lastTriedQuat, currentQuat) > 1e-3;
+            if (drifted) {
+              await api("/robot/movel_custom_tcp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  position_m: currentPosition,
+                  quat_xyzw: currentQuat,
+                  frame: "base",
+                  profile,
+                }),
+              });
+              if (settle > 0) {
+                await sleep(settle * 1000);
+              }
+            }
+            break;
+          }
+        }
+
+        return {
+          moveFailed: false,
+          detection: currentDetection,
+          position_m: currentPosition,
+          quat_xyzw: currentQuat,
+          refined,
+          attemptsUsed,
+          retryLimitReached: false,
+        };
+      }
+
+      function getBoardOuterCornersM() {
+        const rows = Number(targetRows?.value || 0);
+        const cols = Number(targetCols?.value || 0);
+        const square = Number(squareSize?.value || 0);
+        if (rows <= 0 || cols <= 0 || square <= 0) {
+          return [[0, 0, 0]];
+        }
+        const width = cols * square;
+        const height = rows * square;
+        return [
+          [0, 0, 0],
+          [width, 0, 0],
+          [width, height, 0],
+          [0, height, 0],
+        ];
+      }
+
+      function getBoardVisibilityProbePointsM() {
+        const rows = Number(targetRows?.value || 0);
+        const cols = Number(targetCols?.value || 0);
+        const square = Number(squareSize?.value || 0);
+        const type = String(targetType?.value || "charuco").toLowerCase();
+        if (rows <= 0 || cols <= 0 || square <= 0) {
+          return [[0, 0, 0]];
+        }
+        if (type === "charuco" && rows > 1 && cols > 1) {
+          const pts = [];
+          for (let r = 1; r < rows; r += 1) {
+            for (let c = 1; c < cols; c += 1) {
+              pts.push([c * square, r * square, 0]);
+            }
+          }
+          return pts;
+        }
+        const pts = [];
+        for (let r = 0; r < rows; r += 1) {
+          for (let c = 0; c < cols; c += 1) {
+            pts.push([c * square, r * square, 0]);
+          }
+        }
+        return pts;
+      }
+
+      function isBoardVisibleForPose(position, quat, baseToBoardEstimate, intrinsics, minVisiblePoints = 0) {
+        if (
+          !baseToBoardEstimate ||
+          !intrinsics ||
+          !(intrinsics.width > 0) ||
+          !(intrinsics.height > 0)
+        ) {
+          return true;
+        }
+        const cameraFromBase = invertTransform(position, quat);
+        const cameraToBoard = composeTransform(
+          cameraFromBase.translation_m,
+          cameraFromBase.rotation_quat_xyzw,
+          baseToBoardEstimate.translation_m,
+          baseToBoardEstimate.rotation_quat_xyzw
+        );
+        const boardCorners = getBoardOuterCornersM();
+        const probePoints = getBoardVisibilityProbePointsM();
+        const boardCenter =
+          boardCorners.length >= 4
+            ? [
+                (Number(boardCorners[0]?.[0] || 0) + Number(boardCorners[2]?.[0] || 0)) * 0.5,
+                (Number(boardCorners[0]?.[1] || 0) + Number(boardCorners[2]?.[1] || 0)) * 0.5,
+                0,
+              ]
+            : [0, 0, 0];
+        const marginPx = 8;
+        let visibleOuterCornerCount = 0;
+        let visibleProbeCount = 0;
+        for (const corner of boardCorners) {
+          const camPoint = composeTransform(
+            cameraToBoard.translation_m,
+            cameraToBoard.rotation_quat_xyzw,
+            corner,
+            [0, 0, 0, 1]
+          ).translation_m;
+          if (!Array.isArray(camPoint) || camPoint.length < 3 || Number(camPoint[2] || 0) <= 0.05) {
+            return false;
+          }
+          const uv = projectCameraPoint(camPoint, intrinsics);
+          if (!uv) {
+            continue;
+          }
+          if (
+            uv[0] >= marginPx &&
+            uv[0] <= intrinsics.width - marginPx &&
+            uv[1] >= marginPx &&
+            uv[1] <= intrinsics.height - marginPx
+          ) {
+            visibleOuterCornerCount += 1;
+          }
+        }
+        const centerCamPoint = composeTransform(
+          cameraToBoard.translation_m,
+          cameraToBoard.rotation_quat_xyzw,
+          boardCenter,
+          [0, 0, 0, 1]
+        ).translation_m;
+        const centerUv = projectCameraPoint(centerCamPoint, intrinsics);
+        const centerVisible =
+          Array.isArray(centerCamPoint) &&
+          centerCamPoint.length >= 3 &&
+          Number(centerCamPoint[2] || 0) > 0.05 &&
+          Array.isArray(centerUv) &&
+          centerUv[0] >= marginPx &&
+          centerUv[0] <= intrinsics.width - marginPx &&
+          centerUv[1] >= marginPx &&
+          centerUv[1] <= intrinsics.height - marginPx;
+        if (!centerVisible) {
+          return false;
+        }
+        for (const probe of probePoints) {
+          const camPoint = composeTransform(
+            cameraToBoard.translation_m,
+            cameraToBoard.rotation_quat_xyzw,
+            probe,
+            [0, 0, 0, 1]
+          ).translation_m;
+          if (!Array.isArray(camPoint) || camPoint.length < 3 || Number(camPoint[2] || 0) <= 0.05) {
+            continue;
+          }
+          const uv = projectCameraPoint(camPoint, intrinsics);
+          if (!uv) {
+            continue;
+          }
+          if (
+            uv[0] >= marginPx &&
+            uv[0] <= intrinsics.width - marginPx &&
+            uv[1] >= marginPx &&
+            uv[1] <= intrinsics.height - marginPx
+          ) {
+            visibleProbeCount += 1;
+          }
+        }
+        const requiredVisible = Math.max(
+          4,
+          Math.min(
+            probePoints.length || 4,
+            Number(minVisiblePoints || 0) > 0 ? Number(minVisiblePoints || 0) : Math.ceil((probePoints.length || 4) * 0.5)
+          )
+        );
+        return visibleProbeCount >= requiredVisible && visibleOuterCornerCount >= 2;
+      }
+
+      function getMinCharucoCorners() {
+        const raw = Number(minCharucoCornersInput ? minCharucoCornersInput.value : 0);
+        if (raw > 0) return raw;
+        const rows = Number(targetRows ? targetRows.value : 0);
+        const cols = Number(targetCols ? targetCols.value : 0);
+        if (rows > 1 && cols > 1) {
+          return Math.max(4, Math.floor((rows - 1) * (cols - 1) * 0.5));
+        }
+        return 0;
+      }
+
+      async function applyAutoBoundsFromDetection(detection) {
+        if (!detection || autoBoundsApplied) return;
+        const robot = await api("/robot/state");
+        if (!robot.ok || !robot.body) {
+          log("Robot state unavailable for auto bounds.");
+          return;
+        }
+        let pose = null;
+        try {
+          pose = requireCustomTcpPose(robot.body, "auto bounds");
+        } catch (err) {
+          log(err.message);
+          return;
+        }
+        const pos = pose.position_m || [];
+        const q = pose.quat_xyzw || [0, 0, 0, 1];
+        if (!Array.isArray(pos) || pos.length < 3) {
+          log("Invalid robot TCP pose for auto bounds.");
+          return;
+        }
+        let xyMargin = 0.12;
+        let zMargin = 0.08;
+        let radius = 0.12;
+        const tvec = detection.tvec || [];
+        if (Array.isArray(tvec) && tvec.length >= 3) {
+          const dist = Math.abs(Number(tvec[2]) || 0);
+          if (dist > 0.05) {
+            xyMargin = Math.max(0.1, Math.min(0.2, dist * 0.25));
+            zMargin = Math.max(0.06, Math.min(0.15, dist * 0.2));
+            radius = Math.max(0.1, Math.min(0.2, dist * 0.25));
+          }
+        }
+        document.getElementById("minX").value = (-xyMargin).toFixed(3);
+        document.getElementById("maxX").value = xyMargin.toFixed(3);
+        document.getElementById("minY").value = (-xyMargin).toFixed(3);
+        document.getElementById("maxY").value = xyMargin.toFixed(3);
+        document.getElementById("minZ").value = (-zMargin).toFixed(3);
+        document.getElementById("maxZ").value = zMargin.toFixed(3);
+        document.getElementById("autoQx").value = q[0] ?? 0;
+        document.getElementById("autoQy").value = q[1] ?? 0;
+        document.getElementById("autoQz").value = q[2] ?? 0;
+        document.getElementById("autoQw").value = q[3] ?? 1;
+        autoSphereCenter = [pos[0], pos[1], pos[2]];
+        autoSphereRadius = radius;
+        autoBoundsApplied = true;
+        log(
+          `Auto workspace offsets set around current TCP: XY +/-${(xyMargin * 100).toFixed(0)}cm, Z +/-${(zMargin * 100).toFixed(0)}cm; sphere r=${(radius * 100).toFixed(0)}cm.`
+        );
+      }
+
+      function buildSessionPayload() {
+        return {
+          camera_id: cameraSelect.value,
+          target: {
+            type: targetType ? targetType.value : "chessboard",
+            rows: Number(targetRows ? targetRows.value : 0),
+            cols: Number(targetCols ? targetCols.value : 0),
+            square_size_m: Number(squareSize ? squareSize.value : 0),
+            marker_size_m: Number(markerSize ? markerSize.value : 0),
+            aruco_dict: String(arucoDict ? arucoDict.value : ""),
+          },
+          intrinsics: getIntrinsicsPayload(),
+          method: document.getElementById("handeyeMethod").value,
+          mode: document.getElementById("handeyeMode").value,
+        };
+      }
+
+      function sessionConfigMatches(payload, session) {
+        if (!session || session.status !== "active") return false;
+        const tgt = session.target || {};
+        return (
+          session.camera_id === payload.camera_id &&
+          session.mode === payload.mode &&
+          tgt.type === payload.target.type &&
+          Number(tgt.rows) === Number(payload.target.rows) &&
+          Number(tgt.cols) === Number(payload.target.cols) &&
+          Number(tgt.square_size_m) === Number(payload.target.square_size_m) &&
+          Number(tgt.marker_size_m) === Number(payload.target.marker_size_m) &&
+          String(tgt.aruco_dict || "") === String(payload.target.aruco_dict || "")
+        );
+      }
+
+      async function ensureSession() {
+        const payload = buildSessionPayload();
+        if (!payload.camera_id) {
+          log("Select a camera before running detection.");
+          return false;
+        }
+        await ensureCalibrationServerReady();
+        const status = await calibApi("/session");
+        if (status.ok && sessionConfigMatches(payload, status.body)) {
+          return true;
+        }
+        if (status.ok && status.body?.status === "active") {
+          log("Session settings changed, restarting calibration session (samples cleared).");
+        }
+        let res = await calibApi("/session/start", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok && String(res.body?.detail || res.body?.error || "").includes("camera_calibration_unreachable")) {
+          await ensureCalibrationServerReady();
+          res = await calibApi("/session/start", {
+            method: "POST",
+            body: JSON.stringify(payload),
+          });
+        }
+        if (!res.ok) {
+          log(`Session start failed: ${res.body?.detail || res.status}`);
+          return false;
+        }
+        startPreview();
+        return true;
+      }
+
+      function stopPreview() {
+        if (previewTimer) {
+          clearInterval(previewTimer);
+          previewTimer = null;
+        }
+        previewFrameId = "";
+        previewPendingId = "";
+        if (lastPreviewUrl) {
+          URL.revokeObjectURL(lastPreviewUrl);
+          lastPreviewUrl = "";
+        }
+        if (previewImage) previewImage.removeAttribute("src");
+        if (calibLiveImage) calibLiveImage.removeAttribute("src");
+        if (calibLiveStatus) calibLiveStatus.textContent = "idle";
+        if (calibLiveFps) calibLiveFps.textContent = "FPS: --";
+      }
+
+      function startPreview() {
+        if (previewTimer) return;
+        previewTimer = setInterval(refreshPreview, previewPollMs);
+        refreshPreview();
+      }
+
+      function togglePreview() {
+        if (previewTimer) {
+          stopPreview();
+        } else {
+          startPreview();
+        }
+      }
+
+      async function refreshPreview() {
+        const cameraId = cameraSelect.value;
+        if (!cameraId) return;
+        try {
+          const res = await fetch(
+            `/camera/frame?camera_id=${encodeURIComponent(cameraId)}&t=${Date.now()}`,
+            { cache: "no-store" }
+          );
+          if (!res.ok) {
+            if (calibLiveStatus) calibLiveStatus.textContent = "waiting for frames";
+            return;
+          }
+          const frameId = res.headers.get("X-Frame-Id") || "";
+          const blob = await res.blob();
+          if (!blob || blob.size === 0) return;
+          if (frameId && frameId === previewFrameId) return;
+          const nextUrl = URL.createObjectURL(blob);
+          previewPendingId = frameId || `${Date.now()}`;
+          previewBuffer.onload = () => {
+            if (previewPendingId !== (frameId || previewPendingId)) {
+              URL.revokeObjectURL(nextUrl);
+              return;
+            }
+            if (lastPreviewUrl) URL.revokeObjectURL(lastPreviewUrl);
+            lastPreviewUrl = nextUrl;
+            if (previewImage) previewImage.src = nextUrl;
+            if (calibLiveImage) calibLiveImage.src = nextUrl;
+            previewFrameId = frameId || previewPendingId;
+            if (calibLiveStatus) {
+              calibLiveStatus.textContent = `live ${frameId || ""}`.trim();
+            }
+          };
+          previewBuffer.onerror = () => {
+            URL.revokeObjectURL(nextUrl);
+          };
+          previewBuffer.src = nextUrl;
+          const now = Date.now();
+          if (now - lastCalibrationFpsRefreshMs > 2000) {
+            lastCalibrationFpsRefreshMs = now;
+            void refreshCalibrationLiveFps(true);
+          }
+        } catch (_) {
+          // ignore transient errors
+        }
+      }
+
+      async function runDetection() {
+        if (!(await ensureSession())) return;
+        const cameraId = cameraSelect.value;
+        if (!cameraId) return;
+        const res = await calibApi("/detect", {
+          method: "POST",
+          body: JSON.stringify({ camera_id: cameraId, return_overlay: true }),
+        });
+        if (!res.ok) {
+          if (detectDebug) {
+            detectDebug.textContent = res.body?.detail || "Detection failed.";
+          }
+          log(`Detection failed: ${res.body?.detail || res.status}`);
+          return;
+        }
+        if (detectDebug) {
+          detectDebug.textContent = JSON.stringify(res.body, null, 2);
+        }
+        if (res.body.overlay_b64) {
+          const dataUrl = `data:image/${res.body.overlay_format || "jpg"};base64,${res.body.overlay_b64}`;
+          overlayImage.src = dataUrl;
+        }
+        if (res.body.status === "ok") {
+          await applyAutoBoundsFromDetection(res.body);
+          log("Detection annotation updated.");
+        }
+      }
+
+      async function detectForSample(allowPartial = false, minTimestampNs = null, waitTimeoutMs = 1200) {
+        if (!(await ensureSession())) return null;
+        const cameraId = cameraSelect.value;
+        if (!cameraId) return null;
+        const res = await calibApi("/detect", {
+          method: "POST",
+          body: JSON.stringify({
+            camera_id: cameraId,
+            return_overlay: true,
+            min_timestamp_ns: minTimestampNs,
+            wait_timeout_ms: waitTimeoutMs,
+          }),
+        });
+        if (!res.ok) {
+          if (detectDebug) {
+            detectDebug.textContent = JSON.stringify(res.body?.detail || "Detection failed.", null, 2);
+          }
+          if (res.body?.detail?.code === "fresh_frame_timeout") {
+            log("Timed out waiting for a fresh camera frame after motion settle.");
+          }
+          return null;
+        }
+        if (detectDebug) {
+          detectDebug.textContent = JSON.stringify(res.body, null, 2);
+        }
+        if (res.body.overlay_b64) {
+          const dataUrl = `data:image/${res.body.overlay_format || "jpg"};base64,${res.body.overlay_b64}`;
+          overlayImage.src = dataUrl;
+        }
+        if (res.body.status !== "ok") {
+          if (
+            allowPartial &&
+            (
+              Number(res.body?.marker_count || 0) > 0 ||
+              Number(res.body?.charuco_corners || 0) > 0 ||
+              (Array.isArray(res.body?.charuco_centroid_uv) && res.body.charuco_centroid_uv.length >= 2)
+            )
+          ) {
+            return { ...res.body, partial_guidance_detection: true };
+          }
+          return null;
+        }
+        const isCharuco = targetType && targetType.value === "charuco";
+        if (isCharuco) {
+          const minCorners = getMinCharucoCorners();
+          const cornerCount = Number(
+            res.body.corners ?? res.body.charuco_corners ?? res.body.corner_count ?? 0
+          );
+          if (minCorners > 0 && cornerCount < minCorners) {
+            log(`Detection has ${cornerCount} charuco corners (min ${minCorners}), retrying.`);
+            if (
+              allowPartial &&
+              (
+                Number(res.body?.marker_count || 0) > 0 ||
+                cornerCount > 0 ||
+                (Array.isArray(res.body?.charuco_centroid_uv) && res.body.charuco_centroid_uv.length >= 2)
+              )
+            ) {
+              return { ...res.body, partial_guidance_detection: true };
+            }
+            return null;
+          }
+        }
+        await applyAutoBoundsFromDetection(res.body);
+        return res.body;
+      }
+
+      async function captureSample() {
+        if (!(await ensureSession())) return;
+        const cameraId = cameraSelect.value;
+        if (!cameraId) return;
+        const detection = await detectForSample(false, nowTimestampNs(), 1500);
+        if (!detection) {
+          log("Detection failed, sample not captured.");
+          return;
+        }
+        const robot = await getStableRobotTcpPose(2, 30);
+        if (!robot || robot.error || !robot.custom_tcp_pose) {
+          log(robot?.error || "Custom TCP pose unavailable; sample not captured.");
+          return;
+        }
+        if (!robot.stable) {
+          log("Custom TCP pose is still changing; sample not captured.");
+          return;
+        }
+        const pose = robot.custom_tcp_pose;
+        robotPose.textContent = JSON.stringify(pose, null, 2);
+        setPoseEditorFromPose(pose);
+        const payload = {
+          robot: {
+            position_m: pose.position_m || [0, 0, 0],
+            quat_xyzw: pose.quat_xyzw || [0, 0, 0, 1],
+            frame: pose.frame || "base",
+            tcp_frame: pose.tcp_frame || "tool_tcp",
+            pose_source: "custom_tcp",
+            timestamp_ns: robot.body?.timestamp_ns || null,
+          },
+          robot_state_debug: {
+            ...(robot.body?.debug || {}),
+            custom_tcp_pose: pose,
+          },
+          camera_id: cameraId,
+          use_last_detection: true,
+        };
+        const res = await calibApi("/samples/add", {
+          method: "POST",
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          log(`Sample capture failed: ${res.body?.detail || res.status}`);
+          return;
+        }
+        log(`Sample ${res.body.sample.sample_id} captured.`);
+        refreshSamples();
+      }
+
+      async function refreshSamples() {
+        if (!(await ensureSession())) return;
+        const res = await calibApi("/samples");
+        if (!res.ok) {
+          updateSampleSummary(0, "Sample list unavailable.");
+          return;
+        }
+        const samples = Array.isArray(res.body?.samples) ? res.body.samples : [];
+        const lastSample = samples.length ? samples[samples.length - 1] : null;
+        updateSampleSummary(
+          samples.length,
+          lastSample ? `Last sample: #${lastSample.sample_id}.` : ""
+        );
+      }
+
+      async function exportSamplesToStation() {
+        const stationId = stationSelect.value;
+        if (!stationId) {
+          log("Select a station before exporting calibration samples.");
+          return null;
+        }
+        const samplesRes = await calibApi("/samples");
+        if (!samplesRes.ok || !samplesRes.body || !Array.isArray(samplesRes.body.samples)) {
+          log(`Failed to read captured samples: ${samplesRes.body?.detail || samplesRes.status}`);
+          return null;
+        }
+        const payload = {
+          camera_id: cameraSelect.value || null,
+          method: document.getElementById("handeyeMethod").value || null,
+          mode: document.getElementById("handeyeMode").value || null,
+          target: getCurrentTargetPayload(),
+          tcp_calibration: getTcpComputePayload(),
+          samples: samplesRes.body.samples,
+        };
+        const saveRes = await api(`/stations/${encodeURIComponent(stationId)}/calibration/samples`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!saveRes.ok) {
+          log(`Failed to save samples.json: ${saveRes.body?.detail || saveRes.status}`);
+          return null;
+        }
+        log(`Calibration samples saved to ${saveRes.body?.path || "station calibration dir"}.`);
+        return saveRes.body;
+      }
+
+      async function loadSavedSamples() {
+        const stationId = stationSelect.value;
+        if (!stationId) {
+          log("Select a station before loading samples.");
+          return;
+        }
+        const savedRes = await api(`/stations/${encodeURIComponent(stationId)}/calibration/samples`);
+        if (!savedRes.ok || !savedRes.body) {
+          log(`Failed to load saved samples: ${savedRes.body?.detail || savedRes.status}`);
+          return;
+        }
+        const payload = savedRes.body || {};
+        if (payload.camera_id) {
+          cameraSelect.value = String(payload.camera_id);
+        }
+        if (payload.method) {
+          document.getElementById("handeyeMethod").value = String(payload.method);
+        }
+        if (payload.mode) {
+          document.getElementById("handeyeMode").value = String(payload.mode);
+        }
+        const target = payload.target || {};
+        if (target.type) targetType.value = String(target.type);
+        if (target.rows != null) targetRows.value = String(target.rows);
+        if (target.cols != null) targetCols.value = String(target.cols);
+        if (target.square_size_m != null) squareSize.value = String(target.square_size_m);
+        if (target.marker_size_m != null) markerSize.value = String(target.marker_size_m);
+        if (target.aruco_dict != null) arucoDict.value = String(target.aruco_dict);
+        updateTargetFields();
+        if (!(await ensureSession())) return;
+        const importRes = await calibApi("/samples/import", {
+          method: "POST",
+          body: JSON.stringify({
+            camera_id: payload.camera_id || cameraSelect.value,
+            method: payload.method || document.getElementById("handeyeMethod").value,
+            mode: payload.mode || document.getElementById("handeyeMode").value,
+            target: payload.target || null,
+            samples: Array.isArray(payload.samples) ? payload.samples : [],
+          }),
+        });
+        if (!importRes.ok) {
+          log(`Import samples failed: ${importRes.body?.detail || importRes.status}`);
+          return;
+        }
+        await refreshSamples();
+        log(`Loaded ${importRes.body?.samples || 0} saved samples into the active calibration session.`);
+      }
+
+      async function refreshTargetPosesFromLatestIntrinsics(options = {}) {
+        const opts = options && typeof options === "object" ? options : {};
+        const silent = Boolean(opts.silent);
+        const auto = Boolean(opts.auto);
+        if (!(await ensureSession())) return false;
+        const samplesRes = await calibApi("/samples");
+        if (!samplesRes.ok || !samplesRes.body || !Array.isArray(samplesRes.body.samples)) {
+          const message = `Failed to read calibration samples: ${samplesRes.body?.detail || samplesRes.status}`;
+          if (!silent) {
+            intrinsicsResult.textContent = message;
+          }
+          log(message);
+          return false;
+        }
+        const samples = samplesRes.body.samples;
+        if (!samples.length) {
+          const message = "No captured samples to refresh.";
+          if (!silent) {
+            intrinsicsResult.textContent = message;
+          }
+          log(message);
+          return false;
+        }
+        const importRes = await calibApi("/samples/import", {
+          method: "POST",
+          body: JSON.stringify({
+            camera_id: cameraSelect.value || null,
+            method: document.getElementById("handeyeMethod").value || null,
+            mode: document.getElementById("handeyeMode").value || null,
+            target: getCurrentTargetPayload(),
+            samples,
+          }),
+        });
+        if (!importRes.ok) {
+          const message = importRes.body?.detail || "Refresh target poses failed.";
+          if (!silent) {
+            intrinsicsResult.textContent = message;
+          }
+          log(message);
+          return false;
+        }
+        await refreshSamples();
+        const refreshed = Number(importRes.body?.samples || samples.length || 0);
+        const recomputed = Number(importRes.body?.recomputed_with_session_intrinsics || 0);
+        const message =
+          `Target poses refreshed for ${refreshed} samples using latest intrinsics. ` +
+          `Recomputed ${recomputed} sample pose${recomputed === 1 ? "" : "s"}.`;
+        if (!silent) {
+          intrinsicsResult.textContent = JSON.stringify(importRes.body, null, 2);
+        }
+        log(auto ? `Auto refresh: ${message}` : message);
+        return true;
+      }
+
+      async function clearSamples() {
+        if (!(await ensureSession())) return;
+        await calibApi("/samples/clear", { method: "POST" });
+        refreshSamples();
+      }
+
+      async function useCurrentOrientation() {
+        const robot = await api("/robot/state");
+        if (!robot.ok || !robot.body) {
+          log("Robot state unavailable.");
+          return;
+        }
+        let pose = null;
+        try {
+          pose = requireCustomTcpPose(robot.body, "current orientation");
+        } catch (err) {
+          log(err.message);
+          return;
+        }
+        const q = pose.quat_xyzw || [0, 0, 0, 1];
+        document.getElementById("autoQx").value = q[0] ?? 0;
+        document.getElementById("autoQy").value = q[1] ?? 0;
+        document.getElementById("autoQz").value = q[2] ?? 0;
+        document.getElementById("autoQw").value = q[3] ?? 1;
+        setPoseEditorFromPose(pose);
+        log("Loaded current custom TCP orientation.");
+      }
+
+      async function nudge(axis, dir) {
+        const state = await api("/robot/state");
+        if (!state.ok || !state.body) return;
+        let pose = null;
+        try {
+          pose = requireCustomTcpPose(state.body, "nudge");
+        } catch (err) {
+          log(err.message);
+          return;
+        }
+        const step = Number(document.getElementById("stepSize").value || 0.01);
+        const pos = pose.position_m.slice();
+        const idx = axis === "x" ? 0 : axis === "y" ? 1 : 2;
+        pos[idx] += step * dir;
+        const payload = {
+          position_m: pos,
+          quat_xyzw: pose.quat_xyzw || [0, 0, 0, 1],
+          frame: pose.frame || "base",
+          profile: "slow",
+        };
+        await api("/robot/movel_custom_tcp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        setPoseEditorFromPose({
+          position_m: payload.position_m,
+          quat_xyzw: payload.quat_xyzw,
+          frame: payload.frame,
+        });
+        await loadCurrentPoseIntoEditor(true);
+      }
+
+      async function nudgeRotation(axis, dir) {
+        const state = await api("/robot/state");
+        if (!state.ok || !state.body) return;
+        let pose = null;
+        try {
+          pose = requireCustomTcpPose(state.body, "nudge rotation");
+        } catch (err) {
+          log(err.message);
+          return;
+        }
+        const rpy = Array.isArray(pose.rotation_rpy_deg) && pose.rotation_rpy_deg.length >= 3
+          ? pose.rotation_rpy_deg.slice(0, 3)
+          : quatToRpyDeg(pose.quat_xyzw || [0, 0, 0, 1]);
+        const step = angleStepDeg();
+        const idx = axis === "roll" ? 0 : axis === "pitch" ? 1 : 2;
+        rpy[idx] += step * dir;
+        const payload = {
+          position_m: pose.position_m.slice(),
+          quat_xyzw: rpyDegToQuat(rpy[0], rpy[1], rpy[2]),
+          frame: pose.frame || "base",
+          profile: "slow",
+        };
+        await api("/robot/movel_custom_tcp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        setPoseEditorFromPose({
+          position_m: payload.position_m,
+          quat_xyzw: payload.quat_xyzw,
+          rotation_rpy_deg: rpy,
+          frame: payload.frame,
+        });
+        await loadCurrentPoseIntoEditor(true);
+      }
+
+      async function moveManualPose() {
+        const manual = readPoseEditorPayload();
+        const payload = {
+          position_m: manual.position_m,
+          quat_xyzw: rpyDegToQuat(
+            manual.rotation_rpy_deg[0],
+            manual.rotation_rpy_deg[1],
+            manual.rotation_rpy_deg[2]
+          ),
+          frame: "base",
+          profile: "slow",
+        };
+        await api("/robot/movel_custom_tcp", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        await loadCurrentPoseIntoEditor(true);
+      }
+
+      async function openGripper() {
+        await api("/robot/gripper/close", { method: "POST" });
+      }
+
+      async function closeGripper() {
+        await api("/robot/gripper/open", { method: "POST" });
+      }
+
+      async function stopRobot() {
+        await api("/robot/stop", { method: "POST" });
+      }
+
+      function abortAutoCapture() {
+        autoCaptureStop = true;
+        log("Auto capture stop requested.");
+      }
+
+      function parseRange(idMin, idMax) {
+        const min = Number(document.getElementById(idMin).value || 0);
+        const max = Number(document.getElementById(idMax).value || 0);
+        return { min, max };
+      }
+
+      function resolveWorkspaceBounds(centerPosition, xOffsets, yOffsets, zOffsets) {
+        const center = Array.isArray(centerPosition) ? centerPosition.map(Number) : [];
+        if (center.length < 3) {
+          return null;
+        }
+        return {
+          rx: {
+            min: center[0] + Number(xOffsets.min || 0),
+            max: center[0] + Number(xOffsets.max || 0),
+          },
+          ry: {
+            min: center[1] + Number(yOffsets.min || 0),
+            max: center[1] + Number(yOffsets.max || 0),
+          },
+          rz: {
+            min: center[2] + Number(zOffsets.min || 0),
+            max: center[2] + Number(zOffsets.max || 0),
+          },
+        };
+      }
+
+      function randomInRange(min, max) {
+        return min + Math.random() * (max - min);
+      }
+
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      function nowTimestampNs() {
+        return Math.round(Date.now() * 1e6);
+      }
+
+      async function getStableRobotTcpPose(maxChecks = 4, delayMs = 80) {
+        let last = null;
+        for (let i = 0; i < maxChecks; i += 1) {
+          const robot = await api("/robot/state");
+          if (!robot.ok || !robot.body) {
+            return { error: "Robot state unavailable." };
+          }
+          let customTcpPose = null;
+          try {
+            customTcpPose = requireCustomTcpPose(robot.body, "sample capture");
+          } catch (err) {
+            return { error: err.message, body: robot.body };
+          }
+          const current = { body: robot.body, tcp_pose: customTcpPose, custom_tcp_pose: customTcpPose };
+          if (last) {
+            const posDelta = distance3(
+              customTcpPose.position_m || [0, 0, 0],
+              last.tcp_pose.position_m || [0, 0, 0]
+            );
+            const angDelta = quatAngleDeg(
+              customTcpPose.quat_xyzw || [0, 0, 0, 1],
+              last.tcp_pose.quat_xyzw || [0, 0, 0, 1]
+            );
+            if (posDelta <= 0.0005 && angDelta <= 0.2) {
+              current.stable = true;
+              current.position_delta_m = posDelta;
+              current.rotation_delta_deg = angDelta;
+              return current;
+            }
+          }
+          last = current;
+          if (i < maxChecks - 1) {
+            await sleep(delayMs);
+          }
+        }
+        if (last) {
+          last.stable = false;
+        }
+        return last;
+      }
+
+      async function autoCaptureSamples() {
+        if (autoCaptureActive) return;
+        autoCaptureActive = true;
+        autoCaptureStop = false;
+        if (!(await ensureSession())) {
+          autoCaptureActive = false;
+          return;
+        }
+        let calibrationPose = null;
+        try {
+          calibrationPose = getCalibrationPoseOrThrow();
+          applyAutoBoundsFromPose(calibrationPose.tcp_pose, calibrationPose.name);
+        } catch (error) {
+          autoCaptureActive = false;
+          log(error?.message || "Missing calibration pose.");
+          throw error;
+        }
+        const moved = await moveToPoseByName(calibrationPose.name);
+        if (!moved) {
+          autoCaptureActive = false;
+          const error = new Error("Failed to move to saved pose 'calib'.");
+          log(error.message);
+          throw error;
+        }
+        log(`Moved to initial calibration pose '${calibrationPose.name}'.`);
+        const profile = clampAutoCaptureProfile(
+          (document.getElementById("autoProfile").value || "medium").trim()
+        );
+        const settle = Math.max(0, Number(document.getElementById("autoSettle").value || 0));
+        if (settle > 0) {
+          await sleep(settle * 1000);
+        }
+        const referenceDetection = await detectForSample(false, nowTimestampNs(), 1500);
+        if (!referenceDetection || !Array.isArray(referenceDetection.tvec) || referenceDetection.tvec.length < 3) {
+          autoCaptureActive = false;
+          const error = new Error("Failed to detect Charuco board from saved pose 'calib'.");
+          log(error.message);
+          throw error;
+        }
+        const referenceRobot = await api("/robot/state");
+        if (!referenceRobot.ok || !referenceRobot.body) {
+          autoCaptureActive = false;
+          const error = new Error("Robot state unavailable at saved pose 'calib'.");
+          log(error.message);
+          throw error;
+        }
+        let referencePose = null;
+        try {
+          referencePose = requireCustomTcpPose(referenceRobot.body, "auto capture reference");
+        } catch (err) {
+          autoCaptureActive = false;
+          log(err.message);
+          throw err;
+        }
+        const referenceQuat = normalizeQuat(referencePose.quat_xyzw || [0, 0, 0, 1]);
+        const referenceTargetQuat = rvecToQuat(referenceDetection.rvec || [0, 0, 0]);
+        const baseToBoardEstimate = composeTransform(
+          referencePose.position_m || calibrationPose.tcp_pose.position_m,
+          referenceQuat,
+          referenceDetection.tvec,
+          referenceTargetQuat
+        );
+        const captureIntrinsics = getAutoCaptureIntrinsics();
+        const minCorners = getMinCharucoCorners();
+        const referenceBoardDistanceM = Math.abs(Number(referenceDetection?.tvec?.[2] || 0));
+        log("Detected Charuco board from calibration pose. Auto-capture will keep the predicted board inside the camera view.");
+        const count = Math.max(1, Number(document.getElementById("autoCount").value || 1));
+        const xOffsets = parseRange("minX", "maxX");
+        const yOffsets = parseRange("minY", "maxY");
+        const zOffsets = parseRange("minZ", "maxZ");
+        if (
+          xOffsets.max <= xOffsets.min ||
+          yOffsets.max <= yOffsets.min ||
+          zOffsets.max <= zOffsets.min
+        ) {
+          log("Invalid workspace offsets.");
+          autoCaptureActive = false;
+          return;
+        }
+        const calibrationPosition = (calibrationPose.tcp_pose.position_m || []).map(Number);
+        const referencePosition = (
+          referencePose.position_m ||
+          calibrationPose.tcp_pose.position_m ||
+          []
+        ).map(Number);
+        const workspaceBounds = resolveWorkspaceBounds(
+          calibrationPosition,
+          xOffsets,
+          yOffsets,
+          zOffsets
+        );
+        if (!workspaceBounds) {
+          autoCaptureActive = false;
+          const error = new Error("Saved pose 'calib' does not include a valid workspace center.");
+          log(error.message);
+          throw error;
+        }
+        const { rx, ry, rz } = workspaceBounds;
+        if (
+          calibrationPosition.length < 3 ||
+          calibrationPosition[0] < rx.min ||
+          calibrationPosition[0] > rx.max ||
+          calibrationPosition[1] < ry.min ||
+          calibrationPosition[1] > ry.max ||
+          calibrationPosition[2] < rz.min ||
+          calibrationPosition[2] > rz.max
+        ) {
+          autoCaptureActive = false;
+          const error = new Error(
+            "Saved pose 'calib' is outside the current auto-capture bounds."
+          );
+          log(error.message);
+          throw error;
+        }
+        const baseQuat = [
+          Number(document.getElementById("autoQx").value || 0),
+          Number(document.getElementById("autoQy").value || 0),
+          Number(document.getElementById("autoQz").value || 0),
+          Number(document.getElementById("autoQw").value || 1),
+        ];
+        const referencePoseQuat = normalizeQuat(referenceQuat || baseQuat);
+        const boardPositionEstimate = baseToBoardEstimate.translation_m || [0, 0, 0];
+        const referenceLookDirection = normalizeVec(
+          subtractVec(boardPositionEstimate, referencePosition),
+          quatRotate(referencePoseQuat, [0, 0, 1])
+        );
+        const rollJitter = Number(document.getElementById("autoRollJitter").value || 0);
+        const pitchJitter = Number(document.getElementById("autoPitchJitter").value || 0);
+        const yawJitter = Number(document.getElementById("autoYawJitter").value || 0);
+        const orientationRetries = buildAutoCaptureOrientationRetries(pitchJitter, yawJitter);
+        const center = calibrationPosition.slice(0, 3);
+        const radius = Math.min(
+          autoSphereRadius || 0.12,
+          Math.max(0, center[0] - rx.min),
+          Math.max(0, rx.max - center[0]),
+          Math.max(0, center[1] - ry.min),
+          Math.max(0, ry.max - center[1])
+        );
+        if (radius <= 0) {
+          autoCaptureActive = false;
+          const error = new Error(
+            "Auto-capture XY offsets do not leave any sampling radius around saved pose 'calib'."
+          );
+          log(error.message);
+          throw error;
+        }
+        const workspaceArea = Math.max(1e-6, (rx.max - rx.min) * (ry.max - ry.min));
+        const minPositionSeparationM = Math.max(
+          0.015,
+          Math.min(0.04, Math.sqrt(workspaceArea / Math.max(count, 1)) * 0.35)
+        );
+        const maxConfiguredJitter = Math.max(
+          Math.abs(rollJitter),
+          Math.abs(pitchJitter),
+          Math.abs(yawJitter)
+        );
+        const minOrientationSeparationDeg =
+          maxConfiguredJitter > 0 ? Math.max(8, Math.min(20, maxConfiguredJitter * 0.4)) : 0;
+        const globalOrientationSeparationDeg =
+          maxConfiguredJitter > 0 ? Math.max(5, Math.min(12, maxConfiguredJitter * 0.22)) : 0;
+        const acceptedSamples = [
+          {
+            position_m: center.slice(0, 3),
+            quat_xyzw: referencePoseQuat.slice(0, 4),
+          },
+        ];
+        let currentMotionPosition = referencePosition.slice(0, 3);
+        let currentMotionQuat = referencePoseQuat.slice(0, 4);
+        let captured = 0;
+        let attempts = 0;
+        const maxAttempts = Math.max(count * 150, 3000);
+        const maxPoseRetryAttempts = 5;
+        const perAttemptCandidatePool = 12;
+        try {
+          while (captured < count && attempts < maxAttempts) {
+            if (autoCaptureStop) break;
+            attempts += 1;
+            let candidatePose = null;
+            let candidateScore = Number.POSITIVE_INFINITY;
+            for (let poolIdx = 0; poolIdx < perAttemptCandidatePool; poolIdx += 1) {
+              const proposedPose = buildAutoCaptureCandidate(
+                attempts - 1 + poolIdx,
+                center,
+                radius,
+                rz,
+                referencePosition,
+                referencePoseQuat,
+                referenceLookDirection,
+                boardPositionEstimate,
+                { roll: rollJitter, pitch: pitchJitter, yaw: yawJitter },
+                count
+              );
+              const proposedPosition = proposedPose.position_m || null;
+              const proposedQuat = proposedPose.quat_xyzw || null;
+              if (!proposedPosition || !proposedQuat) {
+                continue;
+              }
+              if (
+                proposedPosition[0] < rx.min ||
+                proposedPosition[0] > rx.max ||
+                proposedPosition[1] < ry.min ||
+                proposedPosition[1] > ry.max ||
+                proposedPosition[2] < rz.min ||
+                proposedPosition[2] > rz.max
+              ) {
+                continue;
+              }
+              if (
+                !isBoardVisibleForPose(
+                  proposedPosition,
+                  proposedQuat,
+                  baseToBoardEstimate,
+                  captureIntrinsics,
+                  minCorners
+                )
+              ) {
+                continue;
+              }
+              const proposedTooSimilar = acceptedSamples.some((sample) => {
+                const posDist = distance3(proposedPosition, sample.position_m || [0, 0, 0]);
+                const angDist = quatAngleDeg(proposedQuat, sample.quat_xyzw || [0, 0, 0, 1]);
+                if (globalOrientationSeparationDeg > 0 && angDist < globalOrientationSeparationDeg) {
+                  return true;
+                }
+                if (posDist >= minPositionSeparationM) {
+                  return false;
+                }
+                if (minOrientationSeparationDeg <= 0) {
+                  return true;
+                }
+                return angDist < minOrientationSeparationDeg;
+              });
+              if (proposedTooSimilar) {
+                continue;
+              }
+              const score = autoCaptureMotionScore(
+                proposedPosition,
+                proposedQuat,
+                currentMotionPosition,
+                currentMotionQuat
+              );
+              if (score < candidateScore) {
+                candidateScore = score;
+                candidatePose = proposedPose;
+              }
+            }
+            if (!candidatePose) {
+              continue;
+            }
+            let position = candidatePose.position_m || null;
+            if (!position) continue;
+            let quat = candidatePose.quat_xyzw || null;
+            if (!quat) continue;
+            let detection = null;
+            let moveFailed = false;
+            let usedRetryOrientation = false;
+            let poseRetryAttempts = 0;
+            let skipPoseForRetryLimit = false;
+            for (const retry of orientationRetries) {
+              if (poseRetryAttempts >= maxPoseRetryAttempts) {
+                skipPoseForRetryLimit = true;
+                log(`Skipping pose after ${poseRetryAttempts} low-corner retries.`);
+                break;
+              }
+              const retryQuat =
+                retry.pitch === 0 && retry.yaw === 0
+                  ? quat
+                  : normalizeQuat(
+                      quatMultiply(quat, rpyDegToQuat(0, retry.pitch, retry.yaw))
+                    );
+              const movePlan = chooseAutoCaptureMoveProfile(
+                profile,
+                currentMotionPosition,
+                currentMotionQuat,
+                position,
+                retryQuat
+              );
+              if (movePlan.profile !== profile) {
+                log(
+                  `Auto-capture downshifted move profile to ${movePlan.profile} for long move ` +
+                  `(${movePlan.posDistM.toFixed(3)} m, ${movePlan.angDistDeg.toFixed(1)} deg).`
+                );
+              }
+              const moveRes = await api("/robot/movel_custom_tcp", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  position_m: position,
+                  quat_xyzw: retryQuat,
+                  frame: "base",
+                  profile: movePlan.profile,
+                }),
+              });
+              if (!moveRes.ok) {
+                log(`Move failed: ${moveRes.body?.detail || moveRes.status}`);
+                moveFailed = true;
+                break;
+              }
+              currentMotionPosition = position.slice(0, 3);
+              currentMotionQuat = retryQuat.slice(0, 4);
+              if (settle > 0) {
+                await sleep(settle * 1000);
+              }
+              detection = await detectForSample(true, nowTimestampNs(), 1500);
+              if (detectionMeetsCornerThreshold(detection, minCorners)) {
+                quat = retryQuat;
+                usedRetryOrientation = retry.pitch !== 0 || retry.yaw !== 0;
+                break;
+              }
+              poseRetryAttempts += 1;
+              if (poseRetryAttempts >= maxPoseRetryAttempts) {
+                skipPoseForRetryLimit = true;
+                log(`Skipping pose after ${poseRetryAttempts} low-corner retries.`);
+                break;
+              }
+              if (detection && detection.partial_guidance_detection) {
+                const refinement = await refineDetectionLocally(
+                  position,
+                  retryQuat,
+                  detection,
+                  profile,
+                  settle,
+                  minCorners,
+                  referenceBoardDistanceM,
+                  captureIntrinsics,
+                  baseToBoardEstimate,
+                  Math.max(0, maxPoseRetryAttempts - poseRetryAttempts)
+                );
+                poseRetryAttempts += Math.max(0, Number(refinement.attemptsUsed || 0));
+                if (refinement.moveFailed) {
+                  log("Move failed during local Charuco refinement.");
+                  moveFailed = true;
+                  break;
+                }
+                if (refinement.detection) {
+                  detection = refinement.detection;
+                  position = refinement.position_m || position;
+                  quat = refinement.quat_xyzw || retryQuat;
+                }
+                if (refinement.refined) {
+                  usedRetryOrientation = true;
+                }
+                if (refinement.retryLimitReached || poseRetryAttempts >= maxPoseRetryAttempts) {
+                  skipPoseForRetryLimit = true;
+                  log(`Skipping pose after ${poseRetryAttempts} low-corner retries.`);
+                  break;
+                }
+                if (moveFailed || detectionMeetsCornerThreshold(detection, minCorners)) {
+                  break;
+                }
+              }
+            }
+            if (moveFailed) {
+              continue;
+            }
+            if (skipPoseForRetryLimit) {
+              continue;
+            }
+            if (!detectionMeetsCornerThreshold(detection, minCorners)) {
+              log("Detection failed at pose, retrying.");
+              continue;
+            }
+            if (usedRetryOrientation) {
+              log("Recovered Charuco detection with local orientation refinement.");
+            }
+            const robot = await getStableRobotTcpPose(2, 30);
+            if (!robot || robot.error || !robot.custom_tcp_pose) {
+              log(robot?.error || "Custom TCP pose unavailable.");
+              continue;
+            }
+            if (!robot.stable) {
+              log("Custom TCP pose still settling; retrying candidate.");
+              continue;
+            }
+            const pose = robot.custom_tcp_pose;
+            robotPose.textContent = JSON.stringify(pose, null, 2);
+            setPoseEditorFromPose(pose);
+            currentMotionPosition = Array.isArray(pose.position_m) ? pose.position_m.slice(0, 3) : currentMotionPosition;
+            currentMotionQuat = Array.isArray(pose.quat_xyzw) ? pose.quat_xyzw.slice(0, 4) : currentMotionQuat;
+            const payload = {
+              robot: {
+                position_m: pose.position_m || position,
+                quat_xyzw: pose.quat_xyzw || quat,
+                frame: pose.frame || "base",
+                tcp_frame: pose.tcp_frame || "tool_tcp",
+                pose_source: "custom_tcp",
+                timestamp_ns: robot.body?.timestamp_ns || null,
+              },
+              robot_state_debug: {
+                ...(robot.body?.debug || {}),
+                custom_tcp_pose: pose,
+              },
+              camera_id: cameraSelect.value,
+              use_last_detection: true,
+            };
+            const sampleRes = await calibApi("/samples/add", {
+              method: "POST",
+              body: JSON.stringify(payload),
+            });
+            if (!sampleRes.ok) {
+              log(`Sample add failed: ${sampleRes.body?.detail || sampleRes.status}`);
+              continue;
+            }
+            acceptedSamples.push({
+              position_m: pose.position_m || position,
+              quat_xyzw: pose.quat_xyzw || quat,
+            });
+            captured += 1;
+            log(`Auto sample ${captured}/${count} captured.`);
+            await refreshSamples();
+          }
+          if (autoCaptureStop) {
+            log("Auto capture stopped.");
+          } else {
+            log(`Auto capture finished: ${captured}/${count} samples after ${attempts} candidate tries.`);
+            if (captured === count) {
+              await exportSamplesToStation();
+            }
+          }
+        } finally {
+          const returned = await moveToPoseByName(calibrationPose.name);
+          if (returned) {
+            log(`Returned to calibration pose '${calibrationPose.name}'.`);
+          } else {
+            log(`Failed to return to calibration pose '${calibrationPose.name}'.`);
+          }
+          autoCaptureActive = false;
+        }
+      }
+
+      async function computeHandEye() {
+        if (!(await ensureSession())) return;
+        const refreshed = await refreshTargetPosesFromLatestIntrinsics({ silent: true, auto: true });
+        if (!refreshed) {
+          computeResult.textContent = "Refresh target poses first or capture samples.";
+          return;
+        }
+        // Do NOT pass tcp_calibration to the solver.
+        // Samples are captured using custom_tcp_pose (O_T_custom_tcp) — already the correct
+        // frame. The solver yields T_custom_tcp_camera directly. Passing tcp_calibration
+        // would shift the reference frame a second time and corrupt tz by ~0.1m.
+        const res = await calibApi("/compute", {
+          method: "POST",
+          body: JSON.stringify({
+            method: document.getElementById("handeyeMethod").value || "Andreff",
+          }),
+        });
+        if (!res.ok) {
+          computeResult.textContent = res.body?.detail || "Compute failed.";
+          return;
+        }
+        lastCompute = res.body;
+        if (lastCompute.camera_in_gripper && lastCompute.camera_in_gripper.translation_m) {
+          const t = lastCompute.camera_in_gripper.translation_m || [0, 0, 0];
+          const q = lastCompute.camera_in_gripper.rotation_quat_xyzw || [0, 0, 0, 1];
+          const rpy = quatToRpyDeg(q);
+          if (saveHeTx) saveHeTx.value = String(Number(t[0] || 0));
+          if (saveHeTy) saveHeTy.value = String(Number(t[1] || 0));
+          if (saveHeTz) saveHeTz.value = String(Number(t[2] || 0));
+          if (saveHeRoll) saveHeRoll.value = String(Number(rpy[0] || 0));
+          if (saveHePitch) saveHePitch.value = String(Number(rpy[1] || 0));
+          if (saveHeYaw) saveHeYaw.value = String(Number(rpy[2] || 0));
+          if (saveHandEyeFrame) saveHandEyeFrame.value = "camera_in_gripper";
+          window.impGizmoEditors?.syncAll?.();
+        } else if (lastCompute.base_to_camera) {
+          const t = lastCompute.base_to_camera.translation_m || [0, 0, 0];
+          const q = lastCompute.base_to_camera.rotation_quat_xyzw || [0, 0, 0, 1];
+          const rpy = quatToRpyDeg(q);
+          if (saveHeTx) saveHeTx.value = String(Number(t[0] || 0));
+          if (saveHeTy) saveHeTy.value = String(Number(t[1] || 0));
+          if (saveHeTz) saveHeTz.value = String(Number(t[2] || 0));
+          if (saveHeRoll) saveHeRoll.value = String(Number(rpy[0] || 0));
+          if (saveHePitch) saveHePitch.value = String(Number(rpy[1] || 0));
+          if (saveHeYaw) saveHeYaw.value = String(Number(rpy[2] || 0));
+          if (saveHandEyeFrame) saveHandEyeFrame.value = "base_to_camera";
+          window.impGizmoEditors?.syncAll?.();
+        }
+        computeResult.textContent = JSON.stringify(res.body, null, 2);
+        log("Hand-eye computed.");
+      }
+
+      async function computeIntrinsics() {
+        if (!(await ensureSession())) return;
+        const res = await calibApi("/compute/intrinsics", { method: "POST" });
+        if (!res.ok) {
+          intrinsicsResult.textContent = res.body?.detail || "Intrinsics compute failed.";
+          return;
+        }
+        lastIntrinsicsCompute = res.body;
+        intrinsicsResult.textContent = JSON.stringify(res.body, null, 2);
+        applyComputedIntrinsics(res.body);
+        log("Intrinsics computed.");
+      }
+
+      async function saveIntrinsics() {
+        const stationId = stationSelect.value;
+        if (!stationId) {
+          intrinsicsResult.textContent = "Select a station before saving intrinsics.";
+          return;
+        }
+        const payload = getIntrinsicsPayload();
+        const width = Number(document.getElementById("intrinsicWidth").value || 0);
+        const height = Number(document.getElementById("intrinsicHeight").value || 0);
+        if (width > 0 && height > 0) {
+          payload.resolution = { width: Math.round(width), height: Math.round(height) };
+        } else if (lastIntrinsicsCompute && Array.isArray(lastIntrinsicsCompute.image_size)) {
+          payload.resolution = {
+            width: Number(lastIntrinsicsCompute.image_size[0]) || 0,
+            height: Number(lastIntrinsicsCompute.image_size[1]) || 0,
+          };
+        }
+        const res = await api(`/stations/${encodeURIComponent(stationId)}/calibration/intrinsics`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          intrinsicsResult.textContent = res.body?.detail || "Save intrinsics failed.";
+          return;
+        }
+        intrinsicsResult.textContent = JSON.stringify(res.body, null, 2);
+        log("Intrinsics saved to station.");
+      }
+
+      async function saveHandEye() {
+        const stationId = stationSelect.value;
+        if (!stationId) {
+          saveResult.textContent = "Select a station before saving.";
+          return;
+        }
+        let payload = null;
+        const currentTranslation = [
+          Number(saveHeTx?.value || 0),
+          Number(saveHeTy?.value || 0),
+          Number(saveHeTz?.value || 0),
+        ];
+        const currentRpy = [
+          Number(saveHeRoll?.value || 0),
+          Number(saveHePitch?.value || 0),
+          Number(saveHeYaw?.value || 0),
+        ];
+        const currentFrame = String(saveHandEyeFrame?.value || "camera_in_gripper");
+        if (currentTranslation.every((v) => Number.isFinite(v)) && currentRpy.every((v) => Number.isFinite(v))) {
+          payload = {
+            translation_m: currentTranslation,
+            rotation_rpy_deg: currentRpy,
+            hand_eye_frame: currentFrame,
+          };
+        } else if (lastCompute && lastCompute.camera_in_gripper && lastCompute.camera_in_gripper.translation_m) {
+          payload = {
+            translation_m: lastCompute.camera_in_gripper.translation_m,
+            rotation_quat_xyzw: lastCompute.camera_in_gripper.rotation_quat_xyzw,
+            hand_eye_frame: "camera_in_gripper",
+          };
+        } else if (lastCompute && lastCompute.base_to_camera) {
+          payload = {
+            translation_m: lastCompute.base_to_camera.translation_m,
+            rotation_quat_xyzw: lastCompute.base_to_camera.rotation_quat_xyzw,
+            hand_eye_frame: "base_to_camera",
+          };
+        }
+        if (!payload) {
+          const existing = await api(`/stations/${encodeURIComponent(stationId)}/calibration/handeye`);
+          if (existing.ok && existing.body && existing.body.status !== "pending") {
+            payload = {
+              translation_m: Array.isArray(existing.body.translation_m) ? existing.body.translation_m : [0, 0, 0],
+              hand_eye_frame: String(existing.body.hand_eye_frame || existing.body.frame || "camera_in_gripper"),
+            };
+            if (Array.isArray(existing.body.rotation_quat_xyzw) && existing.body.rotation_quat_xyzw.length >= 4) {
+              payload.rotation_quat_xyzw = existing.body.rotation_quat_xyzw;
+            } else if (Array.isArray(existing.body.rotation_rpy_deg) && existing.body.rotation_rpy_deg.length >= 3) {
+              payload.rotation_rpy_deg = existing.body.rotation_rpy_deg;
+            } else {
+              payload.rotation_quat_xyzw = [0, 0, 0, 1];
+            }
+          }
+        }
+        if (!payload) {
+          saveResult.textContent = "Load saved or compute calibration first.";
+          return;
+        }
+        Object.assign(payload, getTcpCalibrationPayload());
+        const res = await api(`/stations/${encodeURIComponent(stationId)}/calibration/handeye`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) {
+          saveResult.textContent = res.body?.detail || "Save failed.";
+          return;
+        }
+        await loadHandEyeOffset();
+        const verifySaved = await api(`/stations/${encodeURIComponent(stationId)}/calibration/handeye`);
+        saveResult.textContent = verifySaved.ok
+          ? JSON.stringify(verifySaved.body, null, 2)
+          : JSON.stringify(res.body, null, 2);
+        log("Calibration saved.");
+      }
+
+      function getManualVerifyHandEye() {
+        const tx = Number(saveHeTx?.value);
+        const ty = Number(saveHeTy?.value);
+        const tz = Number(saveHeTz?.value);
+        const roll = Number(saveHeRoll?.value);
+        const pitch = Number(saveHePitch?.value);
+        const yaw = Number(saveHeYaw?.value);
+        const values = [tx, ty, tz, roll, pitch, yaw];
+        if (!values.every((value) => Number.isFinite(value))) {
+          return null;
+        }
+        return {
+          source: "manual",
+          translation_m: [tx, ty, tz],
+          rotation_quat_xyzw: rpyDegToQuat(roll, pitch, yaw),
+          ...getTcpCalibrationPayload(),
+          hand_eye_frame: String(saveHandEyeFrame?.value || "camera_in_gripper")
+            .trim()
+            .toLowerCase(),
+        };
+      }
+
+      async function getVerifyHandEye() {
+        const manual = getManualVerifyHandEye();
+        if (manual) {
+          return manual;
+        }
+        if (lastCompute && lastCompute.camera_in_gripper) {
+          return {
+            source: "computed",
+            translation_m: lastCompute.camera_in_gripper.translation_m || [0, 0, 0],
+            rotation_quat_xyzw:
+              lastCompute.camera_in_gripper.rotation_quat_xyzw || [0, 0, 0, 1],
+            ...getTcpCalibrationPayload(),
+            hand_eye_frame: "camera_in_gripper",
+          };
+        }
+        const stationId = stationSelect.value;
+        if (!stationId) return null;
+        const res = await api(`/stations/${encodeURIComponent(stationId)}/calibration/handeye`);
+        if (!res.ok || !res.body) return null;
+        const quat = Array.isArray(res.body.rotation_quat_xyzw) && res.body.rotation_quat_xyzw.length >= 4
+          ? res.body.rotation_quat_xyzw
+          : (
+              Array.isArray(res.body.rotation_rpy_deg) && res.body.rotation_rpy_deg.length >= 3
+                ? rpyDegToQuat(
+                    Number(res.body.rotation_rpy_deg[0] || 0),
+                    Number(res.body.rotation_rpy_deg[1] || 0),
+                    Number(res.body.rotation_rpy_deg[2] || 0)
+                  )
+                : [0, 0, 0, 1]
+            );
+        return {
+          source: "station",
+          translation_m: res.body.translation_m || [0, 0, 0],
+          rotation_quat_xyzw: quat,
+          ...getTcpCalibrationPayload(),
+          hand_eye_frame: String(
+            res.body.hand_eye_frame || res.body.frame || "camera_in_gripper"
+          ).trim().toLowerCase(),
+        };
+      }
+
+      async function checkHandEye() {
+        if (!(await ensureSession())) return;
+        const cameraId = cameraSelect.value;
+        if (!cameraId) return;
+        const tcpSaved = await saveTcpCalibration();
+        if (!tcpSaved) {
+          verifyResult.textContent = "Save TCP calibration failed; verify stopped.";
+          return;
+        }
+        const handEye = await getVerifyHandEye();
+        if (!handEye) {
+          verifyResult.textContent = "Save or compute hand-eye first.";
+          return;
+        }
+        await ensurePoseCacheLoaded();
+        let calibrationPose = null;
+        try {
+          calibrationPose = getCalibrationPoseOrThrow();
+        } catch (error) {
+          verifyResult.textContent = error?.message || "Missing saved pose named 'calib'.";
+          return;
+        }
+        const detectionPoseName = calibrationPose.name;
+        const movedDetection = await moveToPoseByName(detectionPoseName);
+        if (!movedDetection) {
+          verifyResult.textContent = `Failed to move to detection pose '${detectionPoseName}'.`;
+          return;
+        }
+        const robot = await api("/robot/state");
+        if (!robot.ok || !robot.body) {
+          verifyResult.textContent = "Robot state unavailable.";
+          return;
+        }
+        let startPose = null;
+        try {
+          startPose = requireCustomTcpPose(robot.body, "hand-eye check");
+        } catch (err) {
+          verifyResult.textContent = err.message;
+          return;
+        }
+        const startJoints = Array.isArray(robot.body.q) ? robot.body.q : null;
+        const calibrationJoints =
+          Array.isArray(calibrationPose.joints) && calibrationPose.joints.length === 7
+            ? calibrationPose.joints.map((value) => Number(value))
+            : null;
+        const preferredJoints = calibrationJoints || startJoints;
+        const detectRes = await calibApi("/detect", {
+          method: "POST",
+          body: JSON.stringify({ camera_id: cameraId, return_overlay: true }),
+        });
+        if (!detectRes.ok || !detectRes.body || detectRes.body.status !== "ok") {
+          verifyResult.textContent = detectRes.body?.detail || "Detection failed.";
+          return;
+        }
+        if (detectDebug) {
+          detectDebug.textContent = JSON.stringify(detectRes.body, null, 2);
+        }
+        if (detectRes.body.overlay_b64) {
+          const dataUrl = `data:image/${detectRes.body.overlay_format || "jpg"};base64,${detectRes.body.overlay_b64}`;
+          overlayImage.src = dataUrl;
+        }
+        const targetQuatCam = rvecToQuat(detectRes.body.rvec || [0, 0, 0]);
+        const boardCorners = getBoardOuterCornersM();
+        const boardCenterLocal =
+          boardCorners.length >= 4
+            ? [
+                (Number(boardCorners[0]?.[0] || 0) + Number(boardCorners[2]?.[0] || 0)) * 0.5,
+                (Number(boardCorners[0]?.[1] || 0) + Number(boardCorners[2]?.[1] || 0)) * 0.5,
+                0,
+              ]
+            : [0, 0, 0];
+        const boardCenterPoseCam =
+          Array.isArray(detectRes.body.tvec) && detectRes.body.tvec.length >= 3
+            ? composeTransform(
+                detectRes.body.tvec,
+                targetQuatCam,
+                boardCenterLocal,
+                [0, 0, 0, 1]
+              ).translation_m
+            : null;
+        const axisOriginCam =
+          (Array.isArray(detectRes.body.axis_origin_pose_xyz_m) &&
+          detectRes.body.axis_origin_pose_xyz_m.length >= 3)
+            ? detectRes.body.axis_origin_pose_xyz_m
+            : (
+                Array.isArray(detectRes.body.axis_origin_xyz_m) &&
+                detectRes.body.axis_origin_xyz_m.length >= 3
+              )
+                ? detectRes.body.axis_origin_xyz_m
+                : null;
+        const firstCornerCam =
+          (Array.isArray(detectRes.body.first_corner_pose_xyz_m) &&
+          detectRes.body.first_corner_pose_xyz_m.length >= 3)
+            ? detectRes.body.first_corner_pose_xyz_m
+            : (
+                Array.isArray(detectRes.body.first_corner_xyz_m) &&
+                detectRes.body.first_corner_xyz_m.length >= 3
+              )
+                ? detectRes.body.first_corner_xyz_m
+                : null;
+        // Prefer depth-measured points (axisOriginCam, firstCornerCam) over PnP tvec
+        // because the PnP board Z has ~10-30mm residual depth error that causes TCP
+        // overshoot. Depth-measured points are in real 3D space from the sensor.
+        const targetCam =
+          axisOriginCam ||
+          firstCornerCam ||
+          boardCenterPoseCam ||
+          (Array.isArray(detectRes.body.tvec) ? detectRes.body.tvec : null);
+        if (!targetCam || targetCam.length < 3) {
+          verifyResult.textContent = "Charuco target frame/pose missing.";
+          return;
+        }
+        const startQuat = normalizeQuat(startPose.quat_xyzw || [0, 0, 0, 1]);
+        const startPos = startPose.position_m || [0, 0, 0];
+        const handEyeQuat = normalizeQuat(handEye.rotation_quat_xyzw || [0, 0, 0, 1]);
+        const handEyeFrame = handEye.hand_eye_frame || "camera_in_gripper";
+        let baseTarget = null;
+        let baseTargetQuat = null;
+        if (handEyeFrame === "base_to_camera" || handEyeFrame === "base") {
+          const baseToCam = {
+            translation_m: handEye.translation_m || [0, 0, 0],
+            rotation_quat_xyzw: handEyeQuat,
+          };
+          const baseToTarget = composeTransform(
+            baseToCam.translation_m,
+            baseToCam.rotation_quat_xyzw,
+            targetCam,
+            targetQuatCam
+          );
+          baseTarget = baseToTarget.translation_m;
+          baseTargetQuat = normalizeQuat(baseToTarget.rotation_quat_xyzw);
+        } else {
+          const baseToGripper = {
+            translation_m: startPos,
+            rotation_quat_xyzw: startQuat,
+          };
+          const gripperToCam =
+            handEyeFrame === "camera_in_gripper"
+              ? {
+                  translation_m: handEye.translation_m || [0, 0, 0],
+                  rotation_quat_xyzw: handEyeQuat,
+                }
+              : invertTransform(handEye.translation_m || [0, 0, 0], handEyeQuat);
+          const baseToCam = composeTransform(
+            baseToGripper.translation_m,
+            baseToGripper.rotation_quat_xyzw,
+            gripperToCam.translation_m,
+            gripperToCam.rotation_quat_xyzw
+          );
+          const baseToTarget = composeTransform(
+            baseToCam.translation_m,
+            baseToCam.rotation_quat_xyzw,
+            targetCam,
+            targetQuatCam
+          );
+          baseTarget = baseToTarget.translation_m;
+          baseTargetQuat = normalizeQuat(baseToTarget.rotation_quat_xyzw);
+        }
+        const orientationMode = String(document.getElementById("verifyOrientationMode")?.value || "target_matched_staged");
+        const targetMatchedTcpQuat = normalizeQuat(baseTargetQuat || startQuat);
+        const keepCurrentTcpQuat = startQuat;
+        const useTargetMatchedOrientation =
+          orientationMode === "target_matched" || orientationMode === "target_matched_staged";
+        const stagedTargetMatch = orientationMode === "target_matched_staged";
+        const finalTcpQuat = useTargetMatchedOrientation ? targetMatchedTcpQuat : keepCurrentTcpQuat;
+        const exactBaseTarget = [
+          Number(baseTarget[0] || 0),
+          Number(baseTarget[1] || 0),
+          Number(baseTarget[2] || 0),
+        ];
+        const standOffM = Math.max(0, finiteNumber(document.getElementById("verifyStandOffM")?.value, 0));
+        const targetNormal = quatRotate(baseTargetQuat, [0, 0, -1]);
+        const verifyTcpTargetBase = [
+          exactBaseTarget[0] + targetNormal[0] * standOffM,
+          exactBaseTarget[1] + targetNormal[1] * standOffM,
+          exactBaseTarget[2] + targetNormal[2] * standOffM,
+        ];
+        const moveTarget = verifyTcpTargetBase;
+        const moveQuat = finalTcpQuat;
+        const profile = String(document.getElementById("verifyMoveProfile")?.value || "verify");
+        const pauseS = Math.max(0, Number(document.getElementById("verifyPauseS")?.value || 1));
+        const autoReturn = Boolean(document.getElementById("verifyAutoReturn")?.checked);
+        const stagedRotationDeg = stagedTargetMatch ? quatAngleDeg(keepCurrentTcpQuat, finalTcpQuat) : 0;
+        const stagedSteps = 0;
+        verifyResult.textContent = JSON.stringify(
+          {
+            status: "planned",
+            source: handEye.source,
+            move_strategy: "custom_tcp_ik_nullspace",
+            detection_pose_name: detectionPoseName,
+            preferred_joints: preferredJoints,
+            seed_joints: startJoints,
+            hand_eye_frame: handEyeFrame,
+            orientation_mode: orientationMode,
+            auto_return: autoReturn,
+            staged_rotation_steps: stagedSteps,
+            staged_rotation_deg: stagedRotationDeg,
+            target_source: axisOriginCam
+              ? "annotated_axis_origin"
+              : (firstCornerCam ? "first_inner_corner" : (boardCenterPoseCam ? "board_center" : "board_origin")),
+            charuco_tvec_m: targetCam,
+            charuco_rvec_rad: Array.isArray(detectRes.body.rvec) ? detectRes.body.rvec : [0, 0, 0],
+            exact_target_base_m: exactBaseTarget,
+            verify_standoff_m: standOffM,
+            desired_tcp_target_base_m: verifyTcpTargetBase,
+            desired_tcp_target_quat_xyzw: finalTcpQuat,
+            custom_tcp_target_base_m: moveTarget,
+            custom_tcp_target_quat_xyzw: moveQuat,
+            return_pose: startPose,
+          },
+          null,
+          2
+        );
+        log(
+          `Hand-eye check using calibration pose '${detectionPoseName}' to detect, then IK null-space to move custom TCP to [${moveTarget.map((v) => Number(v).toFixed(4)).join(", ")}] at ${axisOriginCam ? "annotated axis origin (depth)" : (firstCornerCam ? "first inner corner (depth)" : (boardCenterPoseCam ? "board center (PnP)" : "board origin (PnP)"))} + ${standOffM.toFixed(3)} m base-Z stand-off; orientation=${orientationMode}.`
+        );
+        const moveRes = await api("/robot/movel_custom_tcp_ik", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            position_m: moveTarget,
+            quat_xyzw: moveQuat,
+            frame: startPose.frame || "base",
+            profile,
+            seed_joints: startJoints,
+            preferred_joints: preferredJoints,
+            position_tolerance_m: 0.002,
+            orientation_tolerance_deg: 2.0,
+            approximate_position_tolerance_m: 0.015,
+            approximate_orientation_tolerance_deg: 3.0,
+            max_iterations: 300,
+          }),
+        });
+        if (!moveRes.ok) {
+          verifyResult.textContent = moveRes.body?.detail || "Verify IK move failed.";
+          return;
+        }
+        const planned = JSON.parse(verifyResult.textContent || "{}");
+        planned.ik_result = moveRes.body?.result || {};
+        planned.status = "moved";
+        verifyResult.textContent = JSON.stringify(planned, null, 2);
+        if (pauseS > 0) {
+          await sleep(pauseS * 1000);
+        }
+        if (!autoReturn) {
+          log("Hand-eye check complete. Robot left at verify pose; return disabled.");
+          return;
+        }
+        const returnJoints = startJoints || preferredJoints;
+        if (!returnJoints) {
+          verifyResult.textContent = "Verify target reached, but robot joints were unavailable for return.";
+          log("Hand-eye check reached verify pose, then could not return because robot joints were unavailable.");
+          return;
+        }
+        const returnRes = await api("/robot/movej", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            joints: returnJoints,
+            profile,
+          }),
+        });
+        if (!returnRes.ok) {
+          verifyResult.textContent = returnRes.body?.detail || "Verify target reached, but return move failed.";
+          log("Hand-eye check reached verify pose, then return move failed.");
+          return;
+        }
+        log("Hand-eye check complete. Robot returned to initial pose.");
+      }
+
+      async function init() {
+        startReconnectWatcher();
+        restoreAutoCaptureSettings();
+        bindAutoCaptureSettingsPersistence();
+        bindTcpCalibrationInputs();
+        updateTcpCalibrationSummary("editor");
+        await startCalibrationServer();
+        await refreshStations();
+        await refreshCameras();
+        await loadCalibrationTarget();
+        const loadedStationIntrinsics = await loadIntrinsics();
+        if (!loadedStationIntrinsics && cameraSelect?.value) {
+          await fetchCameraIntrinsics();
+        }
+        await loadHandEyeOffset();
+        await refreshProcesses();
+        updateSampleSummary();
+        await refreshSamples();
+        await loadCurrentPoseIntoEditor(true);
+        startTeleopPoseRefresh();
+        startPreview();
+      }
+
+      window.addEventListener("beforeunload", () => {
+        try {
+          navigator.sendBeacon("/camera/calibration/stop");
+        } catch (_) {
+          // ignore
+        }
+      });
+
+      if (stationSelect) {
+        stationSelect.addEventListener("change", async () => {
+          currentStationId = stationSelect.value;
+          await loadCalibrationTarget();
+          const loadedStationIntrinsics = await loadIntrinsics();
+          if (!loadedStationIntrinsics && cameraSelect?.value) {
+            await fetchCameraIntrinsics();
+          }
+          await loadHandEyeOffset();
+          await refreshProcesses();
+        });
+      }
+      if (cameraSelect) {
+        cameraSelect.addEventListener("change", () => {
+          syncCalibrationCameraSelect(cameraSelect.value);
+          lastCalibrationFpsRefreshMs = 0;
+          void refreshCalibrationLiveFps(true);
+          void refreshPreview();
+        });
+      }
+      if (calibLiveCameraSelect) {
+        calibLiveCameraSelect.addEventListener("change", () => {
+          syncCalibrationCameraSelect(calibLiveCameraSelect.value);
+          lastCalibrationFpsRefreshMs = 0;
+          void refreshCalibrationLiveFps(true);
+          void refreshPreview();
+        });
+      }
+      if (processSelect) {
+        processSelect.addEventListener("change", async () => {
+          currentProcessId = processSelect.value;
+          window.currentProcessId = currentProcessId;
+          window.dispatchEvent(new CustomEvent("imp:process-changed", { detail: { processId: currentProcessId } }));
+          await refreshPoses();
+        });
+      }
+
+      init();
+    </script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "/ui/assets/operator/vendor/three/build/three.module.js",
+          "three/addons/": "/ui/assets/operator/vendor/three/examples/jsm/"
+        }
+      }
+    </script>
+    <script type="module" src="/ui/assets/gizmo-editor.js"></script>
+    <script type="module">
+      import { mountGripperStudio } from "/ui/assets/gripper-studio.js?v=20260506-tcp-gizmo";
+      let _calibHeEditor = null;
+      let _gripperStudio = null;
+
+      function mountCalibrationTools() {
+        const gizmos = window.impGizmoEditors;
+        if (!gizmos) return;
+
+        // TCP block: replace single-frame TCP gizmo with full gripper-studio editor.
+        const tcpHost = document.getElementById("tcpGripperStudio");
+        if (tcpHost && !_gripperStudio) {
+          _gripperStudio = mountGripperStudio(tcpHost, {
+            processId: window.currentProcessId || (typeof currentProcessId !== "undefined" ? currentProcessId : ""),
+            onFramesChange: (frames) => applyGripperStudioFramesToCalibration(frames, "gripper_studio"),
+            onSave: () => {
+              void saveTcpCalibration();
+            },
+          });
+        }
+
+        // Hand-eye still uses the simple frame gizmo with URDF context.
+        _calibHeEditor = gizmos.mountFrameEditor({
+          rootId: "handEyeGizmoEditor",
+          title: "Hand-Eye Frame Gizmo",
+          fields: {
+            x: "saveHeTx",
+            y: "saveHeTy",
+            z: "saveHeTz",
+            roll: "saveHeRoll",
+            pitch: "saveHePitch",
+            yaw: "saveHeYaw",
+          },
+        });
+        refreshTools();
+      }
+
+      async function refreshTools() {
+        const pid = window.currentProcessId || (typeof currentProcessId !== "undefined" ? currentProcessId : "");
+        if (_gripperStudio) await _gripperStudio.loadAsset(pid);
+        if (_calibHeEditor && pid) {
+          try {
+            const res = await fetch(`/processes/${encodeURIComponent(pid)}/bin-picking/assets`);
+            if (res.ok) {
+              const data = await res.json();
+              if (data?.gripper?.urdf_url) {
+                await _calibHeEditor.loadAsset({
+                  urdfUrl: data.gripper.urdf_url,
+                  label: data.gripper.name || "gripper",
+                });
+              } else {
+                _calibHeEditor.setStatus?.("No gripper URDF set for this asset.");
+              }
+            }
+          } catch (err) {
+            console.warn("[calibration] hand-eye asset load failed:", err);
+          }
+        }
+      }
+
+      window.addEventListener("imp:process-changed", refreshTools);
+
+      if (window.impGizmoEditors) {
+        mountCalibrationTools();
+      } else {
+        window.addEventListener("imp:gizmo-ready", mountCalibrationTools, { once: true });
+      }
+    </script>
+  </body>
+</html>

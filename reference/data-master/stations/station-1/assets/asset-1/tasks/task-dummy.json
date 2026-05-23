@@ -1,0 +1,231 @@
+{
+  "task_id": "task-dummy",
+  "asset_id": "asset-1",
+  "station_id": "station-1",
+  "name": "Dummy Testing",
+  "description": "",
+  "task_type": "dummy_testing",
+  "task": {
+    "vision": {
+      "camera_id": "cam_rs_d405",
+      "module": "megapose_bin_picking",
+      "process_mode": "trigger_only",
+      "params": {
+        "intrinsics": {
+          "fx": 665.4836958924,
+          "fy": 666.8171437432078,
+          "cx": 634.1396956776874,
+          "cy": 356.5755507216394,
+          "saved_at": "2026-04-14T11:16:13.145711Z",
+          "dist_coeffs": [
+            -0.06141834595358104,
+            0.11353802605280054,
+            -0.00034989786797985065,
+            0.002174275406763577,
+            -0.05770312666609091
+          ],
+          "resolution": {
+            "width": 1280,
+            "height": 720
+          }
+        },
+        "templates_dir": "stations/station-1/assets/asset-1/objects/barel/templates",
+        "object_folder": "/home/imp/imp/data/stations/station-1/assets/asset-1/objects/barel2",
+        "object_id": "barel2",
+        "label_override": "barel2",
+        "input_color_order": "bgr",
+        "yolo_conf": 0.4,
+        "selection_top_k": 20,
+        "selection_min_confidence": 0.8,
+        "selection_mode": "top_k_highest_z",
+        "mesh_units": "mm",
+        "mesh_scale": 1,
+        "model": "rgbd",
+        "device": "auto",
+        "refiner_iterations": 3,
+        "coarse_grid_size": 72,
+        "rerank_network_prior_weight": 0.2,
+        "all_poses_mode": false,
+        "all_poses_max": 20,
+        "render_all_poses_3d": true,
+        "safety_pcd_max_points": 1000,
+        "timing_log_enabled": false,
+        "save_outputs": false,
+        "first_frame_timeout_s": 5,
+        "prewarm_before_run": true
+      },
+      "object_id": "barel2",
+      "timeout_s": 120,
+      "use_fusion": false,
+      "fusion": {
+        "enabled": false
+      }
+    },
+    "robot": {
+      "default_profile": "slow",
+      "capture_pose": {
+        "name": "mega",
+        "pose_path": "poses/mega.json"
+      },
+      "gripper_type": "parallel_jaw",
+      "pick": {
+        "approach_offset_m": [
+          0,
+          0,
+          0.03
+        ],
+        "retreat_offset_m": [
+          0,
+          0,
+          0.03
+        ],
+        "vacuum_pick_wait_s": 0.3,
+        "gripper_type": "parallel_jaw",
+        "parallel_jaw_approach_tool_axis": "z",
+        "parallel_jaw_jaw_tool_axis": "y",
+        "parallel_jaw_min_jaw_axis_alignment_score": 0,
+        "parallel_jaw_approach_move_strategy": "ik_nullspace",
+        "parallel_jaw_internal_pregrasp_open_offset_m": 0.03,
+        "parallel_jaw_internal_grasp_close_offset_m": -0.005,
+        "parallel_jaw_external_pregrasp_open_offset_m": 0.005,
+        "parallel_jaw_external_grasp_close_offset_m": -0.01,
+        "parallel_jaw_external_force_enabled": false,
+        "parallel_jaw_external_force_n": 5,
+        "parallel_jaw_internal_force_enabled": false,
+        "parallel_jaw_internal_force_n": 5,
+        "parallel_jaw_open_width_m": 0.11,
+        "parallel_jaw_close_width_m": 0.095,
+        "parallel_jaw_max_approach_angle_deg": 95,
+        "parallel_jaw_max_jaw_axis_tilt_from_xy_deg": 20,
+        "parallel_jaw_finger_width_m": 0.01,
+        "parallel_jaw_finger_length_m": 0.05,
+        "parallel_jaw_safety_margin_m": 0.003,
+        "parallel_jaw_pregrasp_descent_m": 0.05,
+        "parallel_jaw_prefer_inner_grasp": true,
+        "segmentation_safety_ranking_enabled": true,
+        "vacuum_cup_radius_m": 0.015,
+        "vacuum_safety_margin_m": 0.003,
+        "vacuum_pregrasp_descent_m": 0.05,
+        "align_with_surface": false,
+        "fast_acquire": true,
+        "orientation_mode": "vision_pose",
+        "vision_pose_quat_offset_xyzw": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "all_poses_mode": false,
+        "collision_aware_scoring_enabled": false,
+        "grasp_family_mode": "internal_only",
+        "gripper_tcp_frame": {
+          "frame": "flange",
+          "position_m": [
+            0,
+            0,
+            0.1035
+          ],
+          "rotation_rpy_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "place": {
+        "approach_offset_m": [
+          0,
+          0,
+          0.08
+        ],
+        "retreat_offset_m": [
+          0,
+          0,
+          0.08
+        ]
+      },
+      "place_pose": {
+        "name": "place",
+        "pose_path": "poses/place.json"
+      },
+      "place_pose_name": "place",
+      "capture_pose_name": "mega",
+      "capture_move_strategy": "ik_nullspace",
+      "gripper": {
+        "tcp_frame": {
+          "frame": "flange",
+          "position_m": [
+            0,
+            0,
+            0.1035
+          ],
+          "rotation_rpy_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "gripper_tcp_frame": {
+        "frame": "flange",
+        "position_m": [
+          0,
+          0,
+          0.1035
+        ],
+        "rotation_rpy_deg": [
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "dummy_testing": {
+      "program": [
+        {
+          "type": "move_pose",
+          "pose_name": "dhoom1",
+          "profile": "slow"
+        },
+        {
+          "type": "move_pose",
+          "pose_name": "dhoom2",
+          "profile": "slow"
+        }
+      ],
+      "profile": "slow",
+      "strict_collision": true,
+      "dry_run": false,
+      "max_loop_iterations": 1,
+      "use_collision_aware_planning": true,
+      "fail_if_planning_unavailable": true
+    },
+    "operator_flow_version": 2,
+    "operator_flow_task_types": [
+      "dummy_testing"
+    ],
+    "operator_flow": [
+      {
+        "type": "set_task_type",
+        "task_type": "dummy_testing"
+      },
+      {
+        "type": "while_true",
+        "body": [
+          {
+            "type": "move_pose",
+            "pose_name": "dhoom1",
+            "profile": "slow"
+          },
+          {
+            "type": "move_pose",
+            "pose_name": "dhoom2",
+            "profile": "slow"
+          }
+        ]
+      }
+    ]
+  },
+  "created_at": "2026-04-26T10:15:02Z",
+  "updated_at": "2026-05-07T08:46:49Z"
+}

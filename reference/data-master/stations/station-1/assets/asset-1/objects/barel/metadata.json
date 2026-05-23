@@ -1,0 +1,15 @@
+{
+  "bin_picking_frame": {
+    "frame": "object",
+    "position_m": [
+      0.02,
+      0.02,
+      0.016
+    ],
+    "rotation_rpy_deg": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+}

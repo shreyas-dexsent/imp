@@ -1,0 +1,14 @@
+{
+  "robots": [
+    "robots/franka_fr3",
+    "robots/kuka_kr16",
+    "robots/fanuc_crx10ia"
+  ],
+  "grippers": [
+    "grippers/franka_hand",
+    "grippers/robotiq_2f_c2"
+  ],
+  "assemblies": [
+    "assemblies/franka_fr3__franka_hand"
+  ]
+}

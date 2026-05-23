@@ -1,0 +1,158 @@
+camera:
+  camera_id: cam_rs_d435i
+  type: realsense_d435i
+  mode: rgbd
+  fps: 30
+
+  sdk:
+    serial_number: ""
+
+    # Base defaults. Color/depth stream values fall back to these if the
+    # stream-specific keys below are not set.
+    width: 1280
+    height: 720
+    fps: 30
+
+    color_width: 1280
+    color_height: 720
+    color_fps: 30
+    color_format: "bgr8"
+
+    depth_width: 1280
+    depth_height: 720
+    depth_fps: 30
+    depth_format: "z16"
+
+    # color | depth | none
+    align_to: "color"
+
+    # Sensor controls map directly to pyrealsense2 rs.option names.
+    # Unsupported options are skipped with a warning at startup.
+    options:
+      color:
+        enable_auto_exposure: false
+        enable_auto_white_balance: true
+        auto_exposure_priority: 0
+        global_time_enabled: 1
+        power_line_frequency: 3
+        backlight_compensation: 0
+        brightness: 0
+        contrast: 61
+        gamma: 300
+        hue: 0
+        saturation: 64
+        sharpness: 50
+
+        # Manual values are used only when auto exposure / auto white balance
+        # are disabled.
+        exposure: 400
+        gain: 40
+        white_balance: 4600
+
+      depth:
+        enable_auto_exposure: true
+        emitter_enabled: 1
+        laser_power: 150
+        visual_preset: 0
+        error_polling_enabled: 1
+        output_trigger_enabled: 0
+        depth_units: 0.001
+        emitter_on_off: 0
+        global_time_enabled: 1
+        emitter_always_on: 0
+        hdr_enabled: 0
+        sequence_name: 0
+        sequence_size: 2
+        auto_exposure_limit: 165000
+        auto_gain_limit: 248
+
+        # Leave this commented unless you are explicitly configuring
+        # hardware sync outside the live streaming path.
+        # inter_cam_sync_mode: 0
+
+        # Manual values are used only when auto exposure is disabled.
+        exposure: 6800
+        gain: 16
+
+        # Examples for additional D435 controls if needed:
+        # depth_units: 0.001
+        # confidence_threshold: 1
+        # receiver_gain: 9
+
+      # Applied to any discovered RealSense sensor that supports the option.
+      # all:
+      #   global_time_enabled: 1
+
+    post_processing:
+      enabled: false
+      filter_order:
+        - decimation
+        - threshold
+        - depth_to_disparity
+        - spatial
+        - temporal
+        - disparity_to_depth
+        - hole_filling
+
+      decimation:
+        enabled: false
+        options:
+          filter_magnitude: 2
+
+      threshold:
+        enabled: false
+        options:
+          min_distance: 0.10
+          max_distance: 2.00
+
+      depth_to_disparity:
+        enabled: false
+
+      spatial:
+        enabled: false
+        options:
+          filter_magnitude: 2
+          filter_smooth_alpha: 0.50
+          filter_smooth_delta: 20
+          holes_fill: 0
+
+      temporal:
+        enabled: false
+        options:
+          filter_smooth_alpha: 0.40
+          filter_smooth_delta: 20
+          persistence_control: 3
+
+      disparity_to_depth:
+        enabled: false
+
+      hole_filling:
+        enabled: false
+        options:
+          holes_fill: 1
+
+shared_memory:
+  rgb:
+    name_prefix: "cam_cam_rs_d435i_rgb"
+    width: 1280
+    height: 720
+    channels: 3
+    dtype: "uint8"
+    triple_buffers: ["A", "B", "C"]
+
+  depth:
+    name_prefix: "cam_cam_rs_d435i_depth"
+    width: 1280
+    height: 720
+    dtype: "float32"
+    triple_buffers: ["A", "B", "C"]
+
+ipc:
+  zmq_pub: "tcp://127.0.0.1:5555"
+  topic: "camera"
+
+health:
+  port: 8095
+
+runtime:
+  log_level: "INFO"

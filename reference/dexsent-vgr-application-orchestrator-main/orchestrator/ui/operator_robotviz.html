@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Dexsent Intelligent Manupulation Platform | Robot Visualizer</title>
+    <link rel="icon" type="image/png" href="/ui/assets/favicon.png" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/tokens.css" />
+    <link rel="stylesheet" href="/ui/assets/operator/css/operator.css" />
+  </head>
+  <body data-page="robot-viz">
+    <div class="op-app monitor-app">
+      <header class="op-header">
+        <div class="brand">
+          <img class="brand-logo" src="/ui/assets/logo-Blue.svg" alt="Dexsent logo" />
+          <div class="brand-copy">
+            <h1>Intelligent Manupulation Platform</h1>
+            <p>Operator UI: robot visualizer</p>
+          </div>
+        </div>
+
+        <div class="status-row">
+          <div class="chip"><span class="label">Camera</span><span class="led off" id="cameraLed"></span><span id="cameraText">off</span></div>
+          <div class="chip"><span class="label">Robot</span><span class="led off" id="robotLed"></span><span id="robotText">off</span></div>
+          <div class="chip"><span class="label">Vision</span><span class="led off" id="visionLed"></span><span id="visionText">off</span></div>
+          <div class="chip"><span class="label">Vision Mode</span><select id="visionTransportSelect"><option value="zmq">local</option><option value="websocket">blackwell</option></select></div>
+          <div class="chip"><span class="label">Server</span><span class="led off" id="serverLed"></span><span id="serverText">off</span></div>
+          <div class="chip"><span class="label">UI</span><span id="systemStatus">idle</span></div>
+        </div>
+      </header>
+
+      <div class="op-layout monitor-shell">
+        <aside class="op-sidebar">
+          <h2>Operator</h2>
+          <div class="nav-group">
+            <a class="nav-link" href="/ui/operator/assets" data-nav="asset-manager">Asset Manager</a>
+            <a class="nav-sub" href="/ui/operator/assets/robot-waypoints" data-nav="robot-waypoints">Robot Waypoints</a>
+            <a class="nav-sub" href="/ui/operator/assets/object-definition" data-nav="object-definition">Object Definition</a>
+            <a class="nav-link" href="/ui/operator/task-flow" data-nav="task-flow">Task Flow</a>
+            <a class="nav-link" href="/ui/operator/monitor" data-nav="monitor">Monitor</a>
+            <a class="nav-sub active" href="/ui/operator/robot-viz" data-nav="robot-viz">Robot Visualizer</a>
+          </div>
+          <div class="nav-hint">3D digital twin with live robot state, detected object poses, point cloud, and cycle path.</div>
+        </aside>
+
+        <main class="op-content robot-viz-page-content">
+          <section class="panel robot-viz-context-panel">
+            <h2>Visualizer Context</h2>
+            <div class="context-grid">
+              <div>
+                <label for="stationSelect">Station</label>
+                <select id="stationSelect"></select>
+              </div>
+              <div>
+                <label for="assetSelect">Asset</label>
+                <select id="assetSelect"></select>
+              </div>
+              <div>
+                <label for="taskSelect">Task</label>
+                <select id="taskSelect"></select>
+              </div>
+              <div>
+                <label for="cameraIdSelect">Camera</label>
+                <select id="cameraIdSelect"></select>
+              </div>
+            </div>
+            <div class="hint" id="pageInfo">Select an asset to load the 3D visualizer.</div>
+          </section>
+
+          <section class="panel robot-viz-page-panel" id="robotVizPagePanel">
+            <div id="robotVizPageMount"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="/ui/assets/operator/js/api.js"></script>
+    <script src="/ui/assets/operator/js/operator-shell.js"></script>
+    <script src="/ui/assets/operator/js/modal-host.js"></script>
+    <script src="/ui/assets/operator/js/operator-robotviz.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "/ui/assets/operator/vendor/three/build/three.module.js",
+          "three/addons/": "/ui/assets/operator/vendor/three/examples/jsm/"
+        }
+      }
+    </script>
+    <script type="module" src="/ui/assets/operator/js/bin-picking-tools.js"></script>
+  </body>
+</html>

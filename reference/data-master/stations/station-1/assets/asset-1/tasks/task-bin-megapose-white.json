@@ -1,0 +1,175 @@
+{
+  "task_id": "task-bin-megapose-white",
+  "asset_id": "asset-1",
+  "station_id": "station-1",
+  "name": "MegaPose Pose Test - White",
+  "description": "Vision-only MegaPose bin-picking task for white object pose testing.",
+  "task_type": "bin_picking",
+  "task": {
+    "vision": {
+      "camera_id": "cam_rs_d405",
+      "module": "megapose_bin_picking",
+      "process_mode": "trigger_only",
+      "object_id": "white",
+      "timeout_s": 120,
+      "use_fusion": false,
+      "fusion": {
+        "enabled": false
+      },
+      "params": {
+        "object_folder": "/home/imp/imp/data/stations/station-1/assets/asset-1/objects/white",
+        "object_id": "white",
+        "label_override": "white",
+        "input_color_order": "bgr",
+        "yolo_conf": 0.4,
+        "selection_top_k": 20,
+        "selection_min_confidence": 0.8,
+        "selection_mode": "top_k_highest_z",
+        "mesh_units": "mm",
+        "mesh_scale": 1,
+        "model": "rgbd",
+        "device": "auto",
+        "refiner_iterations": 3,
+        "coarse_grid_size": 72,
+        "depth_ray_refinement": true,
+        "rerank_network_prior_weight": 0.2,
+        "all_poses_mode": false,
+        "all_poses_max": 20,
+        "render_all_poses_3d": true,
+        "safety_pcd_max_points": 1000,
+        "timing_log_enabled": false,
+        "save_outputs": true,
+        "first_frame_timeout_s": 5,
+        "prewarm_before_run": true,
+        "intrinsics": {
+          "fx": 655.5262762717883,
+          "fy": 656.94480642929,
+          "cx": 635.875866541722,
+          "cy": 353.9787867042496,
+          "saved_at": "2026-05-11T06:01:28.386343Z",
+          "dist_coeffs": [
+            -0.05454648269423517,
+            0.08241280269410144,
+            -0.001440780613427548,
+            0.0018716338699728407,
+            -0.05089662571612875
+          ],
+          "resolution": {
+            "width": 1280,
+            "height": 720
+          }
+        }
+      }
+    },
+    "robot": {
+      "gripper_type": "parallel_jaw",
+      "pick": {
+        "gripper_type": "parallel_jaw",
+        "fast_acquire": true,
+        "orientation_mode": "vision_pose",
+        "vision_pose_quat_offset_xyzw": [
+          0,
+          0,
+          0,
+          1
+        ],
+        "segmentation_safety_ranking_enabled": true,
+        "approach_offset_m": [
+          0,
+          0,
+          0.08
+        ],
+        "retreat_offset_m": [
+          0,
+          0,
+          0.08
+        ],
+        "vacuum_pick_wait_s": 0,
+        "parallel_jaw_internal_pregrasp_open_offset_m": 0.02,
+        "parallel_jaw_internal_grasp_close_offset_m": -0.005,
+        "parallel_jaw_external_pregrasp_open_offset_m": 0.02,
+        "parallel_jaw_external_grasp_close_offset_m": -0.005,
+        "parallel_jaw_external_force_enabled": false,
+        "parallel_jaw_external_force_n": 40,
+        "parallel_jaw_internal_force_enabled": false,
+        "parallel_jaw_internal_force_n": 40,
+        "parallel_jaw_open_width_m": 0.11,
+        "parallel_jaw_close_width_m": 0.095,
+        "parallel_jaw_max_approach_angle_deg": 45,
+        "parallel_jaw_max_jaw_axis_tilt_from_xy_deg": 20,
+        "grasp_family_mode": "default",
+        "collision_aware_scoring_enabled": false,
+        "parallel_jaw_finger_width_m": 0.01,
+        "parallel_jaw_finger_length_m": 0.05,
+        "parallel_jaw_safety_margin_m": 0.003,
+        "parallel_jaw_pregrasp_descent_m": 0.05,
+        "parallel_jaw_prefer_inner_grasp": true,
+        "vacuum_cup_radius_m": 0.015,
+        "vacuum_safety_margin_m": 0.003,
+        "vacuum_pregrasp_descent_m": 0.05,
+        "align_with_surface": false,
+        "gripper_tcp_frame": {
+          "frame": "flange",
+          "position_m": [
+            0,
+            0,
+            0
+          ],
+          "rotation_rpy_deg": [
+            0,
+            0,
+            0
+          ]
+        },
+        "all_poses_mode": false
+      },
+      "default_profile": "slow",
+      "gripper": {
+        "tcp_frame": {
+          "frame": "flange",
+          "position_m": [
+            0,
+            0,
+            0
+          ],
+          "rotation_rpy_deg": [
+            0,
+            0,
+            0
+          ]
+        }
+      },
+      "gripper_tcp_frame": {
+        "frame": "flange",
+        "position_m": [
+          0,
+          0,
+          0
+        ],
+        "rotation_rpy_deg": [
+          0,
+          0,
+          0
+        ]
+      },
+      "place": {
+        "approach_offset_m": [
+          0,
+          0,
+          0.08
+        ],
+        "retreat_offset_m": [
+          0,
+          0,
+          0.08
+        ]
+      },
+      "use_intermediate_grasp_pose": true,
+      "intermediate_pose": {},
+      "intermediate_pose_name": "",
+      "capture_move_strategy": "ik_nullspace"
+    }
+  },
+  "created_at": "2026-05-22T00:00:00Z",
+  "updated_at": "2026-05-22T15:36:48Z"
+}

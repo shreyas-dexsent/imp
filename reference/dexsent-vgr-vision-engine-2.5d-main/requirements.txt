@@ -1,0 +1,23 @@
+# Install torch and torchvision for your CUDA version first if needed.
+
+numpy>=2,<3
+opencv-contrib-python>=4.10,<4.11
+pyzmq>=25.1
+fastapi>=0.110
+uvicorn>=0.29
+websockets>=12.0
+scipy>=1.11
+scikit-learn>=1.3
+omegaconf
+open3d
+panda3d
+pandas
+Pillow
+PyYAML>=6.0
+roma
+tqdm
+torch
+torchvision
+transforms3d
+trimesh
+ultralytics

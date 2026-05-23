@@ -1,0 +1,408 @@
+/* Self-contained modal styles — dark theme */
+.op-modal-host {
+  position: fixed;
+  inset: 0;
+  display: none;
+  z-index: 1000;
+}
+.op-modal-host.open { display: block; }
+.op-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 8, 14, 0.72);
+  backdrop-filter: blur(4px);
+}
+.op-modal {
+  position: absolute;
+  inset: clamp(12px, 3vw, 34px);
+  border: 1px solid rgba(170, 237, 246, 0.18);
+  border-radius: 16px;
+  background: #0f151e;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.6);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  overflow: hidden;
+}
+.op-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(170, 237, 246, 0.1);
+  background: rgba(170, 237, 246, 0.06);
+}
+.op-modal-header h2 {
+  margin: 0;
+  color: #4dc8d4;
+  font-size: 15px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+.op-modal-close {
+  min-width: 76px;
+  padding: 6px 12px;
+  border: 1px solid rgba(170, 237, 246, 0.2);
+  background: rgba(255,255,255,0.05);
+  color: #aab4c2;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+.op-modal-close:hover {
+  background: rgba(170, 237, 246, 0.12);
+  color: #e0f7fa;
+}
+.op-modal-body {
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+}
+body.op-modal-open { overflow: hidden; }
+
+/* Grasp studio layout */
+.grasp-studio-modal { padding: 0 !important; }
+.gp-root {
+  display: grid;
+  grid-template-columns: minmax(320px, 380px) 1fr;
+  height: 100%;
+  min-height: 0;
+}
+.gp-side {
+  border-right: 1px solid rgba(170, 237, 246, 0.1);
+  padding: 14px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #111820;
+}
+.gp-side h3 {
+  margin: 0 0 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #4dc8d4;
+  font-weight: 600;
+}
+.gp-viewport-shell {
+  position: relative;
+  background: #080e16;
+  min-width: 0;
+  min-height: 0;
+}
+.gp-viewport {
+  position: absolute;
+  inset: 0;
+}
+.gp-viewport canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+.gp-hud {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(8, 14, 22, 0.85);
+  color: #cce8ef;
+  font-size: 12px;
+  pointer-events: none;
+  border: 1px solid rgba(170, 237, 246, 0.12);
+}
+.gp-status {
+  font-size: 11px;
+  color: #5a7080;
+  font-family: "IBM Plex Mono", monospace;
+  min-height: 14px;
+}
+.gp-status.err { color: #e05252; }
+.gp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow: auto;
+}
+.gp-list-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border: 1px solid rgba(170, 237, 246, 0.1);
+  border-radius: 6px;
+  background: #161e2a;
+  color: #c8d8e4;
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.gp-list-row:hover {
+  background: #1c2636;
+  border-color: rgba(170, 237, 246, 0.22);
+}
+.gp-list-row.active {
+  border-color: #4dc8d4;
+  background: rgba(77, 200, 212, 0.08);
+  box-shadow: 0 0 0 2px rgba(77, 200, 212, 0.18);
+}
+.gp-list-row .gp-tag {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(77, 200, 212, 0.15);
+  color: #4dc8d4;
+}
+.gp-row-actions {
+  display: flex;
+  gap: 6px;
+}
+.gp-row-actions button {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  cursor: pointer;
+  border: 1px solid rgba(170, 237, 246, 0.15);
+  background: rgba(255,255,255,0.04);
+  color: #aab4c2;
+  transition: background 0.1s, color 0.1s;
+}
+.gp-row-actions button:hover {
+  background: rgba(170, 237, 246, 0.1);
+  color: #e0f7fa;
+}
+.gp-grid3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.gp-grid3 label {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: #5a7080;
+}
+.gp-grid3 input {
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid rgba(170, 237, 246, 0.15);
+  border-radius: 4px;
+  background: #0f151e;
+  color: #c8d8e4;
+}
+.gp-stroke-row {
+  display: grid;
+  grid-template-columns: 82px 1fr;
+  gap: 8px;
+  align-items: center;
+}
+.gp-stroke-row input[type="number"] {
+  width: 100%;
+  padding: 4px 6px;
+  font-size: 12px;
+  border: 1px solid rgba(170, 237, 246, 0.15);
+  border-radius: 4px;
+  background: #0f151e;
+  color: #c8d8e4;
+}
+.gp-stroke-row input[type="range"] {
+  width: 100%;
+  accent-color: #4dc8d4;
+}
+.gp-stroke-row-full {
+  width: 100%;
+  accent-color: #4dc8d4;
+}
+.gp-inv-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #c8d8e4;
+}
+#gp-inv-body {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+#gp-inv-body[hidden] {
+  display: none;
+}
+.gp-inv-mode-tabs button {
+  font-size: 11px;
+  padding: 5px 6px;
+}
+.gp-axis-radios {
+  display: flex;
+  gap: 12px;
+  margin: 4px 0 8px;
+  font-size: 12px;
+  color: #7a9aaa;
+}
+.gp-axis-radios label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #c8d8e4;
+}
+.gp-step-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.gp-step-actions button,
+.gp-step-badge {
+  padding: 4px 8px;
+  border: 1px solid rgba(170, 237, 246, 0.15);
+  border-radius: 4px;
+  background: #161e2a;
+  color: #c8d8e4;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+.gp-step-actions button:hover {
+  background: rgba(170, 237, 246, 0.1);
+}
+.gp-step-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.gp-step-badge {
+  min-width: 28px;
+  padding: 3px 6px;
+}
+.gp-step-badge.enabled {
+  background: #4dc8d4;
+  border-color: #4dc8d4;
+  color: #060d14;
+}
+.gp-divider {
+  border: 0;
+  border-top: 1px solid rgba(170, 237, 246, 0.08);
+  margin: 8px 0;
+}
+.gp-mode-bar {
+  display: flex;
+  border: 1px solid rgba(170, 237, 246, 0.15);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.gp-mode-bar button {
+  flex: 1;
+  padding: 6px;
+  border: 0;
+  background: #161e2a;
+  color: #7a9aaa;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.1s, color 0.1s;
+}
+.gp-mode-bar button:hover {
+  background: #1c2636;
+  color: #c8d8e4;
+}
+.gp-mode-bar button.active {
+  background: #4dc8d4;
+  color: #060d14;
+  font-weight: 600;
+}
+.gp-actions {
+  display: flex;
+  gap: 8px;
+}
+.gp-actions button {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid rgba(170, 237, 246, 0.15);
+  background: #161e2a;
+  color: #c8d8e4;
+  font-size: 12px;
+  transition: background 0.1s, color 0.1s;
+}
+.gp-actions button:hover {
+  background: #1c2636;
+}
+.gp-actions button.primary {
+  background: #4dc8d4;
+  color: #060d14;
+  border-color: #4dc8d4;
+  font-weight: 600;
+}
+.gp-actions button.primary:hover {
+  background: #65d5df;
+}
+.gp-upload {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  border: 1px dashed rgba(170, 237, 246, 0.2);
+  border-radius: 6px;
+  color: #7a9aaa;
+  font-size: 12px;
+}
+
+/* Grasp family selector */
+.gp-grasp-family-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
+.gp-family-opt {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  cursor: pointer;
+}
+.gp-family-opt input[type="radio"] {
+  margin: 0;
+  cursor: pointer;
+  accent-color: #4dc8d4;
+}
+.gp-family-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #c8d8e4;
+  min-width: 60px;
+}
+.gp-family-hint {
+  font-size: 10px;
+  color: #5a7080;
+}
+
+/* Family-coloured tags in the grasp list */
+.gp-tag-external {
+  background: rgba(77, 200, 212, 0.15);
+  color: #4dc8d4;
+}
+.gp-tag-internal {
+  background: rgba(36, 209, 126, 0.15);
+  color: #24d17e;
+}
+
+/* Global input/select dark baseline for anything inside gp-side */
+.gp-side input,
+.gp-side select,
+.gp-side textarea {
+  background: #0f151e;
+  color: #c8d8e4;
+  border: 1px solid rgba(170, 237, 246, 0.15);
+  border-radius: 4px;
+}
+.gp-side input:focus,
+.gp-side select:focus {
+  outline: none;
+  border-color: #4dc8d4;
+  box-shadow: 0 0 0 2px rgba(77, 200, 212, 0.18);
+}
+.gp-side label {
+  color: #c8d8e4;
+}

@@ -1,0 +1,14 @@
+fastapi>=0.110
+uvicorn>=0.29
+pyzmq>=25.1
+mujoco>=2.3
+numpy>=1.24
+mujoco
+xarm-python-sdk
+xacro>=1.13
+pybind11>=2.11,<3
+# FR3 backend, imported in code as `franky`.
+# Requires a compatible system libfranka install first; for server version 9 use libfranka 0.15.3.
+franky-control @ git+https://github.com/TimSchneider42/franky.git@v1.1.3
+# xArm backup backend.
+xarm-python-sdk>=1.13,<2
