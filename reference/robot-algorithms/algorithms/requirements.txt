@@ -1,0 +1,11 @@
+numpy
+pydantic
+pyyaml
+scipy
+trimesh
+pin
+coal
+ompl
+open3d
+meshcat
+pytest

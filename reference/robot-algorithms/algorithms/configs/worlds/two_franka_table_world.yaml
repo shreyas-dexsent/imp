@@ -1,0 +1,58 @@
+schema: dexsent.algorithms.world
+version: 2
+id: two_franka_table_world
+name: Two Franka Table World
+world_frame: world
+
+robots:
+  - id: left_arm
+    robot_system: ../robots/franka_fr3_with_franka_hand.yaml
+    namespace: left
+    base_pose:
+      parent_frame: world
+      child_frame: left/base
+      matrix:
+        - [1.0, 0.0, 0.0, -0.6]
+        - [0.0, 1.0, 0.0, 0.0]
+        - [0.0, 0.0, 1.0, 0.0]
+        - [0.0, 0.0, 0.0, 1.0]
+
+  - id: right_arm
+    robot_system: ../robots/franka_fr3_with_franka_hand.yaml
+    namespace: right
+    base_pose:
+      parent_frame: world
+      child_frame: right/base
+      matrix:
+        - [1.0, 0.0, 0.0, 0.6]
+        - [0.0, 1.0, 0.0, 0.0]
+        - [0.0, 0.0, 1.0, 0.0]
+        - [0.0, 0.0, 0.0, 1.0]
+
+objects:
+  - id: shared_matka
+    type: workpiece
+    pose:
+      parent_frame: world
+      child_frame: shared_matka
+      matrix:
+        - [1.0, 0.0, 0.0, 0.0]
+        - [0.0, 1.0, 0.0, 0.4]
+        - [0.0, 0.0, 1.0, 0.12]
+        - [0.0, 0.0, 0.0, 1.0]
+    visual:
+      enabled: true
+      geometry:
+        type: mesh
+        path: ../../../assets/objects/matka/visual/model.obj
+        scale: [1.0, 1.0, 1.0]
+    collision:
+      enabled: true
+      geometry:
+        type: mesh
+        path: ../../../assets/objects/matka/visual/model.obj
+        scale: [1.0, 1.0, 1.0]
+
+collision_matrix:
+  default_action: check
+  rules: []

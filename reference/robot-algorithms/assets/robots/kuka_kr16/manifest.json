@@ -1,0 +1,50 @@
+{
+  "name": "kuka_kr16",
+  "model": "kr16_2",
+  "type": "robot_arm",
+  "urdf": "urdf/kuka_kr16.urdf",
+  "base_link": "base_link",
+  "mount_link": "tool0",
+  "tcp_link": "tool0",
+  "actuated_joints": [
+    "joint_a1",
+    "joint_a2",
+    "joint_a3",
+    "joint_a4",
+    "joint_a5",
+    "joint_a6"
+  ],
+  "named_states": {
+    "home": {
+      "joint_a1": 0,
+      "joint_a2": 0,
+      "joint_a3": 0,
+      "joint_a4": 0,
+      "joint_a5": 0,
+      "joint_a6": 0
+    }
+  },
+  "planning_groups": {
+    "arm": {
+      "base_link": "base_link",
+      "tip_link": "tool0",
+      "joints": [
+        "joint_a1",
+        "joint_a2",
+        "joint_a3",
+        "joint_a4",
+        "joint_a5",
+        "joint_a6"
+      ]
+    }
+  },
+  "disabled_self_collisions": [
+    ["base_link", "link_1"],
+    ["link_1", "link_2"],
+    ["link_2", "link_3"],
+    ["link_3", "link_4"],
+    ["link_4", "link_5"],
+    ["link_5", "link_6"],
+    ["link_6", "tool0"]
+  ]
+}

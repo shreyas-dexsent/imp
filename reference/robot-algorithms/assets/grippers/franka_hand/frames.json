@@ -1,0 +1,27 @@
+{
+  "flange": {
+    "position": [
+      0,
+      0,
+      0
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "tcp": {
+    "position": [
+      0,
+      0,
+      103.5
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ]
+  },
+  "strokeWidth": 70
+}

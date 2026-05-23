@@ -1,0 +1,80 @@
+{
+  "name": "robotiq_2f_c2",
+  "type": "gripper",
+  "urdf": "urdf/robotiq_2f_c2.urdf",
+  "root_link": "robotiq_85_adapter_link",
+  "tcp_link": "robotiq_85_base_link",
+  "actuated_joints": [
+    "robotiq_85_left_knuckle_joint"
+  ],
+  "mimic_joints": {
+    "robotiq_85_right_knuckle_joint": {
+      "joint": "robotiq_85_left_knuckle_joint",
+      "multiplier": 1,
+      "offset": 0
+    },
+    "robotiq_85_left_inner_knuckle_joint": {
+      "joint": "robotiq_85_left_knuckle_joint",
+      "multiplier": 1,
+      "offset": 0
+    },
+    "robotiq_85_right_inner_knuckle_joint": {
+      "joint": "robotiq_85_left_knuckle_joint",
+      "multiplier": 1,
+      "offset": 0
+    },
+    "robotiq_85_left_finger_tip_joint": {
+      "joint": "robotiq_85_left_knuckle_joint",
+      "multiplier": -1,
+      "offset": 0
+    },
+    "robotiq_85_right_finger_tip_joint": {
+      "joint": "robotiq_85_left_knuckle_joint",
+      "multiplier": -1,
+      "offset": 0
+    }
+  },
+  "named_states": {
+    "open": {
+      "robotiq_85_left_knuckle_joint": 0
+    },
+    "close": {
+      "robotiq_85_left_knuckle_joint": 0.8575
+    }
+  },
+  "planning_groups": {
+    "hand": {
+      "links": [
+        "robotiq_85_adapter_link",
+        "robotiq_85_base_link",
+        "robotiq_85_left_knuckle_link",
+        "robotiq_85_right_knuckle_link",
+        "robotiq_85_left_finger_link",
+        "robotiq_85_right_finger_link",
+        "robotiq_85_left_inner_knuckle_link",
+        "robotiq_85_right_inner_knuckle_link",
+        "robotiq_85_left_finger_tip_link",
+        "robotiq_85_right_finger_tip_link"
+      ],
+      "joints": [
+        "robotiq_85_left_knuckle_joint",
+        "robotiq_85_right_knuckle_joint",
+        "robotiq_85_left_inner_knuckle_joint",
+        "robotiq_85_right_inner_knuckle_joint",
+        "robotiq_85_left_finger_tip_joint",
+        "robotiq_85_right_finger_tip_joint"
+      ]
+    }
+  },
+  "disabled_self_collisions": [
+    ["robotiq_85_adapter_link", "robotiq_85_base_link"],
+    ["robotiq_85_base_link", "robotiq_85_left_knuckle_link"],
+    ["robotiq_85_base_link", "robotiq_85_right_knuckle_link"],
+    ["robotiq_85_base_link", "robotiq_85_left_inner_knuckle_link"],
+    ["robotiq_85_base_link", "robotiq_85_right_inner_knuckle_link"],
+    ["robotiq_85_left_knuckle_link", "robotiq_85_left_finger_link"],
+    ["robotiq_85_right_knuckle_link", "robotiq_85_right_finger_link"],
+    ["robotiq_85_left_inner_knuckle_link", "robotiq_85_left_finger_tip_link"],
+    ["robotiq_85_right_inner_knuckle_link", "robotiq_85_right_finger_tip_link"]
+  ]
+}

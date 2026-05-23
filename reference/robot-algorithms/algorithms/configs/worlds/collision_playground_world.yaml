@@ -1,0 +1,168 @@
+schema: dexsent.algorithms.world
+version: 2
+id: collision_playground_world
+name: Collision Playground World
+world_frame: world
+
+robots:
+  - id: arm
+    robot_system: ../robots/franka_fr3_robot_only.yaml
+    namespace: null
+    base_pose:
+      parent_frame: world
+      child_frame: base
+      matrix:
+        - [1.0, 0.0, 0.0, 0.0]
+        - [0.0, 1.0, 0.0, 0.0]
+        - [0.0, 0.0, 1.0, 0.0]
+        - [0.0, 0.0, 0.0, 1.0]
+
+objects:
+  # Two "matkas" intentionally overlapping.
+  # Both are spheres of radius 0.10 m.
+  # Center distance = 0.15 m, so expected signed distance = -0.05 m.
+  - id: matka_overlap_a
+    type: workpiece
+    pose:
+      parent_frame: world
+      child_frame: matka_overlap_a
+      matrix:
+        - [1.0, 0.0, 0.0, 1.00]
+        - [0.0, 1.0, 0.0, 0.00]
+        - [0.0, 0.0, 1.0, 0.10]
+        - [0.0, 0.0, 0.0, 1.0]
+    visual:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+    collision:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+
+  - id: matka_overlap_b
+    type: workpiece
+    pose:
+      parent_frame: world
+      child_frame: matka_overlap_b
+      matrix:
+        - [1.0, 0.0, 0.0, 1.15]
+        - [0.0, 1.0, 0.0, 0.00]
+        - [0.0, 0.0, 1.0, 0.10]
+        - [0.0, 0.0, 0.0, 1.0]
+    visual:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+    collision:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+
+  # Two "matkas" separated by a known positive distance.
+  # Center distance = 0.35 m, so expected distance = 0.15 m.
+  - id: matka_gap_a
+    type: workpiece
+    pose:
+      parent_frame: world
+      child_frame: matka_gap_a
+      matrix:
+        - [1.0, 0.0, 0.0, 1.50]
+        - [0.0, 1.0, 0.0, 0.00]
+        - [0.0, 0.0, 1.0, 0.10]
+        - [0.0, 0.0, 0.0, 1.0]
+    visual:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+    collision:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+
+  - id: matka_gap_b
+    type: workpiece
+    pose:
+      parent_frame: world
+      child_frame: matka_gap_b
+      matrix:
+        - [1.0, 0.0, 0.0, 1.85]
+        - [0.0, 1.0, 0.0, 0.00]
+        - [0.0, 0.0, 1.0, 0.10]
+        - [0.0, 0.0, 0.0, 1.0]
+    visual:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+    collision:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+
+  # Two "matkas" exactly tangent.
+  # Center distance = 0.20 m, so expected distance is approximately 0.0 m.
+  - id: matka_touch_a
+    type: workpiece
+    pose:
+      parent_frame: world
+      child_frame: matka_touch_a
+      matrix:
+        - [1.0, 0.0, 0.0, 2.20]
+        - [0.0, 1.0, 0.0, 0.00]
+        - [0.0, 0.0, 1.0, 0.10]
+        - [0.0, 0.0, 0.0, 1.0]
+    visual:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+    collision:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+
+  - id: matka_touch_b
+    type: workpiece
+    pose:
+      parent_frame: world
+      child_frame: matka_touch_b
+      matrix:
+        - [1.0, 0.0, 0.0, 2.40]
+        - [0.0, 1.0, 0.0, 0.00]
+        - [0.0, 0.0, 1.0, 0.10]
+        - [0.0, 0.0, 0.0, 1.0]
+    visual:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+    collision:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+
+  # Two "matkas" inside a 5 cm clearance threshold.
+  # Center distance = 0.23 m, so expected distance = 0.03 m.
+  - id: matka_clearance_a
+    type: workpiece
+    pose:
+      parent_frame: world
+      child_frame: matka_clearance_a
+      matrix:
+        - [1.0, 0.0, 0.0, 2.75]
+        - [0.0, 1.0, 0.0, 0.00]
+        - [0.0, 0.0, 1.0, 0.10]
+        - [0.0, 0.0, 0.0, 1.0]
+    visual:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+    collision:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+
+  - id: matka_clearance_b
+    type: workpiece
+    pose:
+      parent_frame: world
+      child_frame: matka_clearance_b
+      matrix:
+        - [1.0, 0.0, 0.0, 2.98]
+        - [0.0, 1.0, 0.0, 0.00]
+        - [0.0, 0.0, 1.0, 0.10]
+        - [0.0, 0.0, 0.0, 1.0]
+    visual:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+    collision:
+      enabled: true
+      geometry: { type: sphere, radius: 0.10 }
+
+collision_matrix:
+  default_action: check
+  rules: []

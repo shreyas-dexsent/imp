@@ -1,0 +1,44 @@
+# OS/editor noise
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.claude/ 
+
+# Python generated files
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# UI-generated files
+ui/node_modules/
+ui/.tools/
+ui/dist/
+ui/coverage/
+ui/playwright-report/
+ui/test-results/
+ui/*.log
+
+# Backend runtime data
+backend/node_modules/
+backend/data/
+backend/*.log
+
+# algorithms generated documentation and runtime files
+algorithms/docs/generated/
+algorithms/.runtime/
+algorithms/tests/artifacts/
+
+robot_engine_legacy/
+robot_engine_working/
+user_test/
+
+# Reference-only scratch/imported projects
+reference/
+
+datasets/

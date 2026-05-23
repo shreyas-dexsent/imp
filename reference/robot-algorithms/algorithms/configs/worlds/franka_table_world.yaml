@@ -1,0 +1,46 @@
+schema: dexsent.algorithms.world
+version: 2
+id: franka_table_world
+name: Franka Table World
+world_frame: world
+
+robots:
+  - id: arm
+    robot_system: ../robots/franka_fr3_with_franka_hand.yaml
+    namespace: null
+    base_pose:
+      parent_frame: world
+      child_frame: base
+      matrix:
+        - [1.0, 0.0, 0.0, 0.0]
+        - [0.0, 1.0, 0.0, 0.0]
+        - [0.0, 0.0, 1.0, 0.0]
+        - [0.0, 0.0, 0.0, 1.0]
+
+objects:
+  - id: matka
+    type: workpiece
+    pose:
+      parent_frame: world
+      child_frame: matka
+      matrix:
+        - [1.0, 0.0, 0.0, 0.45]
+        - [0.0, 1.0, 0.0, 0.0]
+        - [0.0, 0.0, 1.0, 0.12]
+        - [0.0, 0.0, 0.0, 1.0]
+    visual:
+      enabled: true
+      geometry:
+        type: mesh
+        path: ../../../assets/objects/matka/visual/model.obj
+        scale: [1.0, 1.0, 1.0]
+    collision:
+      enabled: true
+      geometry:
+        type: mesh
+        path: ../../../assets/objects/matka/visual/model.obj
+        scale: [1.0, 1.0, 1.0]
+
+collision_matrix:
+  default_action: check
+  rules: []
