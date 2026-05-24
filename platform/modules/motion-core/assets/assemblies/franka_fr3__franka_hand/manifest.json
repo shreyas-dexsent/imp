@@ -1,0 +1,41 @@
+{
+  "name": "franka_fr3__franka_hand",
+  "robot": "../../robots/franka_fr3",
+  "gripper": "../../grippers/franka_hand",
+  "attach": {
+    "joint_name": "fr3_hand_joint",
+    "type": "fixed",
+    "parent_link": "fr3_link8",
+    "child_link": "fr3_hand",
+    "origin_xyz": [0, 0, 0],
+    "origin_rpy": [0, 0, -0.7853981633974483]
+  },
+  "tcp_link": "fr3_hand_tcp",
+  "actuated_joints": [
+    "fr3_joint1",
+    "fr3_joint2",
+    "fr3_joint3",
+    "fr3_joint4",
+    "fr3_joint5",
+    "fr3_joint6",
+    "fr3_joint7",
+    "fr3_finger_joint1"
+  ],
+  "disabled_self_collisions": [
+    ["fr3_hand", "fr3_link3"],
+    ["fr3_hand", "fr3_link4"],
+    ["fr3_hand", "fr3_link6"],
+    ["fr3_hand", "fr3_link7"],
+    ["fr3_hand", "fr3_link8"],
+    ["fr3_leftfinger", "fr3_link3"],
+    ["fr3_leftfinger", "fr3_link4"],
+    ["fr3_leftfinger", "fr3_link6"],
+    ["fr3_leftfinger", "fr3_link7"],
+    ["fr3_leftfinger", "fr3_link8"],
+    ["fr3_rightfinger", "fr3_link3"],
+    ["fr3_rightfinger", "fr3_link4"],
+    ["fr3_rightfinger", "fr3_link6"],
+    ["fr3_rightfinger", "fr3_link7"],
+    ["fr3_rightfinger", "fr3_link8"]
+  ]
+}

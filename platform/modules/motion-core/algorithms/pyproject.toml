@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "imp-motion-core"
+version = "0.1.0"
+description = "imp motion core (robot-algorithms): descriptions + resolved models + stateless ops. Import package: algorithms."
+requires-python = ">=3.10"
+dependencies = [
+  "numpy",
+  "pydantic",
+  "pyyaml",
+  "scipy",
+  "trimesh",
+  "pin",
+  "coal",
+  "ompl",
+  "open3d",
+  "meshcat",
+]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["."]

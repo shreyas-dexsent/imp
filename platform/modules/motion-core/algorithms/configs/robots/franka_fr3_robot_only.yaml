@@ -1,0 +1,69 @@
+schema: dexsent.algorithms.robot_system
+version: 2
+id: franka_fr3_robot_only
+name: Franka FR3 Robot Only
+
+robot:
+  id: franka_fr3
+  urdf_path: ../../../assets/robots/franka_fr3/urdf/franka_fr3.urdf
+  package_dirs: []
+  base_frame: base
+  joint_limits:
+    fr3_joint1: { acceleration: 15.0, jerk: 7500.0 }
+    fr3_joint2: { acceleration: 7.5,  jerk: 3750.0 }
+    fr3_joint3: { acceleration: 10.0, jerk: 5000.0 }
+    fr3_joint4: { acceleration: 12.5, jerk: 6250.0 }
+    fr3_joint5: { acceleration: 15.0, jerk: 7500.0 }
+    fr3_joint6: { acceleration: 20.0, jerk: 10000.0 }
+    fr3_joint7: { acceleration: 20.0, jerk: 10000.0 }
+  collision:
+    enabled: true
+    source: urdf
+    # Adjacent-link pairs allowed by mechanical design. FR3 visual+collision
+    # meshes overlap slightly at adjacent links (no <disable_collisions>
+    # in the URDF), so without these the home pose self-collides.
+    allowed_pairs:
+      - { a: fr3_link0_0, b: fr3_link1_0 }
+      - { a: fr3_link1_0, b: fr3_link2_0 }
+      - { a: fr3_link2_0, b: fr3_link3_0 }
+      - { a: fr3_link3_0, b: fr3_link4_0 }
+      - { a: fr3_link4_0, b: fr3_link5_0 }
+      - { a: fr3_link5_0, b: fr3_link6_0 }
+      - { a: fr3_link6_0, b: fr3_link7_0 }
+    disabled_links: []
+
+tcps:
+  - id: robot_tcp
+    transform:
+      parent_frame: fr3_link8
+      child_frame: robot_tcp
+      matrix:
+        - [1.0, 0.0, 0.0, 0.0]
+        - [0.0, 1.0, 0.0, 0.0]
+        - [0.0, 0.0, 1.0, 0.12]
+        - [0.0, 0.0, 0.0, 1.0]
+
+kinematic_chains:
+  - id: arm
+    base_frame: base
+    tip_frame: fr3_link8
+    tcp_frame: robot_tcp
+    joints:
+      - fr3_joint1
+      - fr3_joint2
+      - fr3_joint3
+      - fr3_joint4
+      - fr3_joint5
+      - fr3_joint6
+      - fr3_joint7
+
+named_joint_states:
+  home:
+    joints:
+      fr3_joint1: 0.0
+      fr3_joint2: -0.7853981633974483
+      fr3_joint3: 0.0
+      fr3_joint4: -2.356194490192345
+      fr3_joint5: 0.0
+      fr3_joint6: 1.5707963267948966
+      fr3_joint7: 0.7853981633974483

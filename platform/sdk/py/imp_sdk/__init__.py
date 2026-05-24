@@ -5,8 +5,10 @@ the Rust core on the wire."""
 from . import keyexpr, schemas
 from .bus import Bus, Publisher, QosClass, TypedSub
 from .hal import HalDevice, HalNode, Lifecycle, Pub, Sub, run_device
+from .module import Input, Module, ModuleNode, Output, run_module
 
 __all__ = [
     "Bus", "Publisher", "QosClass", "TypedSub", "keyexpr", "schemas",
     "HalDevice", "HalNode", "Lifecycle", "Pub", "Sub", "run_device",
+    "Input", "Module", "ModuleNode", "Output", "run_module",
 ]

@@ -1,0 +1,24 @@
+schema: dexsent.algorithms.world
+version: 2
+id: franka_robot_only_world
+name: Franka Robot Only World
+world_frame: world
+
+robots:
+  - id: arm
+    robot_system: ../robots/franka_fr3_robot_only.yaml
+    namespace: null
+    base_pose:
+      parent_frame: world
+      child_frame: base
+      matrix:
+        - [1.0, 0.0, 0.0, 0.0]
+        - [0.0, 1.0, 0.0, 0.0]
+        - [0.0, 0.0, 1.0, 0.0]
+        - [0.0, 0.0, 0.0, 1.0]
+
+objects: []
+
+collision_matrix:
+  default_action: check
+  rules: []

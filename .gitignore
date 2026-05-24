@@ -9,3 +9,7 @@ __pycache__/
 *.pyc
 *.egg-info/
 .venv/
+.pytest_cache/
+
+# Test-generated artifacts (motion-core)
+**/tests/artifacts/
