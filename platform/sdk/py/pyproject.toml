@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imp-sdk"
+version = "0.0.0"
+description = "imp Python SDK: bus, key conventions, and generated wire schemas (matches the Rust core)."
+requires-python = ">=3.10"
+license = { text = "LicenseRef-Proprietary" }
+dependencies = [
+    "eclipse-zenoh==1.9.0",
+    "protobuf>=6.0",
+]
+
+[project.optional-dependencies]
+# Tooling to regenerate imp_sdk/schemas/imp_pb2.py from crates/schemas/proto.
+codegen = ["grpcio-tools>=1.60"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["imp_sdk"]

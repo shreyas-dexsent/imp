@@ -1,2 +1,11 @@
 .DS_Store
 arc.md
+
+# Rust build artifacts
+target/
+
+# Python caches
+__pycache__/
+*.pyc
+*.egg-info/
+.venv/
