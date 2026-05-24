@@ -1,0 +1,175 @@
+// imp core wire schemas (spec §6). Messages are defined once here and
+// code-generated for Rust / Python / C++ / TS. proto3.
+syntax = "proto3";
+
+package imp;
+
+// Every message embeds a Header. `schema` mirrors the key attachment
+// (e.g. "imp.Pose6D/1") and lets a late decoder self-describe.
+message Header {
+  uint64 stamp_ns = 1;
+  uint64 seq = 2;
+  string frame_id = 3;
+  string schema = 4;
+}
+
+// Out-of-band reference to a large payload (image / depth / cloud / tensor)
+// kept in Zenoh SHM or a blob store. The message never carries the bytes.
+message BlobRef {
+  string uri = 1;
+  repeated uint32 shape = 2;
+  string dtype = 3;
+}
+
+message Intrinsics {
+  double fx = 1;
+  double fy = 2;
+  double cx = 3;
+  double cy = 4;
+  repeated double dist = 5;
+}
+
+// ---- Perception / vision ------------------------------------------------
+
+message Frame {
+  Header header = 1;
+  string camera_id = 2;
+  BlobRef rgb = 3;
+  BlobRef depth = 4;
+  Intrinsics intrinsics = 5;
+  double depth_scale_m = 6;
+}
+
+message Roi {
+  Header header = 1;
+  int32 x = 2;
+  int32 y = 3;
+  int32 width = 4;
+  int32 height = 5;
+}
+
+message Mask {
+  Header header = 1;
+  BlobRef data = 2;
+}
+
+message Detection {
+  string label = 1;
+  double score = 2;
+  Roi roi = 3;
+}
+
+message Detections {
+  Header header = 1;
+  repeated Detection items = 2;
+}
+
+message Pose6D {
+  Header header = 1;
+  string object_id = 2;
+  repeated double position_m = 3;   // x, y, z
+  repeated double quat_xyzw = 4;    // x, y, z, w
+  double confidence = 5;
+  bool valid = 6;
+  string reject_reason = 7;
+}
+
+message Grasp {
+  string grasp_id = 1;
+  double score = 2;
+  repeated double t_obj_gripper = 3;  // 4x4 row-major
+}
+
+message Grasps {
+  Header header = 1;
+  repeated Grasp candidates = 2;
+}
+
+message PointCloud {
+  Header header = 1;
+  BlobRef points = 2;   // Nx3 (or Nx6 with rgb) referenced out-of-band
+}
+
+message Scalar {
+  Header header = 1;
+  double value = 2;
+}
+
+// ---- Spatial ------------------------------------------------------------
+
+message TfEdge {
+  Header header = 1;
+  string parent_frame = 2;
+  string child_frame = 3;
+  repeated double matrix = 4;   // 4x4 row-major
+}
+
+message PoseTarget {
+  Header header = 1;
+  string target_frame = 2;
+  repeated double position_m = 3;
+  repeated double quat_xyzw = 4;
+}
+
+// ---- Motion -------------------------------------------------------------
+
+message JointSolution {
+  Header header = 1;
+  repeated double q = 2;
+  bool valid = 3;
+  string reject_reason = 4;
+}
+
+message Path {
+  Header header = 1;
+  repeated double q_wp = 2;   // flattened waypoints (n_wp * n_dof)
+  uint32 n_dof = 3;
+}
+
+message Trajectory {
+  Header header = 1;
+  repeated double t_s = 2;
+  repeated double q_wp = 3;   // flattened waypoints (len(t_s) * n_dof)
+  uint32 n_dof = 4;
+}
+
+// ---- HAL: robot / gripper / io -----------------------------------------
+
+message RobotState {
+  Header header = 1;
+  repeated double q = 2;
+  repeated double dq = 3;
+  repeated double tcp_pose = 4;   // x,y,z,qx,qy,qz,qw
+  string mode = 5;
+  string active_motion_id = 6;
+}
+
+message MotionCommand {
+  Header header = 1;
+  string motion_id = 2;
+  string kind = 3;                // "joint" | "tcp" | "trajectory"
+  repeated double q_target = 4;
+  repeated double tcp_target = 5;
+  Trajectory trajectory = 6;
+  double speed_scale = 7;
+}
+
+message GripperState {
+  Header header = 1;
+  double width_m = 2;
+  bool grasped = 3;
+  bool moving = 4;
+}
+
+message GripperCommand {
+  Header header = 1;
+  double width_m = 2;
+  double speed = 3;
+  double force = 4;
+}
+
+message Io {
+  Header header = 1;
+  map<string, bool> digital = 2;
+  map<string, double> analog = 3;
+}

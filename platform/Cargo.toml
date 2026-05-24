@@ -1,20 +1,18 @@
 # Rust workspace root for the sealed imp core (see ../README.md §19).
-# Members are added per build phase as each crate gains a Cargo.toml; an empty
-# members list keeps the workspace valid while crates are still scaffold-only.
 [workspace]
 resolver = "2"
 members = [
-    # Phase 1 substrate (uncomment as each crate's Cargo.toml lands):
-    # "crates/core",
-    # "crates/bus",
-    # "crates/schemas",
-    # "crates/hal-contract",
-    # "crates/module-contract",
-    # "crates/service-contract",
+    "crates/core",
+    "crates/schemas",
+    "crates/bus",
+    "crates/hal-contract",
+    "crates/module-contract",
+    "crates/service-contract",
+    "crates/cli",
+    # Added in later phases:
     # "crates/tasks",
     # "crates/supervisor",
     # "crates/workspace",
-    # "crates/cli",
     # "crates/ui-host",
     # "crates/installer",
 ]
@@ -23,3 +21,15 @@ members = [
 edition = "2021"
 license = "LicenseRef-Proprietary"
 repository = "https://github.com/shreyas-dexsent/imp"
+
+[workspace.dependencies]
+zenoh = "1.9"
+prost = "0.14"
+prost-build = "0.14"
+protoc-bin-vendored = "3"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "time", "signal"] }
+clap = { version = "4", features = ["derive"] }
+thiserror = "2"
+anyhow = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
