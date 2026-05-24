@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imp-module-motion-ompl"
+version = "0.0.0"
+description = "Joint-space planning imp module wrapping motion-core (OMPL)."
+requires-python = ">=3.10"
+license = { text = "LicenseRef-Proprietary" }
+dependencies = ["imp-sdk", "imp-motion-core", "numpy>=1.24"]
+
+[project.entry-points."imp.modules"]
+motion-ompl = "imp_module_motion_ompl:PlanModule"
+
+[tool.hatch.build.targets.wheel]
+packages = ["imp_module_motion_ompl"]
