@@ -13,6 +13,7 @@ path = "src/main.rs"
 imp-core = { path = "../core" }
 imp-bus = { path = "../bus" }
 imp-schemas = { path = "../schemas" }
+imp-workspace = { path = "../workspace" }
 clap.workspace = true
 tokio.workspace = true
 anyhow.workspace = true

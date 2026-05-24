@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imp-hal-robot-mujoco-ur5e"
+version = "0.0.0"
+description = "MuJoCo UR5e simulation robot HAL driver for imp."
+requires-python = ">=3.10"
+license = { text = "LicenseRef-Proprietary" }
+dependencies = [
+    "imp-sdk",
+    "mujoco>=3.0",
+    "numpy>=1.24",
+]
+
+[project.entry-points."imp.hal"]
+robot-mujoco-ur5e = "imp_hal_robot_mujoco_ur5e:MujocoUR5e"
+
+[tool.hatch.build.targets.wheel]
+packages = ["imp_hal_robot_mujoco_ur5e"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"assets" = "imp_hal_robot_mujoco_ur5e/assets"

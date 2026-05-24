@@ -8,11 +8,11 @@ members = [
     "crates/hal-contract",
     "crates/module-contract",
     "crates/service-contract",
+    "crates/workspace",
     "crates/cli",
     # Added in later phases:
     # "crates/tasks",
     # "crates/supervisor",
-    # "crates/workspace",
     # "crates/ui-host",
     # "crates/installer",
 ]
@@ -33,3 +33,4 @@ thiserror = "2"
 anyhow = "1"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+serde_yaml = "0.9"

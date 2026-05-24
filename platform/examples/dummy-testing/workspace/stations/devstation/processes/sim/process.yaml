@@ -1,0 +1,6 @@
+schema: imp.process
+version: 1
+id: sim
+name: Sim smoke test
+task_type: dummy_testing
+robot: ur5e
