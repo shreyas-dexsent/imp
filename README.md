@@ -440,9 +440,25 @@ class RealsenseD405(CameraNode):
 ## 9. Functional modules
 
 A module is a **pure typed function** plus the interface descriptor from §7. The **Compute Runtime**
-does subscribe → validate → call → publish; the function stays pure and unit-testable. The existing
-motion code (Pinocchio FK/IK, Coal collision) and perception modules (MegaPose, PPF-ICP, template/SIFT,
-cuboid) from the VGR reference are **wrapped as modules**, not rewritten.
+does subscribe → validate → call → publish; the function stays pure and unit-testable. The perception
+modules (MegaPose, PPF-ICP, template/SIFT, cuboid) from the VGR reference are **wrapped as modules**,
+not rewritten.
+
+The **motion and spatial modules wrap the `robot-algorithms` library** (the transport-agnostic
+three-layer robotics core carried from the reference — see §22), not the orchestrator's embedded
+`robot_engine`. That library's own layering maps cleanly onto imp's "functions, not engines" principle:
+
+- **descriptions** — pydantic models loaded from YAML (`RobotSystemDescription`, `WorldDescription`);
+  imp's canonical robot/world/scene config (§14). No computation.
+- **resolved** — heavy built-once objects (`KinematicModel`, `CollisionModel`, and a mutable `Scene`).
+  The Compute Runtime builds these at `activate()` and caches them.
+- **operations** — stateless NumPy functions (FK, IK, collision, planning, trajectory) that become the
+  pure bodies of the `motion-*` modules.
+
+`Scene` is the **live-state seam**: each tick the Compute Runtime writes subscribed topic data into it
+(`hal/<robot>/state` → robot joint states, perception `Pose6D` → object poses, grasp events → attach /
+detach + dynamic collision allowances), then calls the stateless op and publishes a typed result. The
+library never owns transport — imp supplies it via Zenoh.
 
 ```python
 @module(inputs={"roi": Roi}, outputs={"pose": Pose6D}, rate_hz=10)
@@ -525,21 +541,25 @@ Two interaction styles, both first-class, both declared with the same descriptor
   returns a `job_id`; progress streams on `ctrl/jobs/<id>/progress`; the result is queryable at
   `svc/jobs/<id>`. This is the equivalent of a ROS *action* — cancelable, monitorable, time-bounded.
 
-| Op | Style | Persists |
-|---|---|---|
-| `calibration.intrinsics` | job | `calibration/intrinsics.json` |
-| `calibration.hand_eye` | job | `calibration/handeye.json` |
-| `calibration.tcp` | service | `calibration/tcp.json` (tool mount + custom TCP) |
-| `calibration.target` | service | `calibration/target.json` (ArUco / checkerboard def) |
-| `calibration.samples` | job | `calibration/samples.json` (raw sample data for re-solve) |
-| `object.init` (ingest CAD/mesh) | job | `objects/<id>/…` (mesh + ROI + templates) |
-| `grasp.define` (Grasp Studio backend) | service | `objects/<id>/grasps.json` |
-| `scene.define` (obstacles + collision meshes) | service | `…/scenes/<id>/scene.yaml + obstacles/` |
-| `pose.save` / `pose.list` (named poses: home / capture / place / …) | service | `…/poses/<name>.yaml` |
-| `tf.lookup`, `asset.get` | service | — |
-| `run.start` / `run.stop` / `run.list` / `run.timeline` | service | `runs/<id>/…` |
-| `task.validate` / `task.run` / `task.stop` | service / job | — / `runs/<id>/` |
-| `robot.dt.evaluate` (digital twin: FK, collision, reachability check) | service | — |
+Although they share one descriptor, the two styles live in **separate top-level folders** — `services/`
+(synchronous queryables) and `jobs/` (long-running cancelable ops) — mirroring the `imp.services` and
+`imp.jobs` entry-point groups (§17). The `Folder` column below says where each op's plugin lives.
+
+| Op | Style | Folder | Persists |
+|---|---|---|---|
+| `calibration.intrinsics` | job | `jobs/calibration-intrinsics` | `calibration/intrinsics.json` |
+| `calibration.hand_eye` | job | `jobs/calibration-hand-eye` | `calibration/handeye.json` |
+| `calibration.tcp` | service | `services/calibration-tcp` | `calibration/tcp.json` (tool mount + custom TCP) |
+| `calibration.target` | service | `services/calibration-target` | `calibration/target.json` (ArUco / checkerboard def) |
+| `calibration.samples` | job | `jobs/calibration-samples` | `calibration/samples.json` (raw sample data for re-solve) |
+| `object.init` (ingest CAD/mesh) | job | `jobs/object-init` | `objects/<id>/…` (mesh + ROI + templates) |
+| `grasp.define` (Grasp Studio backend) | service | `services/grasp-define` | `objects/<id>/grasps.json` |
+| `scene.define` (obstacles + collision meshes) | service | `services/scene-define` | `…/scenes/<id>/world.yaml + obstacles/` |
+| `pose.save` / `pose.list` (named poses: home / capture / place / …) | service | `services/pose-library` | `…/poses/<name>.yaml` |
+| `tf.lookup`, `asset.get` | service | `services/tf-lookup`, `services/asset-get` | — |
+| `run.start` / `run.stop` / `run.list` / `run.timeline` | service | `services/run-store` | `runs/<id>/…` |
+| `task.validate` / `task.run` / `task.stop` | service / job | `services/run-store` / `jobs/run-task` | — / `runs/<id>/` |
+| `robot.dt.evaluate` (digital twin: FK, collision, reachability check) | service | `services/robot-digital-twin` | — |
 
 **Hand-eye calibration as a job:**
 
@@ -614,6 +634,16 @@ the Task Runtime loads any valid task graph that compiles.
 **No-code direction:** the **Task Composer** UI edits the YAML; adding a capability = registering a
 function; building a task = drawing edges. Placement is a separate deployment view. No
 orchestration code is written per task.
+
+### Where deployed tasks live
+
+`crates/tasks` is the **engine** (Graph Compiler + Task Runtime + sequence FSM) — it ships no task and
+knows none ahead of time. **Deployed production tasks are workspace data**, stored as YAML at
+`processes/<process_id>/tasks/<task_id>.yaml` (§14): the graph + sequence + asset mappings + params.
+They are authored in the **Task Composer** (which writes through `task.save`) or by hand, then loaded
+and validated by the Task Runtime (`task.validate` / `task.run`); runs are driven by the `run.*` /
+`task.run` services and `jobs/run-task`, and monitored on `ctrl/runs/<id>/events`. The `examples/`
+templates below are tutorials that seed new workspaces — **not** the place your live tasks live.
 
 **Starter task templates** (shipped under `examples/` to seed new workspaces — **not a closed list**;
 add freely):
@@ -773,6 +803,30 @@ shape.
 - **Topology-agnostic** — the UI does not know or care whether the publisher is in-proc, on the same
   host, or across a WAN router.
 
+### Application structure — one app, thin views
+
+The reference shipped many standalone HTML pages, a 125-endpoint REST API, and per-page polling. imp
+replaces that with **one application, `imp-ui`** (top-level `ui/`, served by `crates/ui-host`),
+structured so views cannot drift apart:
+
+- **One data layer** (`ui/lib/bus`) is the *only* way a view touches the system: `subscribe(keyexpr)`,
+  `query(storage)`, `call(service)`, `job(name)`. No per-page REST client, no polling — status LEDs are
+  topic subscriptions, late-joiner panels are storage queries.
+- **Schema-driven** (`ui/lib/schemas`, generated from the same Protobuf as Rust/Py): panels and
+  parameter **forms** auto-build from the Interface descriptor (§7), so a new module or topic appears in
+  the UI with no UI code.
+- **Shared 3-D** (`ui/lib/viewer3d`): one Three.js + OCCT scene with URDF / mesh loaders and a transform
+  gizmo, reused by RobotViz, Grasp / Gripper Studio, and the Scene / Frame editors.
+- **Thin views** (`ui/views/<surface>`): each view only composes `lib/*`; it owns no logic and no
+  transport. `crates/ui-host` serves the built bundle, runs `zenoh-bridge-ws`, and provides the native
+  shell.
+
+**Single source of truth for 3-D.** Every 3-D view renders from the *same* resolved geometry the planner
+uses: the `robot-digital-twin` service serializes `CollisionModel.shapes_for(<name>)` (meshes,
+primitives, convex hulls, octrees) plus current `Scene` state, and the viewer composes each shape's world
+pose exactly as the collision query does (`Scene.object_poses[obj] @ T_parent_shape`, or `fk(q) @
+T_parent_shape` for robot links). No separate UI geometry path can fall out of sync with motion (§9).
+
 ### UI surfaces (carried forward from the VGR reference)
 
 The reference shipped a substantial UI; every surface there carries forward as a named view in
@@ -783,14 +837,14 @@ the same bus.
 |---|---|---|
 | **Dashboard** | Live overview: station status, robot mode, last pose, run progress | wildcard subscribe |
 | **Operator console** | Run / pause / stop tasks; manual commands; pendant-style controls | service calls |
-| **RobotViz** | Browser 3-D view of the robot + scene (URDF + meshes via Three.js + OCCT) | subscribe `hal/<robot>/state`, `tf`, scene |
+| **RobotViz** | Browser 3-D view of the robot + scene (URDF + meshes via Three.js + OCCT) | subscribe `hal/<robot>/state`, `tf`; `robot.dt` `shapes_for` |
 | **Task Composer** | No-code task graph editor (nodes = modules, edges = topics) | reads `task.yaml`, writes via `task.save` |
 | **Calibration Wizard** | Step-through for intrinsics → target → hand-eye → TCP | calls `calibration.*` jobs |
 | **Grasp Studio** | Place / score / save grasp sites on an object mesh | calls `grasp.define`; reads `objects/<id>/grasps.json` |
 | **Gripper Studio** | Define a gripper (URDF + grasp sites + frames + safety margins) | reads / writes `gripper/` assets |
 | **Object Browser** | Browse the object library (mesh, templates, grasps, lighting variants) | reads `objects/<id>/…` |
 | **Pose Library Editor** | Jog robot, capture, name and save poses (home / capture / place / calib / mega / …) | service `pose.save`; reads `poses/<name>.yaml` |
-| **Scene / Frame Editor** | Edit obstacles and the frame graph for a task (visual gizmo) | reads / writes `scenes/<id>/scene.yaml`; `spatial.tf` edits |
+| **Scene / Frame Editor** | Edit obstacles and the frame graph for a task (visual gizmo) | reads / writes `scenes/<id>/world.yaml`; `spatial.tf` edits |
 | **Gizmo Editor** | Generic 3-D transform widget reused by Scene / Grasp / Frame editors | — |
 | **Perception Debug** | Overlays: detections, masks, pose axes, depth quality, reject reasons | subscribe `perc/**` |
 | **Run Monitor** | Per-run timeline, event log, motion plot, debug images | subscribe `ctrl/jobs/<id>/progress`; reads `runs/<id>/…` |
@@ -832,14 +886,15 @@ workspace/
 │       └── processes/
 │           └── <process_id>/
 │               ├── process.yaml            # name, task_type, gripper id, robot id
-│               ├── gripper/                # URDF + visual/collision meshes + frames + grasp sites
-│               ├── robot/                  # URDF / MJCF + visual/collision meshes
+│               ├── robot_system.yaml       # dexsent.algorithms.robot_system/2: robot + gripper + TCPs + chains + named states
+│               ├── gripper/                # URDF + visual/collision meshes + grasp sites (referenced by robot_system.yaml)
+│               ├── robot/                  # URDF / MJCF + visual/collision meshes (referenced by robot_system.yaml)
 │               ├── objects/<object_id>/    # mesh (OBJ/STL/PLY) + templates/ + grasps.json + lighting variants + pick_contacts.json
 │               ├── poses/<name>.yaml       # named poses (home / capture / place / calib / mega / up_int / …)
 │               ├── bin/<bin_id>.yaml       # bin / ROI geometry (origin + dims + frame)
-│               ├── scenes/<scene_id>/      # obstacles + collision geometry per scene
-│               │   ├── scene.yaml
-│               │   └── obstacles/          # mesh files referenced by scene.yaml
+│               ├── scenes/<scene_id>/      # world placement + obstacles per scene
+│               │   ├── world.yaml          # dexsent.algorithms.world/2: robots placed + objects + collision_matrix
+│               │   └── obstacles/          # mesh files referenced by world.yaml
 │               └── tasks/<task_id>.yaml    # logical graph + sequence + asset mappings + params
 ├── models/                                 # *.pt trained networks (segment, detect, megapose, …)
 ├── deployments/<deployment_id>/
@@ -858,21 +913,48 @@ workspace/
 
 | Category | Format | Produced by | Consumed by |
 |---|---|---|---|
-| Robot | URDF / MJCF + meshes | import / robot asset catalog (§19) | `motion-pinocchio`, `motion-coal`, RobotViz |
-| Gripper | URDF + meshes + frames.json + grasp sites | Gripper Studio | `motion-grasp-library`, RobotViz |
+| Robot system | `robot_system.yaml` (`dexsent.algorithms.robot_system/2`) | import / hand-edit | `motion-core` (resolved `KinematicModel`/`CollisionModel`), all `motion-*`, RobotViz |
+| Robot | URDF / MJCF + meshes (referenced by `robot_system.yaml`) | import / robot asset catalog (§19) | `motion-pinocchio`, `motion-coal`, RobotViz |
+| Gripper | URDF + meshes + grasp sites (referenced by `robot_system.yaml`) | Gripper Studio | `motion-grasp-library`, RobotViz |
 | Object | OBJ / STL / PLY + `metadata.json` + `templates/` + `grasps.json` + `pick_contacts.json` + lighting variants (`*.lighting_lab.json`) | `object.init` job + Object Browser | perception modules, `motion-grasp-library`, RobotViz |
 | Pose | YAML / JSON (`q[]` or `tcp_pose`) | Pose Library Editor | tasks (motion targets) |
 | Bin | YAML (origin + dimensions + frame_id) | Frame / Scene editor | bin-picking task ROI |
-| Scene | `scene.yaml` + `obstacles/` (meshes) | Scene editor | `motion-coal`, RobotViz |
+| Scene | `world.yaml` (`dexsent.algorithms.world/2`) + `obstacles/` (meshes) | Scene editor | `motion-coal`, RobotViz |
 | Task | YAML (graph + sequence + params + mappings) | Task Composer / hand-edit | Graph Compiler, Task Runtime |
 | Calibration | JSON (intrinsics / handeye / tcp / target / samples) | `calibration.*` jobs | `spatial-tf`, perception |
 | Trained model | `.pt` | offline training pipeline (see `tools/`, §17) | perception modules |
 
 ### Config kinds — all schema-validated, version-pinned
 
-`station.yaml`, `process.yaml`, `hardware.yaml`, `tasks/<id>.yaml`, `scenes/<id>/scene.yaml`,
-`deployment.yaml`, `placement.yaml`. **Schema + asset versions are pinned per deployment** so an
-upgrade cannot silently change behavior.
+`station.yaml`, `process.yaml`, `hardware.yaml`, `robot_system.yaml`
+(`dexsent.algorithms.robot_system/2`), `scenes/<id>/world.yaml` (`dexsent.algorithms.world/2`),
+`tasks/<id>.yaml`, `deployment.yaml`, `placement.yaml`. The robot-system and world schemas are the
+`robot-algorithms` pydantic descriptions (§9, §22), validated at load — unknown fields are rejected and
+paths resolve relative to the YAML. **Schema + asset versions are pinned per deployment** so an upgrade
+cannot silently change behavior.
+
+### Description vs. runtime state
+
+Robot-system and world YAML are **descriptions** — static facts only: URDF refs, mounts, joint limits
+(incl. the acceleration/jerk that URDF omits), TCPs, kinematic chains, named joint states, object
+geometry, and base/object default poses. Three things deliberately **never** live in YAML:
+
+- **Algorithm configuration** (planner timeout, IK tolerance, smoothing iterations) — these are
+  call-site arguments on the module, surfaced as typed parameter form fields (§7), so description YAML
+  stays stable across solver tuning.
+- **Live poses** (current object poses, robot `q`, attachments) — these live in the runtime `Scene`,
+  filled from topics by the Compute Runtime (§9), and in Zenoh storage for late-joiner UI queries.
+- **Task-driven collision allowances** — see below.
+
+### Collision allowances — three layers
+
+Allowed-collision rules come from three sources, merged at query time, never conflated:
+
+1. **Robot self-collision** — `robot.collision.allowed_pairs` in `robot_system.yaml` (adjacent links by
+   mechanical design).
+2. **Static world facts** — `collision_matrix` in `world.yaml` (e.g. floor ↔ wall permanently touching).
+3. **Runtime overlay** — dynamic allowances written to the `Scene` (e.g. end-effector ↔ workpiece while
+   a grasp is held), added on grasp events and removed on release. Never written back to YAML.
 
 ```yaml
 # stations/st1/hardware.yaml
@@ -1047,10 +1129,10 @@ Design decisions:
 
 ### Source layout — one repo called `imp`, short names inside
 
-Architectural concept = top-level folder. There is no `plugins/` umbrella — `hal/`, `modules/`, and
-`services/` each live at the top so an integrator opens the repo and immediately knows where their
-new code goes by category. Contract / interface code (the *traits*) lives in `crates/` (sealed core);
-implementations live in their respective category folders.
+Architectural concept = top-level folder. There is no `plugins/` umbrella — `hal/`, `modules/`,
+`services/`, `jobs/`, and `ui/` each live at the top so an integrator opens the repo and immediately
+knows where their new code goes by category. Contract / interface code (the *traits*) lives in
+`crates/` (sealed core); implementations live in their respective category folders.
 
 ```
 imp/
@@ -1069,7 +1151,7 @@ imp/
 │   ├── supervisor/                     # lifecycle, deployment manifest, restart policy
 │   ├── workspace/                      # workspace loader, schema validation, asset resolver
 │   ├── cli/                            # `imp` binary
-│   ├── ui/                             # dashboard, composer, studios (native + browser)
+│   ├── ui-host/                        # serve UI bundle + native shell + zenoh-bridge-ws launcher
 │   └── installer/                      # MSI / DEB / RPM / AppImage builders
 │
 ├── hal/                                # HAL device drivers — one short folder per device
@@ -1099,38 +1181,57 @@ imp/
 │   ├── perception-track/               # Kalman-style pose smoothing
 │   ├── perception-fusion/              # multi-camera pose fusion
 │   ├── perception-preview/             # frame passthrough / preview
-│   ├── motion-pinocchio/               # FK + IK + Jacobian
-│   ├── motion-coal/                    # collision queries
-│   ├── motion-ompl/                    # RRT / RRT-Connect / Bi-RRT
-│   ├── motion-cartesian/               # cartesian linear planner
-│   ├── motion-path-processor/          # shortcutting + smoothing
-│   ├── motion-ruckig/                  # jerk-limited trajectory profile
-│   ├── motion-grasp-library/           # grasp candidates + feasibility (parallel-jaw / vacuum)
+│   ├── motion-core/                    # robot-algorithms port: descriptions + resolved + Scene + ops (shared by all motion-*)
+│   ├── motion-pinocchio/               # FK + IK + Jacobian            (thin wrapper over motion-core)
+│   ├── motion-coal/                    # collision queries             (thin wrapper over motion-core)
+│   ├── motion-ompl/                    # RRT / RRT-Connect / Bi-RRT    (thin wrapper over motion-core)
+│   ├── motion-cartesian/               # cartesian linear planner      (thin wrapper over motion-core)
+│   ├── motion-path-processor/          # shortcutting + smoothing      (thin wrapper over motion-core)
+│   ├── motion-ruckig/                  # jerk-limited trajectory profile (thin wrapper over motion-core)
+│   ├── motion-grasp-library/           # grasp candidates + feasibility (parallel-jaw / vacuum) — from orchestrator, not robot-algorithms
 │   ├── spatial-tf/                     # frame graph
 │   └── spatial-transform/              # pose transform between frames
 │
-├── services/                           # services + jobs — one folder per service
-│   ├── calibration-intrinsics/         # job
-│   ├── calibration-hand-eye/           # job (ArUco / checkerboard wizard backend)
-│   ├── calibration-tcp/                # service
-│   ├── calibration-target/             # service
-│   ├── object-init/                    # job (CAD/mesh ingest)
-│   ├── grasp-define/                   # service (Grasp Studio backend)
-│   ├── scene-define/                   # service (obstacle / collision geometry)
-│   ├── pose-library/                   # service (named poses)
-│   ├── tf-lookup/                      # service
-│   ├── asset-get/                      # service
-│   ├── run-store/                      # service (run metadata + timeline)
-│   └── robot-digital-twin/             # service (FK / collision / reachability check)
+├── services/                           # synchronous queryables — one folder per service
+│   ├── calibration-tcp/                # tool mount + custom TCP
+│   ├── calibration-target/             # ArUco / checkerboard target def
+│   ├── grasp-define/                   # Grasp Studio backend
+│   ├── scene-define/                   # obstacle / collision geometry
+│   ├── pose-library/                   # named poses
+│   ├── tf-lookup/                      # frame lookup / Scene query
+│   ├── asset-get/                      # asset resolution
+│   ├── run-store/                      # run metadata + timeline
+│   └── robot-digital-twin/             # FK / collision / reachability + shapes_for serialization
+│
+├── jobs/                               # long-running cancelable ops — one folder per job
+│   ├── calibration-intrinsics/         # intrinsics solve
+│   ├── calibration-hand-eye/           # ArUco / checkerboard wizard backend
+│   ├── calibration-samples/            # raw sample capture / re-solve
+│   ├── object-init/                    # CAD / mesh ingest
+│   └── run-task/                       # execute a task as a job
 │
 ├── catalog/                            # pre-configured asset catalog shipped with the install
-│   ├── robots/                         # Franka FR3, UR3/5/10e, KUKA, Fanuc, xArm, …
+│   │                                   # (seeded from robot-algorithms assets/: robots, grippers, objects, assemblies)
+│   ├── robots/                         # Franka FR3, UR3/5/10e, KUKA KR16, Fanuc CRX-10iA, xArm, …
 │   ├── grippers/                       # Robotiq 2F / Hand-E, Franka Hand, OnRobot, vacuum cups
 │   └── objects/                        # sample object meshes + templates for examples
 │
 ├── sdk/                                # public surface for plugin / task developers
 │   ├── py/                             # imp_sdk (Python)  — pip-installable
 │   └── rs/                             # imp-sdk  (Rust)   — cargo-installable
+│
+├── ui/                                 # single TypeScript app (imp-ui), served by crates/ui-host
+│   ├── app/                            # shell: routing, layout, view registry, global status
+│   ├── lib/
+│   │   ├── bus/                        # the one Zenoh data layer (zenoh-ts / zenoh-bridge-ws)
+│   │   ├── schemas/                    # generated TS types from Protobuf (schema-driven panels + forms)
+│   │   ├── viewer3d/                   # shared Three.js + OCCT scene, URDF / mesh loaders, gizmo
+│   │   ├── forms/                      # schema-driven parameter forms from Interface descriptors
+│   │   └── components/                 # shared widgets (panels, tables, timeline, charts)
+│   └── views/                          # one thin folder per surface (§13); composes lib/*, owns no logic
+│       ├── dashboard/  operator/  robotviz/  task-composer/  calibration-wizard/
+│       ├── grasp-studio/  gripper-studio/  gizmo/  object-browser/  pose-library/
+│       └── scene-editor/  perception-debug/  run-monitor/  asset-manager/
 │
 ├── docs/
 │   ├── user/                           # operators: install, run, inspect, recover
@@ -1253,12 +1354,14 @@ cargo crates, and `imp` loads them via entry points at startup.
 ## 22. From the VGR reference codebase
 
 The `reference/` folder holds the prior VGR codebase (camera-core, vision-engine, robot-engine,
-application-orchestrator). It is **frozen** — kept as a reference for what to wrap and what to
+application-orchestrator) plus **`robot-algorithms`** — a clean, locked, tested, transport-agnostic
+robotics library added later. It is **frozen** — kept as a reference for what to wrap and what to
 replace. `imp` is a clean rebuild on Zenoh; algorithms are kept, plumbing is replaced.
 
 | Keep (wrap as `imp` …) | Replace |
 |---|---|
-| `robot_engine`: Pinocchio FK/IK/Jacobian, Coal collision, OMPL RRT / RRT-Connect / Bi-RRT, Ruckig, cartesian linear, path shortcutting, grasp library + feasibility | bespoke orchestrator task code → Task Runtime + graph |
+| **`robot-algorithms`** (canonical motion source): the whole three-layer library — descriptions + resolved (`KinematicModel`/`CollisionModel`/`Scene`) + ops (Pinocchio FK/IK/Jacobian, Coal collision, OMPL planners, cartesian, shortcut/spline, Ruckig), its two pydantic YAML schemas (§14), its tests/examples/docs, and its `assets/` → `catalog/` | nothing internal — it is already transport-agnostic; imp adds only a Zenoh Compute-Runtime adapter that fills `Scene` from topics |
+| `robot_engine` grasp planning: grasp library + candidate + feasibility (parallel-jaw / vacuum) — **not** in robot-algorithms, which excludes grasping by design | the rest of `robot_engine` (duplicates robot-algorithms) is dropped; bespoke orchestrator task code → Task Runtime + graph |
 | Vision modules: megapose, ppf-icp, template, sift-template, feature, blob, object_proposals (YOLO), cuboid_pose_6d, opt_sift, camera_preview, multi-view fusion | ZMQ event bus + manual SHM → Zenoh pub/sub + SHM |
 | Camera drivers: RealSense D435i + D405, Basler GigE, FLIR Blackfly, UVC webcam | Camera Core's PUSH/PULL/PUB bus → HAL nodes on Zenoh |
 | Robot adapters: mujoco_ur5e, ur_rtde (planned), franka_fr3 (planned), xarm (planned) | ZMQ REQ/REP cmd + PUB state → HAL `command` / `state` topics |
@@ -1266,7 +1369,7 @@ replace. `imp` is a clean rebuild on Zenoh; algorithms are kept, plumbing is rep
 | Object library: meshes, templates, grasps, pick_contacts, lighting variants | flat `data/object_library/` → workspace `processes/<id>/objects/<id>/` |
 | Pose library (home / capture / place / calib / mega / …) | `data/station/poses` → workspace `processes/<id>/poses/` |
 | Robot asset catalog (Franka, UR, KUKA, Fanuc, xArm; Robotiq, Franka Hand) | `orchestrator/robot_asset_catalog/` → `catalog/` (shipped with install) |
-| Scene / obstacle YAMLs (bin_picking, dummy_testing) | per-task scene files → `scenes/<id>/scene.yaml + obstacles/` |
+| Scene / obstacle YAMLs (bin_picking, dummy_testing) | per-task scene files → `scenes/<id>/world.yaml + obstacles/` (`dexsent.algorithms.world`) |
 | Run logger (meta, timeline, log, debug artifacts) | `orchestrator/runs/` → `runs/<id>/` + Zenoh bag |
 | UI surfaces: Operator console, RobotViz (URDF + Three.js), Grasp Studio, Gripper Studio, Calibration Wizard, Perception Debug, Frame Editor, Gizmo Editor, Pose Library Editor, Object Browser, Asset Manager, Run Monitor, Task Composer | FastAPI REST + WS + polling → Zenoh wildcard subs + storage queries + service calls (via `zenoh-ts` or `zenoh-bridge-ws`) |
 | Training pipeline (YOLO seg, LabelMe→YOLO, capture-from-realsense) | `data-master/extras/seg_obj/` → `tools/train/` |

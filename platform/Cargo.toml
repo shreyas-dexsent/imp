@@ -1,0 +1,25 @@
+# Rust workspace root for the sealed imp core (see ../README.md §19).
+# Members are added per build phase as each crate gains a Cargo.toml; an empty
+# members list keeps the workspace valid while crates are still scaffold-only.
+[workspace]
+resolver = "2"
+members = [
+    # Phase 1 substrate (uncomment as each crate's Cargo.toml lands):
+    # "crates/core",
+    # "crates/bus",
+    # "crates/schemas",
+    # "crates/hal-contract",
+    # "crates/module-contract",
+    # "crates/service-contract",
+    # "crates/tasks",
+    # "crates/supervisor",
+    # "crates/workspace",
+    # "crates/cli",
+    # "crates/ui-host",
+    # "crates/installer",
+]
+
+[workspace.package]
+edition = "2021"
+license = "LicenseRef-Proprietary"
+repository = "https://github.com/shreyas-dexsent/imp"
