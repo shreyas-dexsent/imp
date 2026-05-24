@@ -1,8 +1,12 @@
 # imp-sdk (Python)
 
-The public surface for Python HAL drivers, modules, services and jobs. Phase 1
-ships the bus + key conventions + generated wire schemas, matching the Rust core
-exactly on the wire (same Protobuf, same key namespace, same schema tags).
+The public surface for Python HAL drivers, modules, services and jobs. Ships the
+bus + key conventions + generated wire schemas (matching the Rust core exactly on
+the wire — same Protobuf, key namespace, and schema tags) and, from phase 2, the
+**HAL device framework** (`imp_sdk.hal`): subclass `HalDevice`, declare `Pub`/`Sub`
+topics, implement `read`/`on_command`, and `run_device(...)` wires the bus,
+lifecycle, rate scheduling, and heartbeats. See `hal/robot-mujoco-ur5e` for a
+working driver.
 
 ## Install
 

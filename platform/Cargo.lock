@@ -1139,6 +1139,7 @@ dependencies = [
  "imp-bus",
  "imp-core",
  "imp-schemas",
+ "imp-workspace",
  "tokio",
 ]
 
@@ -1180,6 +1181,17 @@ name = "imp-service-contract"
 version = "0.0.0"
 dependencies = [
  "imp-core",
+]
+
+[[package]]
+name = "imp-workspace"
+version = "0.0.0"
+dependencies = [
+ "imp-core",
+ "serde",
+ "serde_yaml",
+ "tempfile",
+ "thiserror 2.0.18",
 ]
 
 [[package]]

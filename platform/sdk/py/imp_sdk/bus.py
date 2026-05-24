@@ -75,12 +75,14 @@ class Bus:
         return Publisher(inner)
 
     def put(self, key: str, msg, qos: QosClass) -> None:
-        rel, cc, prio = _QOS[qos]
+        # Session.put() (unlike declare_publisher) does not take `reliability`;
+        # reliability is a publisher/transport setting. Use publisher() when it
+        # matters for a stream.
+        _, cc, prio = _QOS[qos]
         self._session.put(
             key,
             msg.SerializeToString(),
             attachment=schema_tag(msg).encode(),
-            reliability=rel,
             congestion_control=cc,
             priority=prio,
         )

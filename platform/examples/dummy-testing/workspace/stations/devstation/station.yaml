@@ -1,0 +1,5 @@
+schema: imp.station
+version: 1
+id: devstation
+name: Dev Station (sim)
+location: container

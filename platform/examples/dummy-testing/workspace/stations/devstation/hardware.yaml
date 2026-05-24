@@ -1,0 +1,9 @@
+schema: imp.hardware
+version: 1
+devices:
+  - id: ur5e
+    kind: robot
+    driver: robot-mujoco-ur5e
+    state: hal/ur5e/state
+    command: hal/ur5e/command
+    rate_hz: 125
