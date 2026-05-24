@@ -1,0 +1,32 @@
+# Python project root for imp modules, services, jobs, and SDK (see ../README.md §17, §19).
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imp"
+version = "0.0.0"
+description = "Zenoh-based, topic-driven robotics middleware and no-code VGR platform."
+requires-python = ">=3.10"
+license = { text = "LicenseRef-Proprietary" }
+
+# Plugins register under these entry-point groups; the runtime discovers them at
+# startup via importlib.metadata (§17). Each plugin ships as its own wheel and
+# adds an entry to the matching group. Examples (added as plugins are implemented):
+#
+# [project.entry-points."imp.hal"]
+# camera-realsense = "imp_hal_camera_realsense:device"
+#
+# [project.entry-points."imp.modules"]
+# motion-pinocchio = "imp_module_motion_pinocchio:module"
+#
+# [project.entry-points."imp.services"]
+# tf-lookup = "imp_service_tf_lookup:service"
+#
+# [project.entry-points."imp.jobs"]
+# calibration-hand-eye = "imp_job_calibration_hand_eye:job"
+
+[tool.imp]
+# Folders that must each contain a README.md and an examples/ directory
+# (enforced by tools/dev/check_docs.py).
+documented-roots = ["crates", "hal", "modules", "services", "jobs"]
