@@ -4,6 +4,7 @@
 
 use std::io::Write;
 use std::path::PathBuf;
+use std::process::Command;
 use std::time::Instant;
 
 use clap::{Parser, Subcommand};
@@ -46,6 +47,14 @@ enum Cmd {
         #[command(subcommand)]
         cmd: ProcessCmd,
     },
+    /// Validate or run a task.yaml.
+    ///
+    /// Delegates to the Python task engine (`python -m imp_job_run_task`) for
+    /// v1 -- the sealed Rust engine is a P7+ concern (see PLAN.md).
+    Task {
+        #[command(subcommand)]
+        cmd: TaskCmd,
+    },
     /// Print runtime + schema versions.
     Version,
 }
@@ -77,6 +86,22 @@ enum ProcessCmd {
     List { station: String },
 }
 
+#[derive(Subcommand)]
+enum TaskCmd {
+    /// Load + compile a task.yaml without running it. Exit 0 = would run.
+    Validate { path: PathBuf },
+    /// Compile and run a task.yaml end-to-end; exit code mirrors RunStatus.
+    Run {
+        path: PathBuf,
+        /// Pin a run id; otherwise the runtime generates one.
+        #[arg(long)]
+        run_id: Option<String>,
+        /// Per-stage timeout (seconds). Default 30.
+        #[arg(long, default_value_t = 30.0)]
+        stage_timeout_s: f64,
+    },
+}
+
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
     let cli = Cli::parse();
@@ -92,6 +117,40 @@ async fn main() -> anyhow::Result<()> {
         },
         Cmd::Station { cmd } => station(&cli, cmd)?,
         Cmd::Process { cmd } => process(&cli, cmd)?,
+        Cmd::Task { cmd } => task(&cli, cmd)?,
+    }
+    Ok(())
+}
+
+fn task(cli: &Cli, cmd: &TaskCmd) -> anyhow::Result<()> {
+    // The task engine is currently the Python `imp_job_run_task` module.
+    // Shell out so the developer doesn't need to remember the Python entry
+    // point. Honors $IMP_PYTHON; defaults to `python3`.
+    let py = std::env::var("IMP_PYTHON").unwrap_or_else(|_| "python3".to_string());
+    let mut command = Command::new(&py);
+    command.arg("-m").arg("imp_job_run_task");
+
+    match cmd {
+        TaskCmd::Validate { path } => {
+            command.arg("--task").arg(path).arg("--validate-only");
+        }
+        TaskCmd::Run { path, run_id, stage_timeout_s } => {
+            command.arg("--task").arg(path);
+            if let Some(id) = run_id {
+                command.arg("--run-id").arg(id);
+            }
+            command.arg("--stage-timeout-s").arg(stage_timeout_s.to_string());
+            if let Some(ws) = &cli.workspace {
+                command.arg("--workspace-root").arg(ws);
+            }
+        }
+    }
+
+    let status = command
+        .status()
+        .map_err(|e| anyhow::anyhow!("could not exec {py} -m imp_job_run_task: {e}"))?;
+    if !status.success() {
+        std::process::exit(status.code().unwrap_or(1));
     }
     Ok(())
 }

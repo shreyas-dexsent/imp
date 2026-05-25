@@ -33,6 +33,10 @@ PACKAGES=(
 
   # HAL drivers
   "hal/robot-mujoco-ur5e"
+
+  # Task layer + run store + run-task job
+  "services/run-store"
+  "jobs/run-task"
 )
 
 PIP="${PIP:-pip}"

@@ -34,15 +34,19 @@ jobs:
       - name: no reference/ leak under platform/ code
         run: python platform/tools/dev/check_no_reference_leak.py
 
+      - name: pip install pydantic + pyyaml (task spec deps)
+        run: pip install "pydantic>=2" pyyaml
+
       - name: pure-library pytest sweep
         env:
-          PYTHONPATH: platform/sdk/py:platform/modules/spatial-tf
+          PYTHONPATH: platform/sdk/py:platform/modules/spatial-tf:platform/services/run-store
         run: |
           set -e
           pytest -q platform/sdk/py/tests
           pytest -q platform/modules/spatial-tf/tests
           pytest -q platform/modules/spatial-transform/tests
           pytest -q platform/modules/motion-grasp-library/tests
+          pytest -q platform/services/run-store/tests
 
   # --------------------------------------------------------------------
   # Heavy lane: motion-core 226 + bus round-trip + Scene-fill integration.
@@ -81,6 +85,9 @@ jobs:
 
       - name: smoke gate -- full motion chain
         run: micromamba run -n imp-dev pytest -q platform/tests/test_smoke_motion_chain.py
+
+      - name: task layer end-to-end (task.yaml drives the chain)
+        run: micromamba run -n imp-dev pytest -q platform/tests/test_task_run.py
 
   # --------------------------------------------------------------------
   # Rust workspace: build + test + fmt + clippy.

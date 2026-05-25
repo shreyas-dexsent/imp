@@ -1,0 +1,17 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imp-service-run-store"
+version = "0.0.0"
+description = "run-store: workspace-backed run metadata + (later) timeline + bag + artifacts (spec §10, §14). Migrates orchestrator/runs from the VGR reference."
+requires-python = ">=3.10"
+license = { text = "LicenseRef-Proprietary" }
+dependencies = []
+
+[project.entry-points."imp.services"]
+run-store = "imp_service_run_store:RunStore"
+
+[tool.hatch.build.targets.wheel]
+packages = ["imp_service_run_store"]

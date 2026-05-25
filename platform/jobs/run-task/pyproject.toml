@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imp-job-run-task"
+version = "0.0.0"
+description = "run-task: execute a workspace task.yaml as a cancelable job (spec §10, §11). Migrates orchestrator/core/executor.py from the VGR reference."
+requires-python = ">=3.10"
+license = { text = "LicenseRef-Proprietary" }
+dependencies = [
+    "imp-sdk",
+    "pydantic>=2",
+    "pyyaml",
+]
+
+[project.entry-points."imp.jobs"]
+run-task = "imp_job_run_task:run_task"
+
+[tool.hatch.build.targets.wheel]
+packages = ["imp_job_run_task"]

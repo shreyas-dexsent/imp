@@ -10,8 +10,8 @@ members = [
     "crates/service-contract",
     "crates/workspace",
     "crates/cli",
+    "crates/tasks",
     # Added in later phases:
-    # "crates/tasks",
     # "crates/supervisor",
     # "crates/ui-host",
     # "crates/installer",

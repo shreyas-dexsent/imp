@@ -71,6 +71,11 @@ def _record(violations: list[str], path: Path, text: str, pat: re.Pattern[str]) 
 
 def main() -> int:
     violations: list[str] = []
+    # `from reference` / `import reference` only mean "Python import" inside
+    # a Python file. (A Markdown heading like "## Migrates from reference"
+    # is documentation, not a runtime link.)
+    import_check_exts = {".py"}
+
     for path in PLATFORM.rglob("*"):
         if not path.is_file() or _should_skip(path):
             continue
@@ -81,9 +86,9 @@ def main() -> int:
             text = path.read_text(encoding="utf-8", errors="replace")
         except OSError:
             continue
-        # Python-style imports are banned in every file type.
-        _record(violations, path, text, IMPORT_PATTERN)
-        # Path-style "reference/" only banned in code, not docs.
+        if ext in import_check_exts:
+            _record(violations, path, text, IMPORT_PATTERN)
+        # Path-style "reference/" is banned in code (any code file), allowed in docs.
         if ext in CODE_EXTS:
             _record(violations, path, text, PATH_PATTERN)
 

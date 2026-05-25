@@ -20,7 +20,8 @@ MuJoCo 3.8. CI runs Rust + Python (lite) + Python (heavy) on every PR.
 | P1 | Substrate: `crates/{core,bus,schemas,*-contract,cli}` | **done** (PR #2) | cross-language Zenoh round-trip; schema-tag reject |
 | P2 | Workspace+config (`crates/workspace`) + HAL framework + `hal/robot-mujoco-ur5e` | **done** (PR #3) | workspace tests; UR5e command→motion→state over the bus |
 | P3 | Motion stack + spatial + Scene-fill | **done** (PRs #4–#7 + commit 9cc0ca9) | 226 motion-core tests; FK/IK/coal/ompl/ruckig over bus; spatial-tf + spatial-transform + motion-cartesian + motion-path-processor + motion-grasp-library landed; **FK is world-frame, collision routes perception Pose6D into Scene** (closes D3); the Scene-fill integration test in `platform/tests/test_scene_fill.py` is green in CI |
-| P4 | Quality foundation: packaging + tests + CI | **code-complete** (this branch) | `tools/dev/install_dev.sh` (editable install of every package); `imp_sdk.discover` + lazy `__init__` (closes D6); promoted `verify_*.py` -> `platform/tests/test_modules_bus.py`; `platform/tests/test_smoke_motion_chain.py` smoke gate; `tools/dev/check_no_reference_leak.py` guard; `.github/workflows/ci.yml` runs Rust (build/test/clippy/fmt) + lite Python (doc rule + no-ref-leak + 34 pure-library tests) + heavy Python (motion-core 226 + bus modules + Scene-fill + smoke gate) |
+| P4 | Quality foundation: packaging + tests + CI | **done** (commit 87a2942) | `tools/dev/install_dev.sh` (editable install of every package); `imp_sdk.discover` + lazy `__init__` (closes D6); promoted `verify_*.py` -> `platform/tests/test_modules_bus.py`; `platform/tests/test_smoke_motion_chain.py` smoke gate; `tools/dev/check_no_reference_leak.py` guard; `.github/workflows/ci.yml` runs Rust (build/test/clippy/fmt) + lite Python (doc rule + no-ref-leak + 34 pure-library tests) + heavy Python (motion-core 226 + bus modules + Scene-fill + smoke gate) |
+| P5 | Task layer + end-to-end task.yaml chain | **code-complete** (this branch) | `crates/tasks` Rust scaffold; `imp_tasks.{spec,compiler,runtime}` (task.yaml schema + Graph Compiler + Task Runtime); `jobs/run-task` job wrapper with `--validate-only` mode; `services/run-store` workspace persistence; `imp task validate/run` CLI subcommands (shells out to Python engine for v1); `platform/tests/test_task_run.py` drives a synthetic Pose6D[cam] -> spatial-transform -> IK -> ompl plan chain as a task.yaml end-to-end. 38 new pure-library tests (9 spec + 9 compiler + 5 run-store) green; closes debt **D4** |
 
 **Verified capabilities today:** typed pub/sub with schema rejection
 (Rust↔Python); a sim robot HAL (state + joint/trajectory commands); the
@@ -193,15 +194,50 @@ Closes debts **D5** (ad-hoc verification) and **D6** (PYTHONPATH-based packaging
 - **DoD:** every PR runs the three CI jobs; zero manual `verify_*.py`
   runs needed.
 
-### P5 — Task layer & end-to-end sim chain — *(orig P4)*
-- `crates/tasks`: Graph Compiler (schema+wiring validation, placed instances) +
-  Task Runtime (sequence FSM reacting to `reject_reason`/events) + `task.yaml`
-  schema in the workspace; `jobs/run-task` + `run-store`.
-- **End-to-end in sim:** a task graph driving PoseTarget → `spatial-transform` →
-  IK → plan → trajectory → `hal/robot-mujoco-ur5e`, collision-gated, with events
-  on `ctrl/runs/<id>/events` and artifacts in `runs/<id>/`.
-- **Tests:** `imp task validate/run`; a headless CI integration test that runs the
-  chain and asserts the sim robot reaches the target. Closes **D4**.
+### P5 — Task layer & end-to-end sim chain — **CODE-COMPLETE**
+Closes debt **D4** (no task layer / hand-wired modules) -- imp is now a
+platform that runs deployed `task.yaml` files, not a library of
+independently-launched modules.
+
+- **`imp_tasks` (Python engine, [`platform/sdk/py/imp_tasks/`](platform/sdk/py/imp_tasks/)):**
+  - `spec` -- Pydantic schema for `task.yaml` (nodes + edges + sequence +
+    assets + placement; version-pinned with `imp.task/1`).
+  - `compiler` -- `compile_task(spec)` looks up each node's plugin via
+    `imp_sdk.discover`, supports `class:` overrides for plugins that
+    expose multiple classes (e.g. `motion-pinocchio:IkModule`), splats
+    `params` into the constructor, collects every port's `(key, schema)`,
+    and validates every advisory `EdgeSpec` -- a `keyexpr` or schema
+    mismatch fails compile with the line.
+  - `runtime` -- `TaskRun(compiled).run()` spins every module in a
+    daemon `ModuleNode` thread, emits JSON events on
+    `imp/<station>/ctrl/runs/<run_id>/events`
+    (`run.started/stage_changed/succeeded/failed`), and waits on each
+    stage's `until` keyexpr with a configurable timeout. Returns a
+    `RunResult` summarising status, elapsed time, and per-stage durations.
+- **`crates/tasks` Rust scaffold:** workspace member, empty engine
+  reserved for the sealed Rust replacement (P7+). Same polyglot pragma
+  as the Compute Runtime today (PLAN.md D2).
+- **`jobs/run-task`:** Python job wrapper around `TaskRun` with a
+  `--validate-only` mode for compile-only checks. Persists the
+  `RunResult` to `workspace/runs/<run_id>/meta.json` via `run-store`.
+- **`services/run-store`:** workspace-backed `RunRecord` reader/writer
+  (`write_run` / `read_run` / `list_runs` / `RunStore`). Tests cover
+  round-trip, missing-id handling, filtering by `task_id`. The
+  bus-side queryable (`run.list` / `run.show` over Zenoh) lands in P8.
+- **`imp task` CLI:** new Rust subcommand on the `imp` binary --
+  `imp task validate <path>` and `imp task run <path>`. Shells out to
+  `python -m imp_job_run_task` (v1 polyglot bridge); the sealed Rust
+  driver replaces the subprocess hop alongside `crates/tasks` in P7+.
+- **End-to-end integration test:**
+  [`platform/tests/test_task_run.py`](platform/tests/test_task_run.py)
+  composes spatial-transform → IK → ompl plan as a single `task.yaml`,
+  runs it through `TaskRun`, asserts `RunStatus.SUCCEEDED` and that the
+  expected stage list completed. A second test exercises the `run-task`
+  job's `meta.json` persistence via a timeout path.
+- **Deferred to P7:** richer sequence FSM (branches, loops); bag capture
+  of every produced topic; supervisor-driven cancellation.
+- **Deferred to P8:** typed `RunEvent` protobuf message (events are
+  JSON-over-bytes for v1); `run.*` services as Zenoh queryables.
 
 ### P6 — Perception, tf & calibration → vision-guided pick — *(consolidated)*
 - **Calibration + tf first:** `jobs/calibration-{intrinsics,hand-eye,samples}`,
