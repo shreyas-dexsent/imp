@@ -1,0 +1,29 @@
+# imp dev/CI conda env: motion-core's heavy native deps + Zenoh + protobuf 6
+# + ruckig + mujoco for HAL sim. CI uses this directly; `install_dev.sh`
+# layers editable installs of every platform/ package on top.
+name: imp-dev
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pip
+  # motion-core / robot-algorithms native deps
+  - numpy
+  - scipy
+  - pydantic
+  - pyyaml
+  - trimesh
+  - pinocchio
+  - coal
+  - ompl
+  - open3d
+  # tests
+  - pytest
+  - pytest-timeout
+  # bus + IDL
+  - pip:
+      - eclipse-zenoh==1.9.0
+      - protobuf>=6.31
+      - ruckig>=0.9
+      - mujoco>=3.0

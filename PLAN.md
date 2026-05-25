@@ -8,18 +8,19 @@
 
 ---
 
-## 1. Current status (as of 2026-05-24)
+## 1. Current status (as of 2026-05-25)
 
-Built on `main` via PRs #1–#7. Toolchain proven in-container: Rust 1.94 +
-zenoh 1.9, Python 3.11 + eclipse-zenoh 1.9, Pinocchio 4 + coal + ompl +
-open3d, MuJoCo 3.8.
+Built on `main`. Toolchain proven in-container: Rust 1.94 + zenoh 1.9,
+Python 3.11 + eclipse-zenoh 1.9, Pinocchio 4 + coal + ompl + open3d,
+MuJoCo 3.8. CI runs Rust + Python (lite) + Python (heavy) on every PR.
 
 | Phase | Scope | State | Evidence |
 |---|---|---|---|
 | P0 | Scaffold + README §9–§22 edits + doc-rule | **done** (PR #1) | 60 plugin folders, `check_docs.py` green |
 | P1 | Substrate: `crates/{core,bus,schemas,*-contract,cli}` | **done** (PR #2) | cross-language Zenoh round-trip; schema-tag reject |
 | P2 | Workspace+config (`crates/workspace`) + HAL framework + `hal/robot-mujoco-ur5e` | **done** (PR #3) | workspace tests; UR5e command→motion→state over the bus |
-| P3 | Motion stack + spatial + Scene-fill | **code-complete** (PRs #4–#6 + this branch) | 226 motion-core tests; FK/IK/coal/ompl/ruckig over bus; **spatial-tf, spatial-transform, motion-cartesian, motion-path-processor, motion-grasp-library** landed; **FK now world-frame, collision routes perception Pose6D into Scene** (closes D3); 28 new pure-library tests green; the headline Scene-fill integration test (`platform/tests/test_scene_fill.py`) is written, gated on the dev-container env, and skips cleanly on hosts without `pin`/`coal`/`zenoh` |
+| P3 | Motion stack + spatial + Scene-fill | **done** (PRs #4–#7 + commit 9cc0ca9) | 226 motion-core tests; FK/IK/coal/ompl/ruckig over bus; spatial-tf + spatial-transform + motion-cartesian + motion-path-processor + motion-grasp-library landed; **FK is world-frame, collision routes perception Pose6D into Scene** (closes D3); the Scene-fill integration test in `platform/tests/test_scene_fill.py` is green in CI |
+| P4 | Quality foundation: packaging + tests + CI | **code-complete** (this branch) | `tools/dev/install_dev.sh` (editable install of every package); `imp_sdk.discover` + lazy `__init__` (closes D6); promoted `verify_*.py` -> `platform/tests/test_modules_bus.py`; `platform/tests/test_smoke_motion_chain.py` smoke gate; `tools/dev/check_no_reference_leak.py` guard; `.github/workflows/ci.yml` runs Rust (build/test/clippy/fmt) + lite Python (doc rule + no-ref-leak + 34 pure-library tests) + heavy Python (motion-core 226 + bus modules + Scene-fill + smoke gate) |
 
 **Verified capabilities today:** typed pub/sub with schema rejection
 (Rust↔Python); a sim robot HAL (state + joint/trajectory commands); the
@@ -157,18 +158,40 @@ Protobuf→Rust+Python; keyexpr/QoS/schema-tag; `imp topic echo|hz`, `version`.
   (the new pure-library tests are already pytest; the heavy ones need
   the container env P4 sets up).
 
-### P4 — Quality foundation: packaging, tests & CI — **NEW**
-Make the system regression-safe and installable before breadth grows (closes D5, D6).
-- **Packaging:** real editable/wheel installs for `imp_sdk` + each module/hal;
-  exercise **entry-point discovery** (`importlib.metadata`) so `imp` finds plugins
-  with no `PYTHONPATH`. Rust workspace builds clean.
-- **Test suites:** promote all `verify_*.py` to `pytest`; add SDK tests (bus, hal,
-  module frameworks) over an embedded Zenoh session; broaden Rust unit/integration.
-- **CI (GitHub Actions):** Linux (and Windows where feasible) running
-  `cargo build/test/clippy/fmt`, `pytest`, the **motion-core 226 tests**, the doc
-  rule, and the no-`reference/`-leak grep; dependency caching; coverage report.
-- **Smoke gate:** a synthetic motion-chain integration test as a required check.
-- **DoD:** green CI required on every PR; zero manual verification remains.
+### P4 — Quality foundation: packaging, tests & CI — **CODE-COMPLETE**
+Closes debts **D5** (ad-hoc verification) and **D6** (PYTHONPATH-based packaging).
+- **Packaging:** `platform/tools/dev/install_dev.sh` does a single-shot
+  editable install of every Python package (sdk + motion-core + every
+  module + HAL) in dependency order. `imp_sdk.discover` exposes the
+  entry-point plugin discovery layer (`imp.hal` / `imp.modules` /
+  `imp.services` / `imp.jobs`) the runtime + CLI sit on; tested with
+  6 unit tests (pure-stdlib, runs without zenoh). `imp_sdk/__init__.py`
+  is now lazy (PEP 562) so pure-Python tooling — `discover`, `keyexpr`,
+  the doc rule — works on hosts without the heavy native env.
+- **Test suites:** every `verify_*.py` shell-script promoted to a pytest
+  in `platform/tests/test_modules_bus.py` (one bus round-trip per
+  module). New shared `imp_sdk.testing.module_under_test` helper bringsup
+  a module in a daemon `ModuleNode` thread for test-side publish/recv.
+  Pure-library suites (12 + 8 + 8 + 6 = 34 tests) run on every PR; bus
+  suites (`test_modules_bus.py`, `test_scene_fill.py`,
+  `test_smoke_motion_chain.py`) run in the heavy lane with full env.
+- **CI:** [`.github/workflows/ci.yml`](.github/workflows/ci.yml) — three jobs:
+  *lite* (Ubuntu, no native deps): `check_docs.py` + `check_no_reference_leak.py`
+  + the 34 pure-library tests. *heavy* (Ubuntu + micromamba):
+  `tools/dev/environment.yml` env → `install_dev.sh` → motion-core 226
+  tests + bus round-trips + Scene-fill + smoke gate. *rust*:
+  `cargo fmt --check`, `clippy -D warnings`, `build`, `test` across the
+  workspace.
+- **Smoke gate:** `platform/tests/test_smoke_motion_chain.py` wires a
+  synthetic perception `Pose6D` → spatial-transform → IK → ompl plan
+  and asserts the final path's TCP matches the target. Marks the
+  motion-chain shippable end-to-end.
+- **No-reference-leak guard:** `tools/dev/check_no_reference_leak.py`
+  blocks any code-file `reference/` path or `from/import reference`
+  reaching `platform/`; doc mentions (e.g. README "Migrates from
+  reference:") are explicitly allowed.
+- **DoD:** every PR runs the three CI jobs; zero manual `verify_*.py`
+  runs needed.
 
 ### P5 — Task layer & end-to-end sim chain — *(orig P4)*
 - `crates/tasks`: Graph Compiler (schema+wiring validation, placed instances) +

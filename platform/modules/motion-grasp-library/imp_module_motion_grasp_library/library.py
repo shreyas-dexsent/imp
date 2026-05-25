@@ -1,7 +1,8 @@
 """In-memory grasp catalogue: ``Grasp`` records keyed by id, ranked by score.
 
-Mirrors ``reference/.../robot_engine/planning/grasp_library.py`` and the
-spec's ``Grasp`` / ``Grasps`` wire schemas. A grasp's ``t_obj_gripper`` is
+Mirrors the VGR orchestrator's ``robot_engine/planning/grasp_library.py``
+shape (see the README for the migration source) and the spec's ``Grasp`` /
+``Grasps`` wire schemas. A grasp's ``t_obj_gripper`` is
 the gripper pose in the *object* frame at the moment of grasping -- the world
 pose is computed on the fly by ``synthesize_grasps`` using the live
 ``T_world_object``.

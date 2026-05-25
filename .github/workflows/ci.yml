@@ -1,0 +1,120 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel in-progress runs for the same PR / branch.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # --------------------------------------------------------------------
+  # Fast lane: no native deps -- runs on every PR in seconds.
+  # --------------------------------------------------------------------
+  lite-checks:
+    name: lite (docs + no-ref-leak + pure-python tests)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: pip install pytest + numpy + scipy
+        run: pip install pytest numpy scipy
+
+      - name: doc rule (every plugin has README.md + examples/)
+        run: python platform/tools/dev/check_docs.py
+
+      - name: no reference/ leak under platform/ code
+        run: python platform/tools/dev/check_no_reference_leak.py
+
+      - name: pure-library pytest sweep
+        env:
+          PYTHONPATH: platform/sdk/py:platform/modules/spatial-tf
+        run: |
+          set -e
+          pytest -q platform/sdk/py/tests
+          pytest -q platform/modules/spatial-tf/tests
+          pytest -q platform/modules/spatial-transform/tests
+          pytest -q platform/modules/motion-grasp-library/tests
+
+  # --------------------------------------------------------------------
+  # Heavy lane: motion-core 226 + bus round-trip + Scene-fill integration.
+  # Needs Pinocchio + Coal + OMPL + Zenoh + protobuf 6.31+ -- installed
+  # via the dev conda env (mirrors what motion-core's environment.yml uses).
+  # --------------------------------------------------------------------
+  heavy-checks:
+    name: heavy (motion-core + bus modules + scene-fill)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -leo pipefail {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: install micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: platform/tools/dev/environment.yml
+          environment-name: imp-dev
+          cache-environment: true
+          init-shell: bash
+
+      - name: editable install of every platform/ package
+        run: micromamba run -n imp-dev bash platform/tools/dev/install_dev.sh
+
+      - name: motion-core regression suite (226 tests)
+        working-directory: platform/modules/motion-core/algorithms
+        run: micromamba run -n imp-dev pytest -q tests
+
+      - name: bus-attached module round-trips (promoted verify_*.py)
+        run: micromamba run -n imp-dev pytest -q platform/tests/test_modules_bus.py
+
+      - name: Scene-fill seam (D3 integration test)
+        run: micromamba run -n imp-dev pytest -q platform/tests/test_scene_fill.py
+
+      - name: smoke gate -- full motion chain
+        run: micromamba run -n imp-dev pytest -q platform/tests/test_smoke_motion_chain.py
+
+  # --------------------------------------------------------------------
+  # Rust workspace: build + test + fmt + clippy.
+  # --------------------------------------------------------------------
+  rust:
+    name: rust (cargo build + test + clippy + fmt)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: platform
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: platform
+
+      - name: install protoc (prost-build wants it on PATH)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y protobuf-compiler
+
+      - name: cargo fmt --check
+        run: cargo fmt --all -- --check
+
+      - name: cargo clippy -D warnings
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+      - name: cargo build
+        run: cargo build --workspace
+
+      - name: cargo test
+        run: cargo test --workspace
