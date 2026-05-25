@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imp-module-motion-cartesian"
+version = "0.0.0"
+description = "Cartesian linear planning imp module wrapping motion-core (plan_cartesian + straight_line backend, spec §9)."
+requires-python = ">=3.10"
+license = { text = "LicenseRef-Proprietary" }
+dependencies = [
+    "imp-sdk",
+    "imp-motion-core",
+    "numpy>=1.24",
+    "scipy>=1.10",
+]
+
+[project.entry-points."imp.modules"]
+motion-cartesian = "imp_module_motion_cartesian:CartesianPlanModule"
+
+[tool.hatch.build.targets.wheel]
+packages = ["imp_module_motion_cartesian"]

@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imp-module-spatial-tf"
+version = "0.0.0"
+description = "Frame graph over Zenoh (spec §9 spatial.tf) - maintains the live transform graph used by spatial-transform and downstream motion modules."
+requires-python = ">=3.10"
+license = { text = "LicenseRef-Proprietary" }
+dependencies = [
+    "imp-sdk",
+    "numpy>=1.24",
+]
+
+[project.entry-points."imp.modules"]
+spatial-tf = "imp_module_spatial_tf:TfModule"
+
+[tool.hatch.build.targets.wheel]
+packages = ["imp_module_spatial_tf"]

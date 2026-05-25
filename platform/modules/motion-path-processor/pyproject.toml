@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imp-module-motion-path-processor"
+version = "0.0.0"
+description = "Path post-processor: shortcut smoothing + spline fit (spec §9). Wraps motion-core's algorithms.optimization."
+requires-python = ">=3.10"
+license = { text = "LicenseRef-Proprietary" }
+dependencies = [
+    "imp-sdk",
+    "imp-motion-core",
+    "numpy>=1.24",
+]
+
+[project.entry-points."imp.modules"]
+motion-path-processor = "imp_module_motion_path_processor:PathProcessorModule"
+
+[tool.hatch.build.targets.wheel]
+packages = ["imp_module_motion_path_processor"]

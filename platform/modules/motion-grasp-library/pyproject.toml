@@ -1,0 +1,21 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imp-module-motion-grasp-library"
+version = "0.0.0"
+description = "Grasp candidate library + synthesize_grasps op (spec §9). Ported from the VGR orchestrator's robot_engine/planning -- robot-algorithms excludes grasping by design."
+requires-python = ">=3.10"
+license = { text = "LicenseRef-Proprietary" }
+dependencies = [
+    "imp-sdk",
+    "numpy>=1.24",
+    "scipy>=1.10",
+]
+
+[project.entry-points."imp.modules"]
+motion-grasp-library = "imp_module_motion_grasp_library:SynthesizeGraspsModule"
+
+[tool.hatch.build.targets.wheel]
+packages = ["imp_module_motion_grasp_library"]

@@ -10,24 +10,30 @@
 
 ## 1. Current status (as of 2026-05-24)
 
-Built on branch `claude/busy-hypatia-wqZFJ`, landed to `main` via PRs #1–#6.
-Toolchain proven in-container: Rust 1.94 + zenoh 1.9, Python 3.11 + eclipse-zenoh
-1.9, Pinocchio 4 + coal + ompl + open3d, MuJoCo 3.8.
+Built on `main` via PRs #1–#7. Toolchain proven in-container: Rust 1.94 +
+zenoh 1.9, Python 3.11 + eclipse-zenoh 1.9, Pinocchio 4 + coal + ompl +
+open3d, MuJoCo 3.8.
 
 | Phase | Scope | State | Evidence |
 |---|---|---|---|
 | P0 | Scaffold + README §9–§22 edits + doc-rule | **done** (PR #1) | 60 plugin folders, `check_docs.py` green |
 | P1 | Substrate: `crates/{core,bus,schemas,*-contract,cli}` | **done** (PR #2) | cross-language Zenoh round-trip; schema-tag reject |
 | P2 | Workspace+config (`crates/workspace`) + HAL framework + `hal/robot-mujoco-ur5e` | **done** (PR #3) | workspace tests; UR5e command→motion→state over the bus |
-| P3 | Motion stack over `motion-core` | **partial** (PRs #4–#6) | 226 motion-core tests; FK/IK/coal/ompl/ruckig verified over bus |
+| P3 | Motion stack + spatial + Scene-fill | **code-complete** (PRs #4–#6 + this branch) | 226 motion-core tests; FK/IK/coal/ompl/ruckig over bus; **spatial-tf, spatial-transform, motion-cartesian, motion-path-processor, motion-grasp-library** landed; **FK now world-frame, collision routes perception Pose6D into Scene** (closes D3); 28 new pure-library tests green; the headline Scene-fill integration test (`platform/tests/test_scene_fill.py`) is written, gated on the dev-container env, and skips cleanly on hosts without `pin`/`coal`/`zenoh` |
 
-**Verified capabilities today:** typed pub/sub with schema rejection (Rust↔Python);
-a sim robot HAL (state + joint/trajectory commands); the full per-op motion chain
-**FK · IK · collision · plan · trajectory** wrapping `robot-algorithms`, each
-cross-checked against the library's direct call.
+**Verified capabilities today:** typed pub/sub with schema rejection
+(Rust↔Python); a sim robot HAL (state + joint/trajectory commands); the
+full per-op motion chain **FK · IK · collision · plan · trajectory** wrapping
+`robot-algorithms`, each cross-checked against the library's direct call;
+**a topic-driven tf frame graph** (`spatial-tf`); **camera→base lifting**
+through tf with optional FK-injected `base→tcp` (`spatial-transform`);
+**Cartesian planning + shortcut/spline post-processing**; **grasp library
++ `synthesize_grasps`** (orchestrator port); **Scene-fill seam wired** —
+perception `Pose6D` mutates `Scene.object_poses` inside the collision
+module before each query, and FK composes through the world's `base_pose`.
 
-**Not yet built:** `spatial-*`, the Scene-fill seam, perception, the task layer,
-services/jobs, supervisor, UI, C++/TS codegen, packaging/CI, hardening.
+**Not yet built:** perception, the task layer, services/jobs, supervisor,
+UI, C++/TS codegen, packaging/CI (P4), hardening.
 
 ---
 
@@ -128,17 +134,28 @@ Protobuf→Rust+Python; keyexpr/QoS/schema-tag; `imp topic echo|hz`, `version`.
 `crates/workspace` (Station→Process→Task→Run, schema-validated, trash backup);
 `imp station|process`; `imp_sdk.hal`; `hal/robot-mujoco-ur5e`.
 
-### P3 — Motion stack, spatial & the Scene-fill seam — **IN PROGRESS**
-- **Done:** `motion-core` (226 tests), `imp_sdk.module` Compute Runtime,
-  `motion-pinocchio` FK+IK, `motion-coal`, `motion-ompl`, `motion-ruckig`.
-- **Remaining:** `motion-cartesian`, `motion-path-processor`; `spatial-transform`
-  (Pose6D[cam]+tf+RobotState→PoseTarget[base]); `spatial-tf` (frame graph over
-  Zenoh, hand-eye = edge); `motion-grasp-library` (from orchestrator); a
-  **Scene-fill integration**: ingest a perception `Pose6D` into `Scene.object_poses`,
-  apply grasp **attach/detach** + dynamic ACM, and prove world-frame FK/collision
-  reflect it (closes **D3**).
-- **Tests:** per-module pytest (verify-as-test); an integration test asserting the
-  Scene-fill changes collision/FK outcomes.
+### P3 — Motion stack, spatial & the Scene-fill seam — **CODE-COMPLETE**
+- **Done (prior PRs):** `motion-core` (226 tests), `imp_sdk.module` Compute
+  Runtime, `motion-pinocchio` FK+IK, `motion-coal`, `motion-ompl`, `motion-ruckig`.
+- **Done (this branch):** `spatial-tf` (TfGraph library + bus-resident
+  module, 12 pytest); `spatial-transform` (eye-to-hand + eye-in-hand modes,
+  pure-math `lift_pose` helpers, 8 pytest); `motion-cartesian`
+  (`plan_cartesian` wrapper); `motion-path-processor` (`shortcut_smooth` +
+  `spline_fit` wrapper); `motion-grasp-library` (`GraspLibrary` +
+  `synthesize_grasps` port from `reference/.../robot_engine/planning/`,
+  8 pytest); **FK switched to world-frame `fk(scene,…)`** (closes D3 for FK);
+  **collision routes a perception `Pose6D` into `Scene.set_object_pose`
+  each tick** before querying (closes D3 for collision).
+- **Headline demo:** `platform/tests/test_scene_fill.py` proves (1) FK
+  publishes world-frame `Pose6D`, (2) a topic-driven object pose change
+  flips the collision verdict, (3) `Scene.attach` registers the dynamic
+  ACM allowance so EE↔attached-object contacts are suppressed. Gated on
+  `pinocchio + coal + zenoh`; skips cleanly on hosts without them.
+- **Deferred to P5 (task layer):** grasp-event schema (`Scene.attach` is
+  in-process only for now) and end-to-end task chaining of the modules.
+- **Deferred to P4:** the `verify_*.py` → pytest promotion + CI wiring
+  (the new pure-library tests are already pytest; the heavy ones need
+  the container env P4 sets up).
 
 ### P4 — Quality foundation: packaging, tests & CI — **NEW**
 Make the system regression-safe and installable before breadth grows (closes D5, D6).

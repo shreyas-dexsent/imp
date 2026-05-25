@@ -1,0 +1,23 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "imp-module-spatial-transform"
+version = "0.0.0"
+description = "Camera-frame Pose6D -> base-frame PoseTarget via the tf graph (spec §9 spatial.transform)."
+requires-python = ">=3.10"
+license = { text = "LicenseRef-Proprietary" }
+dependencies = [
+    "imp-sdk",
+    "imp-module-spatial-tf",
+    "imp-motion-core",
+    "numpy>=1.24",
+    "scipy>=1.10",
+]
+
+[project.entry-points."imp.modules"]
+spatial-transform = "imp_module_spatial_transform:TransformModule"
+
+[tool.hatch.build.targets.wheel]
+packages = ["imp_module_spatial_transform"]
